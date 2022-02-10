@@ -43,6 +43,9 @@ fn main() {
     function_map.insert(String::from("assert"), my_command::command_assert);
     function_map.insert(String::from("string"), my_command::command_string);
     function_map.insert(String::from("scalar"), my_command::command_scalar);
+    function_map.insert(String::from("shadowing"), my_command::command_shadowing);
+    function_map.insert(String::from("string"), my_command::command_string);
+    function_map.insert(String::from("struct"), my_command::command_struct);
     let key = String::from(command);
     let found_func = function_map[&key];
     found_func();

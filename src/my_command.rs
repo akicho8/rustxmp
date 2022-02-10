@@ -83,60 +83,62 @@ pub fn command_scalar() {
     println!("value_f32: {}, {} bytes, {:?}", value_f32, std::mem::size_of_val(&value_f32), as_raw_bytes(&value_f32));
     let value_f64: f64 = -9223372036854775808.0;
     println!("value_f64: {}, {} bytes, {:?}", value_f64, std::mem::size_of_val(&value_f64), as_raw_bytes(&value_f64));
+
+    // 文字
+    // なんと 'a' でも4バイト。というかすべて4バイトのようだ
+    let value_ascii: char = 'a';
+    println!("value_ascii: {}, {} bytes, {:?}", value_ascii, std::mem::size_of_val(&value_ascii), as_raw_bytes(&value_ascii));
+    let value_kanji: char = '漢';
+    println!("value_kanji: {}, {} bytes, {:?}", value_kanji, std::mem::size_of_val(&value_kanji), as_raw_bytes(&value_kanji));
+    let value_emoji: char = '🍣';
+    println!("value_emoji: {}, {} bytes, {:?}", value_emoji, std::mem::size_of_val(&value_emoji), as_raw_bytes(&value_emoji));
+
+    // bool 1 byte
+    let value_true: bool = true;
+    println!("value_true: {}, {} bytes, {:?}", value_true, std::mem::size_of_val(&value_true), as_raw_bytes(&value_true));
+    let value_false: bool = false;
+    println!("value_false: {}, {} bytes, {:?}", value_false, std::mem::size_of_val(&value_false), as_raw_bytes(&value_false));
+
+    // ユニット型 (配列？)
+    let value_ary = (10, 20, 30);
+    println!("value_ary: {:?}, {} bytes, {:?}", value_ary, std::mem::size_of_val(&value_ary), as_raw_bytes(&value_ary));
 }
 
-// 符号付き整数: i8, i16, i32, i64, i128, isize（ポインタのサイズ）
-// 符号無し整数: u8, u16, u32, u64, u128, usize（ポインタのサイズ）
-// 浮動小数点数: f32, f64
-// char: 'a', 'α', '∞'などのUnicodeのスカラー値
-// bool: trueまたはfalse
-// ユニット型: ()が唯一の値
+pub fn command_shadowing() {
+    let value = 1;
+    let value = value + 2;
+    assert_eq!(value, 3);
+    println!("success");
+}
 
 pub fn command_string() {
-    assert!(false, "foo")
+    // 文字列リテラル(なのか？)
+    let value_str1 = "ab";
+    println!("value_str1: {:?}, {} bytes, {:?}", value_str1, std::mem::size_of_val(&value_str1), as_raw_bytes(&value_str1));
+
+    // 文字列リテラルからコピーしてヒープに確保したものでポインタではなく
+    // スタックに確保した ptr, len, capacity の構造体へのポインタになっている
+    let value_str2 = String::from("ab");
+    println!("value_str2: {:?}, {} bytes, {:?}", value_str2, std::mem::size_of_val(&value_str2), as_raw_bytes(&value_str2));
 }
 
-//     // // use super::*;
-//     // #[test]
-//     // fn test_string_parse() {
-//     //     assert_eq!(123, "123".parse().expect("expect_message"));
-//     // }
-//     // #[test]
-//     // fn test_string_from() {
-//     //     let mut s1 = String::from("foo"); // let mut s1 = "foo"; と書いた場合は push_str できない。なんで？
-//     //     s1.push_str("bar");
-//     //     assert_eq!("foobar", s1);
-//     //
-//     //     // let s1 = String::from("foo");
-//     //     // let s2 = s1; // s1 を s2 にコピーしたあと s1 を使うとエラーになる
-//     //     // println!("s2 -> {}", s1);
-//     // }
-//     // #[test]
-//     // fn test_string_clone() {
-//     //     let s1 = String::from("foo");
-//     //     let s2 = s1.clone();    // 実体をコピーしている
-//     //     assert_eq!(s1, s2);
-//     // }
-//     // #[test]
-//     // fn test_string_len() {
-//     //     assert_eq!(3, "foo".len());
-//     //     assert_eq!(3, String::from("foo").len());
-//     // }
-//     // #[test]
-//     // fn test_string_as_bytes() {
-//     //     // let s1 = String::from("foo");
-//     //     // assert_eq!(3, s1.as_bytes());
-//     // }
-//     // #[test]
-//     // fn test_string_clear() {
-//     //     let mut s1 = String::from("foo");
-//     //     s1.clear();
-//     //     assert_eq!("", s1);
-//     // }
-//     // #[test]
-//     // fn test_string_slice() {
-//     //     let s1 = "foobar";
-//     //     assert_eq!("fo", &s1[0..2]); // .. は ... と考えて 0...2 が ruby の 0..1 になる
-//     //     assert_eq!("ba", &s1[3..5]);
-//     // }
-// }
+pub fn command_struct() {
+    struct Rect {
+        w: usize,
+        h: usize,
+    }
+
+    impl Rect {
+        fn area(&self) -> usize {
+            self.w * self.h
+        }
+
+        fn can_hold(&self, other: &Rect) -> bool {
+            self.w >= other.w && self.h >= other.h
+        }
+    }
+
+    let rect1 = Rect { w: 2, h: 3 };
+    assert_eq!(rect1.area(), 6);
+    assert_eq!(rect1.can_hold(&rect1), true);
+}
