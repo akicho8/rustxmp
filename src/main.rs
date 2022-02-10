@@ -46,6 +46,12 @@ fn main() {
     function_map.insert(String::from("shadowing"), my_command::command_shadowing);
     function_map.insert(String::from("string"), my_command::command_string);
     function_map.insert(String::from("struct"), my_command::command_struct);
+    function_map.insert(String::from("wip_command_list"), my_command::command_wip_command_list);
+    function_map.insert(String::from("hash_map"), my_command::command_hash_map);
+    function_map.insert(String::from("env"), my_command::command_env);
+    function_map.insert(String::from("closure"), my_command::command_closure);
+    function_map.insert(String::from("enum"), my_command::command_enum);
+    function_map.insert(String::from("stderr"), my_command::command_stderr);
     let key = String::from(command);
     let found_func = function_map[&key];
     found_func();

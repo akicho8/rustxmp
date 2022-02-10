@@ -3,6 +3,8 @@
 //     a + b
 // }
 
+// use std::fmt::Debug::fmt;
+
 // use std::env;
 // use std::fs::File;
 // use std::io::prelude::*;
@@ -42,66 +44,66 @@ pub fn command_assert() {
 
 pub fn command_scalar() {
     // 8
-    let value_i8: i8 = -128;
-    println!("value_i8: {}, {} bytes, {:?}", value_i8, std::mem::size_of_val(&value_i8), as_raw_bytes(&value_i8));
-    let value_u8: u8 = 255;
-    println!("value_u8: {}, {} bytes, {:?}", value_u8, std::mem::size_of_val(&value_u8), as_raw_bytes(&value_u8));
+    let value: i8 = -128;
+    println!("i8: {}, {} bytes, {:?}", value, std::mem::size_of_val(&value), as_raw_bytes(&value));
+    let value: u8 = 255;
+    println!("u8: {}, {} bytes, {:?}", value, std::mem::size_of_val(&value), as_raw_bytes(&value));
 
     // 16
-    let value_i16: i16 = -32768;
-    println!("value_i16: {}, {} bytes, {:?}", value_i16, std::mem::size_of_val(&value_i16), as_raw_bytes(&value_i16));
-    let value_u16: u16 = 65535;
-    println!("value_u16: {}, {} bytes, {:?}", value_u16, std::mem::size_of_val(&value_u16), as_raw_bytes(&value_u16));
+    let value: i16 = -32768;
+    println!("i16: {}, {} bytes, {:?}", value, std::mem::size_of_val(&value), as_raw_bytes(&value));
+    let value: u16 = 65535;
+    println!("u16: {}, {} bytes, {:?}", value, std::mem::size_of_val(&value), as_raw_bytes(&value));
 
     // 32
-    let value_i32: i32 = -2147483648;
-    println!("value_i32: {}, {} bytes, {:?}", value_i32, std::mem::size_of_val(&value_i32), as_raw_bytes(&value_i32));
-    let value_u32: u32 = 4294967295;
-    println!("value_u32: {}, {} bytes, {:?}", value_u32, std::mem::size_of_val(&value_u32), as_raw_bytes(&value_u32));
+    let value: i32 = -2147483648;
+    println!("i32: {}, {} bytes, {:?}", value, std::mem::size_of_val(&value), as_raw_bytes(&value));
+    let value: u32 = 4294967295;
+    println!("u32: {}, {} bytes, {:?}", value, std::mem::size_of_val(&value), as_raw_bytes(&value));
 
     // 64
-    let value_i64: i64 = -9223372036854775808;
-    println!("value_i64: {}, {} bytes, {:?}", value_i64, std::mem::size_of_val(&value_i64), as_raw_bytes(&value_i64));
-    let value_u64: u64 = 18446744073709551615;
-    println!("value_u64: {}, {} bytes, {:?}", value_u64, std::mem::size_of_val(&value_u64), as_raw_bytes(&value_u64));
+    let value: i64 = -9223372036854775808;
+    println!("i64: {}, {} bytes, {:?}", value, std::mem::size_of_val(&value), as_raw_bytes(&value));
+    let value: u64 = 18446744073709551615;
+    println!("u64: {}, {} bytes, {:?}", value, std::mem::size_of_val(&value), as_raw_bytes(&value));
 
     // 128
-    let value_i128: i128 = -170141183460469231731687303715884105728;
-    println!("value_i128: {}, {} bytes, {:?}", value_i128, std::mem::size_of_val(&value_i128), as_raw_bytes(&value_i128));
-    let value_u128: u128 = 340282366920938463463374607431768211455;
-    println!("value_u128: {}, {} bytes, {:?}", value_u128, std::mem::size_of_val(&value_u128), as_raw_bytes(&value_u128));
+    let value: i128 = -170141183460469231731687303715884105728;
+    println!("i128: {}, {} bytes, {:?}", value, std::mem::size_of_val(&value), as_raw_bytes(&value));
+    let value: u128 = 340282366920938463463374607431768211455;
+    println!("u128: {}, {} bytes, {:?}", value, std::mem::size_of_val(&value), as_raw_bytes(&value));
 
     // CPUのちょうどいいやつ
     // いつもの実行環境だと isize は 8 バイトなので i64 相当だとわかる
-    let value_isize: isize = -9223372036854775808;
-    println!("value_isize: {}, {} bytes, {:?}", value_isize, std::mem::size_of_val(&value_isize), as_raw_bytes(&value_isize));
-    let value_usize: usize = 18446744073709551615;
-    println!("value_usize: {}, {} bytes, {:?}", value_usize, std::mem::size_of_val(&value_usize), as_raw_bytes(&value_usize));
+    let value: isize = -9223372036854775808;
+    println!("isize: {}, {} bytes, {:?}", value, std::mem::size_of_val(&value), as_raw_bytes(&value));
+    let value: usize = 18446744073709551615;
+    println!("usize: {}, {} bytes, {:?}", value, std::mem::size_of_val(&value), as_raw_bytes(&value));
 
     // 浮動小数点
-    let value_f32: f32 = -2147483648.0;
-    println!("value_f32: {}, {} bytes, {:?}", value_f32, std::mem::size_of_val(&value_f32), as_raw_bytes(&value_f32));
-    let value_f64: f64 = -9223372036854775808.0;
-    println!("value_f64: {}, {} bytes, {:?}", value_f64, std::mem::size_of_val(&value_f64), as_raw_bytes(&value_f64));
+    let value: f32 = -2147483648.0;
+    println!("f32: {}, {} bytes, {:?}", value, std::mem::size_of_val(&value), as_raw_bytes(&value));
+    let value: f64 = -9223372036854775808.0;
+    println!("f64: {}, {} bytes, {:?}", value, std::mem::size_of_val(&value), as_raw_bytes(&value));
 
     // 文字
     // なんと 'a' でも4バイト。というかすべて4バイトのようだ
-    let value_ascii: char = 'a';
-    println!("value_ascii: {}, {} bytes, {:?}", value_ascii, std::mem::size_of_val(&value_ascii), as_raw_bytes(&value_ascii));
-    let value_kanji: char = '漢';
-    println!("value_kanji: {}, {} bytes, {:?}", value_kanji, std::mem::size_of_val(&value_kanji), as_raw_bytes(&value_kanji));
-    let value_emoji: char = '🍣';
-    println!("value_emoji: {}, {} bytes, {:?}", value_emoji, std::mem::size_of_val(&value_emoji), as_raw_bytes(&value_emoji));
+    let value: char = 'a';
+    println!("ascii: {}, {} bytes, {:?}", value, std::mem::size_of_val(&value), as_raw_bytes(&value));
+    let value: char = '漢';
+    println!("kanji: {}, {} bytes, {:?}", value, std::mem::size_of_val(&value), as_raw_bytes(&value));
+    let value: char = '🍣';
+    println!("emoji: {}, {} bytes, {:?}", value, std::mem::size_of_val(&value), as_raw_bytes(&value));
 
     // bool 1 byte
-    let value_true: bool = true;
-    println!("value_true: {}, {} bytes, {:?}", value_true, std::mem::size_of_val(&value_true), as_raw_bytes(&value_true));
-    let value_false: bool = false;
-    println!("value_false: {}, {} bytes, {:?}", value_false, std::mem::size_of_val(&value_false), as_raw_bytes(&value_false));
+    let value: bool = true;
+    println!("true: {}, {} bytes, {:?}", value, std::mem::size_of_val(&value), as_raw_bytes(&value));
+    let value: bool = false;
+    println!("false: {}, {} bytes, {:?}", value, std::mem::size_of_val(&value), as_raw_bytes(&value));
 
     // ユニット型 (配列？)
-    let value_ary = (10, 20, 30);
-    println!("value_ary: {:?}, {} bytes, {:?}", value_ary, std::mem::size_of_val(&value_ary), as_raw_bytes(&value_ary));
+    let value = (10, 20, 30);
+    println!("(): {:?}, {} bytes, {:?}", value, std::mem::size_of_val(&value), as_raw_bytes(&value));
 }
 
 pub fn command_shadowing() {
@@ -113,13 +115,13 @@ pub fn command_shadowing() {
 
 pub fn command_string() {
     // 文字列リテラル(なのか？)
-    let value_str1 = "ab";
-    println!("value_str1: {:?}, {} bytes, {:?}", value_str1, std::mem::size_of_val(&value_str1), as_raw_bytes(&value_str1));
+    let value = "ab";
+    println!("str1: {:?}, {} bytes, {:?}", value, std::mem::size_of_val(&value), as_raw_bytes(&value));
 
     // 文字列リテラルからコピーしてヒープに確保したものでポインタではなく
     // スタックに確保した ptr, len, capacity の構造体へのポインタになっている
-    let value_str2 = String::from("ab");
-    println!("value_str2: {:?}, {} bytes, {:?}", value_str2, std::mem::size_of_val(&value_str2), as_raw_bytes(&value_str2));
+    let value = String::from("ab");
+    println!("str2: {:?}, {} bytes, {:?}", value, std::mem::size_of_val(&value), as_raw_bytes(&value));
 }
 
 pub fn command_struct() {
@@ -141,4 +143,86 @@ pub fn command_struct() {
     let rect1 = Rect { w: 2, h: 3 };
     assert_eq!(rect1.area(), 6);
     assert_eq!(rect1.can_hold(&rect1), true);
+}
+
+pub fn command_wip_command_list() {
+    // struct Command {
+    //     name: String,
+    //     desc: String,
+    //     func: fn(),
+    // }
+
+    // impl Command {
+    //     fn area(&self) -> usize {
+    //         self.w * self.h
+    //     }
+    //     fn can_hold(&self, other: &Rect) -> bool {
+    //         self.w >= other.w && self.h >= other.h
+    //     }
+    // }
+
+    // // #[derive(Debug)]
+    // let commands = (
+    //     Command { name: String::from("my_func1"), desc: String::from(""), func: my_func1, },
+    // );
+    // let command = commands.0;
+    // command.func();
+
+    // assert_eq!(rect1.area(), 6);
+    // assert_eq!(rect1.can_hold(&rect1), true);
+
+    // println!("{:?}", commands);
+
+}
+
+// fn my_func1() {
+// }
+
+pub fn command_hash_map() {
+    use std::collections::HashMap;
+
+    let mut value_map1 = HashMap::new();
+
+    value_map1.insert(String::from("A"), 10);
+    value_map1.insert(String::from("B"), 20);
+    value_map1.entry(String::from("C")).or_insert(30); // キーがないので入る hash["C"] ||= 30
+    value_map1.entry(String::from("C")).or_insert(40); // キーがすでに入るので無視
+
+    println!("{:?}", value_map1);
+}
+
+// FOO=abc cargo r env
+pub fn command_env() {
+    use std::env;
+
+    let value = env::var("FOO").is_err(); // value = ENV["FOO"].blank?
+    println!("ENV['FOO'].blank? -> {:?}", value);
+
+    let value = env::var("FOO").unwrap(); // value = ENV["FOO"]
+    println!("ENV['FOO'] -> {:?}", value);
+}
+
+pub fn command_closure() {
+    let c = 10;
+    let sum = |a, b| { a + b + c }; // sum = -> a, b { a + b + c }
+    println!("{:?}", sum(1, 2));
+}
+
+pub fn command_enum() {
+    enum ColorType {
+        TypeRGB(u8, u8, u8),
+        TypeName(String),
+    }
+
+    let _value = ColorType::TypeRGB(0, 0, 255);
+    // println!("{}", value);
+
+    let _value = ColorType::TypeName(String::from("blue"));
+    // println!("{}", value);
+}
+
+// 想定した挙動と異なる
+// cargo r stderr > foo.txt でリダイレクトされてしまう
+pub fn command_stderr() {
+    eprintln!("エラー出力(のはずだがリダイレクトされてしまう)");    // STDERR.puts "xxx"
 }
