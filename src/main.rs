@@ -1,7 +1,7 @@
 use std::env;
-use std::fs::File;
-use std::io::prelude::*;
 use std::collections::HashMap;
+
+mod my_command;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -35,11 +35,16 @@ fn main() {
     // println!("{:?}", a);
     //
 
-    // // let mut function_map: HashMap<&str, fn()> = HashMap::new();
-    let mut function_map = HashMap::new();
-    function_map.insert(String::from("cat"), command_cat);
+    let mut function_map: HashMap<String, fn()> = HashMap::new();
+    // let mut function_map = HashMap::new();
+    function_map.insert(String::from("こんにちは"), my_command::command_hello);
+    function_map.insert(String::from("ping"), my_command::command_ping);
+    function_map.insert(String::from("cat"), my_command::command_cat);
+    function_map.insert(String::from("assert"), my_command::command_assert);
+    function_map.insert(String::from("string"), my_command::command_string);
+    function_map.insert(String::from("scalar"), my_command::command_scalar);
     let key = String::from(command);
-    let found_func = function_map.get(&key).unwrap();
+    let found_func = function_map[&key];
     found_func();
 
     // let found_func = function_map.get(&cat);
@@ -68,12 +73,3 @@ fn main() {
 // fn call_me<F1: Fn()>(f2: F1) {
 //     f2();
 // }
-
-fn command_cat() {
-    let args: Vec<String> = env::args().collect();
-    let filename = &args[2];
-    let mut f = File::open(filename).expect("ファイルが見つかりません");
-    let mut contents = String::new();
-    f.read_to_string(&mut contents).expect("失敗しました");
-    print!("{}", contents);
-}
