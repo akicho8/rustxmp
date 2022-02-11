@@ -226,3 +226,28 @@ pub fn command_enum() {
 pub fn command_stderr() {
     eprintln!("エラー出力(のはずだがリダイレクトされてしまう)");    // STDERR.puts "xxx"
 }
+
+// Vec だけど数学のベクトルと関係なく、拡張可能な配列を表している
+pub fn command_vec() {
+    let value: Vec<isize> = Vec::new();
+    println!("{:?}", value);
+
+    let value = vec![1];         // vec![] とは書けない。引数がないと型が決められないからか？
+    println!("{:?}", value);
+
+    // push, pop
+    let mut value: Vec<isize> = Vec::new();
+    value.push(1);
+    println!("value       -> {:?}", value);       // []
+    println!("value.pop() -> {:?}", value.pop()); // Some(1)
+    println!("value.pop() -> {:?}", value.pop()); // None
+
+    // アクセス
+    let value = vec![10, 20];
+    println!("{:?}", value[0]);
+    // println!("{:?}", value[-1]); // value[-1] はエラー。気が利かない。
+
+    // 上書きではない直接セットはエラー
+    let mut value = vec![];
+    value[1] = 20;              // エラー。[nil, 20] になったりしない。
+}
