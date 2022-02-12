@@ -53,6 +53,9 @@ fn main() {
     function_map.insert(String::from("enum"), my_command::command_enum);
     function_map.insert(String::from("stderr"), my_command::command_stderr);
     function_map.insert(String::from("vec"), my_command::command_vec);
+    function_map.insert(String::from("syntax"), my_command::command_syntax);
+    function_map.insert(String::from("unsafe"), my_command::command_unsafe);
+    function_map.insert(String::from("global"), my_command::command_global);
     let key = String::from(command);
     let found_func = function_map[&key];
     found_func();

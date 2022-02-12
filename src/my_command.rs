@@ -251,3 +251,144 @@ pub fn command_vec() {
     let mut value = vec![];
     value[1] = 20;              // エラー。[nil, 20] になったりしない。
 }
+
+pub fn command_syntax() {
+    let value = if true { 1 } else { 0 }; // よくわかんが else を書かないとエラーになる
+    println!("{}", value);
+
+    // loop は break で値を返せる
+    let mut i = 0;
+    let retv = loop {
+        if i >= 2 {
+            break "loopの戻値";
+        }
+        println!("loop i = {}", i);
+        i += 1;
+    };
+    println!("{:?}", retv);
+
+    // while
+    let mut i = 0;
+    while i < 2 {
+        println!("while i = {}", i);
+        i += 1;
+    };
+    println!("{:?}", retv);
+
+    // for
+    // 0...2 => 0..2
+    // 0..2  => 0..=2
+    for i in 0..2 {
+        println!("for i = {}", i);
+    }
+    for i in 0..=2 {
+        println!("for i = {}", i);
+    }
+
+    // イテレータ(参照させるだけ)
+    let values = vec![10, 20, 30];
+    for v in values.iter() {
+        println!("iter {}", v);
+    }
+    println!("{:?}", values);
+
+    // イテレータ(移動するので使えない)
+    let values = vec![10, 20, 30];
+    for v in values.into_iter() {
+        println!("iter {}", v);
+    }
+    // println!("{:?}", values); ← なんとエラー
+
+    // イテレータ(中身を更新する場合)
+    let mut values = vec![10, 20, 30];
+    for v in values.iter_mut() {
+        *v += 1;
+        println!("iter {}", v);
+    }
+    println!("{:?}", values);
+
+    ////////////////////////////////////////////////////////////////////////////////
+
+    // case や switch に相当
+    let value = 1;
+    let value = match value {
+        1 => 10,
+        2 => 20,
+        _ => 30,                // すべての値をカバーしないといけない
+    };
+    println!("{:?}", value);
+
+    let value = true;
+    let value = match value {
+        true  => 10,            // boolean のすべての値をカバーしているので
+        false => 20,            // _ => はいらない
+    };
+    println!("{:?}", value);
+
+    // 新しいRubyでサポートされた別にいらんやつ
+    let value = (2, 3, 4);
+    match value {
+        (2, y, z) => println!("y={} z={}", y, z),
+        (3, ..)   => println!("x=3"),
+        _         => println!("その他"),
+    };
+
+    // enum の場合
+    enum ColorType {
+        Blue,
+        RGB(usize, usize, usize),
+    }
+    let _ = ColorType::RGB(0, 0, 0);
+    let value = ColorType::Blue;
+    match value {
+        ColorType::Blue       => println!("blue"),
+        ColorType::RGB(r,g,b) => println!("RGB({},{},{})", r, g, b),
+    };
+
+    // ポインタとref
+    let value = &1;             // i32 の値へののポインタ？？？
+    // 下の3つはどれも同じ
+    match value {
+        &v => println!("v = {:?}", v), // v = 1
+    };
+    match *value {
+        v => println!("v = {:?}", v), // v = 1
+    };
+    match value {
+        ref v => println!("v = {:?}", v), // v = 1
+    };
+    // mut の場合は ref mut が必要
+    let mut value = 1;             // i32 の値へののポインタ？？？
+    match value {
+        ref mut v => println!("v = {:?}", v), // v = 1
+    };
+}
+
+pub fn command_unsafe() {
+    // ポインタと参照。参照には unsafe が必要
+    let value: i8 = 3;
+    let address = &value as *const i8; // ポインタを得る方法
+    println!("{:?}", address);         // アドレスわかる
+    unsafe {                           // 実体を参照する場合は unsafe {} が必要
+        println!("{:?}", *address);    // 値を得る
+    }
+
+    // unsafe がついた関数は unsafe で囲まないと使えない
+    unsafe {
+        unsafe_func1();
+    }
+}
+
+unsafe fn unsafe_func1() {
+}
+
+static mut G_COUNTER: i8 = 0;   // グローバル変数には必ず型を書かないといけない
+pub fn command_global() {
+    unsafe {
+        G_COUNTER += 1;         // 更新も
+    }
+    unsafe {
+        println!("{:?}", G_COUNTER); // 参照も unsafe が必要
+    }
+}
+
