@@ -56,6 +56,18 @@ fn main() {
     function_map.insert(String::from("syntax"), my_command::command_syntax);
     function_map.insert(String::from("unsafe"), my_command::command_unsafe);
     function_map.insert(String::from("global"), my_command::command_global);
+    function_map.insert(String::from("fn"), my_command::command_fn);
+    function_map.insert(String::from("tuple"), my_command::command_tuple);
+    function_map.insert(String::from("array"), my_command::command_array);
+    function_map.insert(String::from("test2"), my_command::command_test2);
+    function_map.insert(String::from("option"), my_command::command_option);
+    function_map.insert(String::from("transmute"), my_command::command_transmute);
+    function_map.insert(String::from("result"), my_command::command_result);
+    function_map.insert(String::from("generic"), my_command::command_generic);
+    function_map.insert(String::from("trait"), my_command::command_trait);
+    function_map.insert(String::from("test8"), my_command::command_test8);
+    function_map.insert(String::from("test9"), my_command::command_test9);
+    function_map.insert(String::from("test10"), my_command::command_test10);
     let key = String::from(command);
     let found_func = function_map[&key];
     found_func();
