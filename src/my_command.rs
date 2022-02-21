@@ -654,7 +654,7 @@ pub fn command_array() {
 }
 
 // 数値のリテラル表現
-pub fn command_test2() {
+pub fn command_literal() {
     let _ = 2_5_5;              // 10
     let _ = 0xf_f;              // 16
     let _ = 0o7_7;              // 8
@@ -830,10 +830,58 @@ pub fn command_trait() {
     println!("{:?}", c2.bar());
 }
 
-pub fn command_test8() {
+pub fn command_move() {
+    let a = "1".to_string(); let _b = &a; println!("{:?}", a);
+    // let a = "1".to_string(); let _b =  a; println!("{:?}", a);
+    let a = "1";             let _b =  a; println!("{:?}", a);
+    let a = "1";             let _b =  &a; println!("{:?}", a);
+    let a =  1;             let _b =  a; println!("{:?}", a);
+    let a =  1;             let _b =  &a; println!("{:?}", a);
+    let a = (1,2);             let _b =  a; println!("{:?}", a);
+    let a = (3,4);             let _b =  &a; println!("{:?}", a);
+    // let a = vec![1];             let _b =  a; println!("{:?}", a);
+    let a = vec![1];             let _b =  &a; println!("{:?}", a);
+
+    let a = [1, 2];             let _b =  a; println!("{:?}", a);
+    let a = [3, 4];             let _b =  &a; println!("{:?}", a);
 }
 
-pub fn command_test9() {
+pub fn command_read_to_string() {
+    if let Ok(s) = std::fs::read_to_string("main.rs") {
+        println!("{:?}", s.len());
+    }
+    use std::fs;
+    if let Ok(s) = fs::read_to_string("main.rs") {
+        println!("{:?}", s.len());
+    }
+    use std::fs::read_to_string;
+    if let Ok(s) = read_to_string("main.rs") {
+        println!("{:?}", s.len());
+    }
+
+    // File#read_to_string を使う場合
+    use std::fs::File;
+    use std::io::Read;          // File に read_to_string が生える
+    let mut file = File::open("main.rs").expect("ERROR");
+    let mut s = String::new();
+    file.read_to_string(&mut s).expect("ERROR");
+    println!("{:?}", s.len());
+
+    // 1バイトずつ読む
+    let mut file = File::open("main.rs").expect("ERROR");
+    let mut s: [u8; 1] = [0; 1];
+    file.read(&mut s).expect("ERROR");
+    println!("{:?}", s[0] as char);
+
+    // 1行ずつ読む
+    use std::io::BufReader;
+    use std::io::BufRead;
+    let mut file = File::open("main.rs").expect("ERROR");
+    for line in BufReader::new(file).lines() {
+        if let Ok(s) = line {
+            println!("{:?}", s);
+        }
+    }
 }
 
 pub fn command_test10() {
