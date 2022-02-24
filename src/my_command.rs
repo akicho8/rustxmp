@@ -846,7 +846,7 @@ pub fn command_move() {
     let a = [3, 4];             let _b =  &a; println!("{:?}", a);
 }
 
-pub fn command_read_to_string() {
+pub fn command_file_read() {
     if let Ok(s) = std::fs::read_to_string("main.rs") {
         println!("{:?}", s.len());
     }
@@ -876,7 +876,7 @@ pub fn command_read_to_string() {
     // 1行ずつ読む
     use std::io::BufReader;
     use std::io::BufRead;
-    let mut file = File::open("main.rs").expect("ERROR");
+    let file = File::open("main.rs").expect("ERROR");
     for line in BufReader::new(file).lines() {
         if let Ok(s) = line {
             println!("{:?}", s);
@@ -884,5 +884,46 @@ pub fn command_read_to_string() {
     }
 }
 
-pub fn command_test10() {
+pub fn command_file_write() {
+    use std::fs::File;
+    use std::io::Write;
+
+    let mut file = File::create("/tmp/_test1.txt").expect("file not found");
+    writeln!(file, "hello").expect("cannot write");
+
+    let mut file = File::create("/tmp/_test2.txt").expect("file not found");
+
+    file.write(b"hello1\n").expect("cannot write"); // b をつけると &[u8] 型になる
+
+    // b"" は "".as_bytes() のこと
+    file.write("hello2\n".as_bytes()).expect("cannot write"); // b をつけると &[u8] 型になる
+
+    // 1バイトずつ書き込む
+    for it in "hello3\n".as_bytes() {
+        file.write(&[*it]).expect("cannot write"); // b をつけると &[u8] 型になる
+    }
+
+    // &[*it] を別の書き方にすると
+    for it in "hello4\n".as_bytes() {
+        let ch = *it;
+        let ary = [ch];
+        file.write(&ary).expect("cannot write"); // b をつけると &[u8] 型になる
+    }
+}
+
+pub fn command_test2() {
+}
+pub fn command_test3() {
+}
+pub fn command_test4() {
+}
+pub fn command_test5() {
+}
+pub fn command_test6() {
+}
+pub fn command_test7() {
+}
+pub fn command_test8() {
+}
+pub fn command_test9() {
 }

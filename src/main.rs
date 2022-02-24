@@ -66,8 +66,16 @@ fn main() {
     function_map.insert(String::from("generic"), my_command::command_generic);
     function_map.insert(String::from("trait"), my_command::command_trait);
     function_map.insert(String::from("move"), my_command::command_move);
-    function_map.insert(String::from("read_to_string"), my_command::command_read_to_string);
-    function_map.insert(String::from("test10"), my_command::command_test10);
+    function_map.insert(String::from("file_read"), my_command::command_file_read);
+    function_map.insert(String::from("file_write"), my_command::command_file_write);
+    function_map.insert(String::from("test2"), my_command::command_test2);
+    function_map.insert(String::from("test3"), my_command::command_test3);
+    function_map.insert(String::from("test4"), my_command::command_test4);
+    function_map.insert(String::from("test5"), my_command::command_test5);
+    function_map.insert(String::from("test6"), my_command::command_test6);
+    function_map.insert(String::from("test7"), my_command::command_test7);
+    function_map.insert(String::from("test8"), my_command::command_test8);
+    function_map.insert(String::from("test9"), my_command::command_test9);
     let key = String::from(command);
     let found_func = function_map[&key];
     found_func();
