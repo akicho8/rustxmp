@@ -888,10 +888,10 @@ pub fn command_file_write() {
     use std::fs::File;
     use std::io::Write;
 
-    let mut file = File::create("/tmp/_test1.txt").expect("file not found");
+    let mut file = File::create("/tmp/_some1.txt").expect("file not found");
     writeln!(file, "hello").expect("cannot write");
 
-    let mut file = File::create("/tmp/_test2.txt").expect("file not found");
+    let mut file = File::create("/tmp/_some2.txt").expect("file not found");
 
     file.write(b"hello1\n").expect("cannot write"); // b をつけると &[u8] 型になる
 
@@ -911,10 +911,69 @@ pub fn command_file_write() {
     }
 }
 
-pub fn command_test2() {
+pub fn command_stdin_read() {
+    // 動かない
+    // use std::fs::File;
+    // use std::io::{self, Read, Write, BufReader, BufWriter};
+    // use std::env;
+    // let args = env::args().collect::<Vec<String>>();
+    // if args.len() <= 1 {
+    //     let reader = BufReader::new(std::io::stdin());
+    //     let mut writer = BufWriter::new(std::io::stdout());
+    //     for result in reader.bytes() {
+    //         let byte = result?;
+    //         writer.write(&[byte])?;
+    //     }
+    // } else {
+    // }
 }
-pub fn command_test3() {
+
+pub fn command_print() {
+    println!("{:?}", (1, 2));                 // (1, 2)
+    println!("{:#?}", (1, 2));                // (1, 2) ※複数行
+    println!("{:?}", Option::<i32>::Some(1)); // Some(1)
+    println!("{:?}", Option::<i32>::None);    // None
+    println!("{b} {a}", a=2, b=1);            // 1 2
+    println!("{:x}", 255);                    // ff
+    println!("{:X}", 255);                    // FF
+    println!("{:o}", 255);                    // 377
+    println!("{:b}", 255);                    // 11111111
+    println!("{:4}", 12);                     // "  12"
+    println!("{:04}", 12);                    // "0012"
+    println!("{:08X}", 15);                   // 0000000F
+    println!("{:08b}", 15);                   // 00001111
+    println!("{}", 123.456789);               // 00001111
+    println!("{:e}", 123.456789);             // 1.23456789e2
+    println!("{:E}", 123.456789);             // 1.23456789E2
+    println!("{:.2}", 123.456789);            // 123.46
+    println!("{:<5}", "x");                   // "x    "
+    println!("{:^5}", "x");                   // "  x  "
+    println!("{:>5}", "x");                   // "    x"
+
+    let a = [1, 2, 3];
+    dbg!(a);
+    dbg!([1, 2, 3]);
+
+    #[derive(Debug)]
+    struct Foo {
+        _value: isize,
+    }
+    let v = Foo { _value: 1 };
+    dbg!(v);
+
+    struct Foo2 {
+        _value: isize,
+    }
+    impl std::fmt::Debug for Foo2 {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "あ={}", self._value)
+        }
+    }
+    let v = Foo2 { _value: 1 };
+    dbg!(v);
+
 }
+
 pub fn command_test4() {
 }
 pub fn command_test5() {

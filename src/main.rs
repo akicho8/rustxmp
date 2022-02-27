@@ -1,3 +1,13 @@
+// #[tokio::main]
+// async fn main() -> Result<(), Box<dyn std::error::Error>> {
+//     let url = "http://openccpm.com/blog/";
+//     println!("call {:?}", url);
+//     let res = reqwest::get(url).await?;
+//     let body = res.text().await?;
+//     println!("response is {:?}", body);
+//     Ok(())
+// }
+
 use std::env;
 use std::collections::HashMap;
 
@@ -35,49 +45,48 @@ fn main() {
     // println!("{:?}", a);
     //
 
-    let mut function_map: HashMap<String, fn()> = HashMap::new();
+    let mut function_map: HashMap<&str, fn()> = HashMap::new();
     // let mut function_map = HashMap::new();
-    function_map.insert(String::from("こんにちは"), my_command::command_hello);
-    function_map.insert(String::from("ping"), my_command::command_ping);
-    function_map.insert(String::from("cat"), my_command::command_cat);
-    function_map.insert(String::from("assert"), my_command::command_assert);
-    function_map.insert(String::from("string"), my_command::command_string);
-    function_map.insert(String::from("scalar"), my_command::command_scalar);
-    function_map.insert(String::from("shadowing"), my_command::command_shadowing);
-    function_map.insert(String::from("string"), my_command::command_string);
-    function_map.insert(String::from("struct"), my_command::command_struct);
-    function_map.insert(String::from("wip_command_list"), my_command::command_wip_command_list);
-    function_map.insert(String::from("hash_map"), my_command::command_hash_map);
-    function_map.insert(String::from("env"), my_command::command_env);
-    function_map.insert(String::from("closure"), my_command::command_closure);
-    function_map.insert(String::from("enum"), my_command::command_enum);
-    function_map.insert(String::from("stderr"), my_command::command_stderr);
-    function_map.insert(String::from("vec"), my_command::command_vec);
-    function_map.insert(String::from("syntax"), my_command::command_syntax);
-    function_map.insert(String::from("unsafe"), my_command::command_unsafe);
-    function_map.insert(String::from("global"), my_command::command_global);
-    function_map.insert(String::from("fn"), my_command::command_fn);
-    function_map.insert(String::from("tuple"), my_command::command_tuple);
-    function_map.insert(String::from("array"), my_command::command_array);
-    function_map.insert(String::from("literal"), my_command::command_literal);
-    function_map.insert(String::from("option"), my_command::command_option);
-    function_map.insert(String::from("transmute"), my_command::command_transmute);
-    function_map.insert(String::from("result"), my_command::command_result);
-    function_map.insert(String::from("generic"), my_command::command_generic);
-    function_map.insert(String::from("trait"), my_command::command_trait);
-    function_map.insert(String::from("move"), my_command::command_move);
-    function_map.insert(String::from("file_read"), my_command::command_file_read);
-    function_map.insert(String::from("file_write"), my_command::command_file_write);
-    function_map.insert(String::from("test2"), my_command::command_test2);
-    function_map.insert(String::from("test3"), my_command::command_test3);
-    function_map.insert(String::from("test4"), my_command::command_test4);
-    function_map.insert(String::from("test5"), my_command::command_test5);
-    function_map.insert(String::from("test6"), my_command::command_test6);
-    function_map.insert(String::from("test7"), my_command::command_test7);
-    function_map.insert(String::from("test8"), my_command::command_test8);
-    function_map.insert(String::from("test9"), my_command::command_test9);
-    let key = String::from(command);
-    let found_func = function_map[&key];
+    function_map.insert("こんにちは", my_command::command_hello);
+    function_map.insert("ping", my_command::command_ping);
+    function_map.insert("cat", my_command::command_cat);
+    function_map.insert("assert", my_command::command_assert);
+    function_map.insert("string", my_command::command_string);
+    function_map.insert("scalar", my_command::command_scalar);
+    function_map.insert("shadowing", my_command::command_shadowing);
+    function_map.insert("string", my_command::command_string);
+    function_map.insert("struct", my_command::command_struct);
+    function_map.insert("wip_command_list", my_command::command_wip_command_list);
+    function_map.insert("hash_map", my_command::command_hash_map);
+    function_map.insert("env", my_command::command_env);
+    function_map.insert("closure", my_command::command_closure);
+    function_map.insert("enum", my_command::command_enum);
+    function_map.insert("stderr", my_command::command_stderr);
+    function_map.insert("vec", my_command::command_vec);
+    function_map.insert("syntax", my_command::command_syntax);
+    function_map.insert("unsafe", my_command::command_unsafe);
+    function_map.insert("global", my_command::command_global);
+    function_map.insert("fn", my_command::command_fn);
+    function_map.insert("tuple", my_command::command_tuple);
+    function_map.insert("array", my_command::command_array);
+    function_map.insert("literal", my_command::command_literal);
+    function_map.insert("option", my_command::command_option);
+    function_map.insert("transmute", my_command::command_transmute);
+    function_map.insert("result", my_command::command_result);
+    function_map.insert("generic", my_command::command_generic);
+    function_map.insert("trait", my_command::command_trait);
+    function_map.insert("move", my_command::command_move);
+    function_map.insert("file_read", my_command::command_file_read);
+    function_map.insert("file_write", my_command::command_file_write);
+    function_map.insert("stdin_read", my_command::command_stdin_read);
+    function_map.insert("print", my_command::command_print);
+    function_map.insert("test4", my_command::command_test4);
+    function_map.insert("test5", my_command::command_test5);
+    function_map.insert("test6", my_command::command_test6);
+    function_map.insert("test7", my_command::command_test7);
+    function_map.insert("test8", my_command::command_test8);
+    function_map.insert("test9", my_command::command_test9);
+    let found_func = function_map[command as &str];
     found_func();
 
     // let found_func = function_map.get(&cat);
