@@ -11,6 +11,5 @@ name = "x"
 path = "src/main.rs"
 
 [dependencies]
-reqwest = "0.11.9"
-tokio = { version = "0.2", features = ["full"] }
+rusqlite = "0.26.3"
 # tokio = "1.17.0"

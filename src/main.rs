@@ -8,8 +8,8 @@
 //     Ok(())
 // }
 
-use std::env;
 use std::collections::HashMap;
+use std::env;
 
 mod my_command;
 
@@ -105,7 +105,6 @@ fn main() {
     //     // ("Earth", 1.0),
     //     // ("Mars", 1.5),
     // ]);
-
 }
 
 // fn foo() -> u32 {
