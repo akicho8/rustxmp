@@ -3,6 +3,7 @@
 # https://qiita.com/drafts/f68495f5270ba29d45d4/edit
 
 require "pathname"
+require "fileutils"
 require "uri"
 require "cgi"
 require "./iterator_list"
@@ -54,7 +55,7 @@ class Generator
 
   def rust_process(e)
     if !e[:rust_code].empty?
-      file = Pathname("_rustcode.rs")
+      file = Pathname("_src/#{e[:rust_title]}.rs")
       code1 = e[:rust_code].lines.collect { |e|
         if e.include?("=>")
           e = e.sub(%r{\s*//\s*=>\s*}, "")
@@ -72,8 +73,10 @@ class Generator
       run_code << %(    #{code1.join.strip})
       run_code << %(})
       run_code = run_code.join("\n") + "\n"
+      FileUtils.makedirs(file.dirname)
       file.write(run_code)
-      result = `rustc #{file} && ./#{file.basename('.*')}`
+      command = "cd _src && rustc #{file.basename} && ./#{file.basename('.*')}"
+      result = `#{command}`
 
       result_lines = result.lines
       pos = 0
