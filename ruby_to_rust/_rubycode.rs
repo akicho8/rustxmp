@@ -1,1 +1,3 @@
-[2, 3].each.to_a # =>
+["a", "b", "c"].each do |e|
+  p e
+end

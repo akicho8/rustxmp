@@ -1,3 +1,5 @@
+#![feature(iter_intersperse)]
+
 fn main() {
-    println!("{:?}", [2, 3].iter());
+    println!("{:?}", ["a", "b", "c"].iter().intersperse_with(||&"-").collect::<Vec<_>>());
 }
