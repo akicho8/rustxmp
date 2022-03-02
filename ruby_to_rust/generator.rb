@@ -15,14 +15,17 @@ class Generator
 
   def run
     @out = []
-    @params[:list].each do |e|
+    list = @params[:list]
+    if v = ARGV.first
+      list = list.find_all { |e| [e[:ruby_title], e[:rust_title]].join("/").include?(v) }
+    end
+    list.each do |e|
       @out << ""
       title_process(e)
       ruby_process(e)
-      if e[:desc]
-        @out << e[:desc]
-      end
       rust_process(e)
+      desc_process(e)
+      ground_process(e)
     end
     puts "-" * 80
     puts @out
@@ -43,7 +46,7 @@ class Generator
 
   def ruby_process(e)
     if !e[:ruby_code].to_s.empty?
-      file = Pathname("_rubycode.rs")
+      file = Pathname("_rubycode.rb")
       s = %(#{e[:ruby_code]})
       file.write(s)
       result = `xmpfilter #{file}`.strip
@@ -56,33 +59,16 @@ class Generator
   def rust_process(e)
     if !e[:rust_code].empty?
       file = Pathname("_src/#{e[:rust_title]}.rs")
-      code1 = e[:rust_code].lines.collect { |e|
-        if e.include?("=>")
-          e = e.sub(%r{\s*//\s*=>\s*}, "")
-          %(println!("{:?}", #{e});\n)
-        else
-          e
-        end
-      }
-      run_code = []
-      if e[:rust_feature]
-        run_code << e[:rust_feature]
-        run_code << ""
-      end
-      run_code << %(fn main() {)
-      run_code << %(    #{code1.join.strip})
-      run_code << %(})
-      run_code = run_code.join("\n") + "\n"
+
       FileUtils.makedirs(file.dirname)
-      file.write(run_code)
+      file.write(rust_code2(e))
       command = "cd _src && rustc #{file.basename} && ./#{file.basename('.*')}"
       result = `#{command}`
 
       result_lines = result.lines
-      pos = 0
       code2 = e[:rust_code].gsub(%r/=>/) { |s|
         r = result_lines.shift
-        "#{s} #{r}"
+        "#{s} #{r.rstrip}"
       }
       result_lines.each do |e|
         code2 += "// >> #{e.rstrip}\n"
@@ -95,10 +81,41 @@ class Generator
       @out << "```rust:#{lang}"
       @out << code2.strip
       @out << "```"
-
-      url = "https://play.rust-lang.org/?code=#{CGI.escape(run_code)}&version=nightly&edition=2021"
-      @out << %([Rust Playground で確認する](#{url}))
     end
+  end
+
+  def rust_code1(e)
+    e[:rust_code].lines.collect { |e|
+      if e.include?("=>")
+        e = e.sub(%r{\s*//\s*=>\s*}, "")
+        %(println!("{:?}", #{e});\n)
+      else
+        e
+      end
+    }
+  end
+
+  def rust_code2(e)
+    code = []
+    if e[:rust_feature]
+      code << e[:rust_feature]
+      code << ""
+    end
+    code << %(fn main() {)
+    code << %(    #{rust_code1(e).join.strip})
+    code << %(})
+    code.join("\n") + "\n"
+  end
+
+  def desc_process(e)
+    if e[:desc]
+      @out << e[:desc]
+    end
+  end
+
+  def ground_process(e)
+    url = "https://play.rust-lang.org/?code=#{CGI.escape(rust_code2(e))}&version=nightly&edition=2021"
+    @out << %([Rust Playground で確認する](#{url}))
   end
 end
 

@@ -73,13 +73,73 @@ fn main() {
     // // println!("{:?}", [2, 3, 4].iter().reduce(|a, e| a + e));
     //
     // println!("{:?}", [[2, 3], [4, 5]].iter().flatten().collect::<Vec<_>>());
+    // println!("{:?}", [[2, 3], [4, 5]].iter().flatten().collect::<Vec<_>>());
 
     // #![feature(iter_intersperse)]
 
-    println!("{:?}", ["a", "b", "c"].iter().intersperse(&"-").collect::<Vec<_>>());
-    println!("{:?}", ["a", "b", "c"].iter().intersperse_with(||&"-").collect::<Vec<_>>());
+    // ["a", "b", "c"].iter().for_each(|e| {
+    //     println!("{:?}", e);
+    // })
 
-    ["a", "b", "c"].iter().for_each(|e| {
-        println!("{:?}", e);
-    })
+    // println!("{:?}", ["a", "b", "c"].iter().intersperse(&"-").collect::<Vec<_>>());
+    // println!("{:?}", ["a", "b", "c"].iter().intersperse_with(||&"-").collect::<Vec<_>>());
+
+    // let mut it = ["a", "b"].iter().peekable();
+    // println!("{:?}", it.next());
+    // println!("{:?}", it.peek());
+    // println!("{:?}", it.next());
+
+    // println!("{:?}", [5, 6, 7, 8].iter().take(2).collect::<Vec<_>>());
+    // println!("{:?}", ["a", "b", "c"].iter().take(2).collect::<Vec<_>>());
+    // println!("{:?}", [1, 2, 3].take(2).collect::<Vec<_>>());
+    // println!("{:?}", ["a", "b"].iter().inspect(|e| println!("{:?}", e)).collect::<Vec<_>>());
+    // println!("{:?}", (0..).take(2).collect::<Vec<_>>());
+
+    // println!("{:?}", [5, 6, 7, 8].iter().take_while(|e| **e < 7).collect::<Vec<_>>());
+
+    // let it = ["a", "b", "c"].iter();
+    // let mut it = it.skip(2);
+    // println!("{:?}", it.next());
+
+    // let mut it = ["a", "b"].iter();
+    // println!("{:?}", it.next());
+    // let mut it = it.fuse();
+    // println!("{:?}", it.next());
+    // println!("{:?}", it.next());
+    // println!("{:?}", it.next());
+    // println!("{:?}", it.next());
+
+    // struct Foo {
+    //     counter: i32,
+    // }
+    //
+    // impl Iterator for Foo {
+    //     type Item = i32;
+    //
+    //     fn next(&mut self) -> Option<i32> {
+    //         let val = self.counter;
+    //         self.counter += 1;
+    //         if val % 2 == 0 {
+    //             Some(val)
+    //         } else {
+    //             None
+    //         }
+    //     }
+    // }
+    //
+    // let mut it = Foo { counter: 0 };
+    // println!("{:?}", it.next());
+    // println!("{:?}", it.next());
+    // println!("{:?}", it.next());
+    // println!("{:?}", it.next());
+    // let mut it = it.fuse();
+    // println!("{:?}", it.next());
+    // println!("{:?}", it.next());
+    // println!("{:?}", it.next());
+
+    let mut v = Vec::new();
+    println!("{:?}", ["a", "b"].iter().inspect(|&e| v.push(e)).collect::<Vec<_>>());
+    println!("{:?}", v);
+
+    println!("{:?}", [1].iter().first());
 }
