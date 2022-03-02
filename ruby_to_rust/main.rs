@@ -1,6 +1,8 @@
 // -*- compile-command: "rustc main.rs && ./main" -*-
 
 #![feature(iter_intersperse)]
+#![feature(iter_partition_in_place)]
+#![feature(iter_is_partitioned)]
 
 fn main() {
 
@@ -137,9 +139,39 @@ fn main() {
     // println!("{:?}", it.next());
     // println!("{:?}", it.next());
 
-    let mut v = Vec::new();
-    println!("{:?}", ["a", "b"].iter().inspect(|&e| v.push(e)).collect::<Vec<_>>());
-    println!("{:?}", v);
+    // let mut v = Vec::new();
+    // println!("{:?}", ["a", "b"].iter().inspect(|&e| v.push(e)).collect::<Vec<_>>());
+    // println!("{:?}", v);
+    //
+    // println!("{:?}", [1].iter().first());
 
-    println!("{:?}", [1].iter().first());
+    // [5, 6, 7, 8].partition(&:even?) # => [[6, 8], [5, 7]]
+    // let (even, odd): (Vec<isize>, Vec<isize>) = [5, 6, 7, 8].iter().partition(|&e| e % 2 == 0);
+    // println!("{:?}", even);
+    // println!("{:?}", odd);
+
+    // let mut ary = [2, 3, 4, 5, 6];
+    // let index = ary.iter_mut().partition_in_place(|&e| e % 2 == 0);
+    // println!("{:?}", index);
+    // println!("{:?}", ary);
+    // println!("{:?}", ary[..index].iter().collect::<Vec<_>>());
+    // println!("{:?}", ary[index..].iter().collect::<Vec<_>>());
+
+    // println!("{:?}", i);
+    // println!("{:?}", a[..i].iter().all(|&n| n % 2 == 0));
+
+    // println!("{:?}", [2, 3, 4, 5, 6].iter().is_partitioned(|&e| e % 2 == 0));
+    // println!("{:?}", [2, 4, 6, 3, 5].iter().is_partitioned(|&e| e % 2 == 0));
+
+    // let mut it = ['a', 'b', 'c', 'd'].iter();
+    // println!("{:?}", it.nth(1));
+    // println!("{:?}", it.nth(1));
+    // println!("{:?}", it.nth(1));
+    //
+    // println!("{:?}", [1].get(0));
+
+    // let a = [1, 2, 3];
+    // let b: Vec<_> = a.iter().collect();
+    // println!("{:?}", b);
+    // println!("{:?}", a);
 }

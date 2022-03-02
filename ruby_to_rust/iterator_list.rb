@@ -67,6 +67,18 @@ ITERATOR_LIST = [
   },
   {
     :ruby_title => "?",
+    :rust_title => "nth",
+    :ruby_code => "",
+    :rust_code => <<~EOT,
+    let mut it = ['a', 'b', 'c', 'd'].iter();
+    it.nth(1)  // =>
+    it.nth(1)  // =>
+    it.nth(1)  // =>
+EOT
+    :desc => "at(i) 相当かと思いきや内部でポインタを進めてからその位置の値を返すようだ。使いどころがわからない。",
+  },
+  {
+    :ruby_title => "?",
     :rust_title => "fuse",
     :ruby_code => nil,
     :rust_code => <<~EOT,
@@ -102,13 +114,6 @@ ITERATOR_LIST = [
     :desc => "fuse を呼んで最初の None が来てから None を継続する。どういうときに使うのかはわからない",
   },
 
-  {
-    :ruby_title => "?",
-    :rust_title => "nth",
-    :ruby_code => %([2, 3, 4].each.to_a.at(0) # =>),
-    :rust_code => %([2, 3, 4].iter().nth(0) // =>),
-    :desc => nil,
-  },
   {
     :ruby_title => "to_a",
     :rust_title => "collect",
@@ -237,6 +242,46 @@ EOT
   },
 
   {
+    :ruby_title => "partition",
+    :rust_title => "partition",
+    :ruby_code => %([5, 6, 7, 8].partition(&:even?)  # =>),
+    :rust_code => <<~EOT,
+      let (even, odd): (Vec<isize>, Vec<isize>) = [5, 6, 7, 8].iter().partition(|&e| e % 2 == 0);
+      even  // =>
+      odd   // =>
+EOT
+    :desc => nil,
+  },
+
+  {
+    :ruby_title => "?",
+    :rust_title => "partition_in_place",
+    :ruby_code => %(),
+    :rust_code => <<~EOT,
+      let mut ary = [2, 3, 4, 5, 6];
+      let index = ary.iter_mut().partition_in_place(|&e| e % 2 == 0);
+      index  // =>
+      ary    // =>
+      ary[..index].iter().collect::<Vec<_>>() // =>
+      ary[index..].iter().collect::<Vec<_>>() // =>
+EOT
+    :rust_feature => "#![feature(iter_partition_in_place)]",
+    :desc => "元の配列を破壊的に並び換える。ドキュメントでは個数を返すと言っているがピンとこないので「境界のインデックスを返す」と考えた方がよさそう。",
+  },
+  {
+    :ruby_title => "?",
+    :rust_title => "is_partitioned",
+    :ruby_code => %(),
+    :rust_code => <<~EOT,
+      [2, 3, 4, 5, 6].iter().is_partitioned(|&e| e % 2 == 0) // =>
+      [2, 4, 6, 3, 5].iter().is_partitioned(|&e| e % 2 == 0) // =>
+      [4, 2, 6, 3, 5].iter().is_partitioned(|&e| e % 2 == 0) // =>
+EOT
+    :rust_feature => "#![feature(iter_is_partitioned)]",
+    :desc => "partition_in_place を適用した結果と同じなら true",
+  },
+
+  {
     :ruby_title => "?",
     :rust_title => "intersperse",
     :ruby_code => nil,
@@ -344,10 +389,9 @@ EOT
 EOT
 
     :rust_code => <<~EOT,
-[2, 3, 4].first()       // =>
-[2, 3, 4].iter().nth(0) // =>
+[2, 3, 4].first()  // =>
 EOT
-    :desc => "iter().last() はあるのに iter().first() はない。代わりに iter().nth(0) を使えば iter().first() 相当になる。",
+    :desc => "iter().last() はあるのに iter().first() はない",
   },
 
   {
@@ -385,5 +429,21 @@ EOT
     :ruby_code => %([2, 3, -4].sort { |a, b| a <=> b }.max # =>),
     :rust_code => %([2_i32, 3, -4].iter().max_by(|a, b| a.cmp(b)) // =>),
     :desc => "使いづらい",
+  },
+
+  {
+    :ruby_title => "min",
+    :rust_title => "min",
+    :desc => "使い方は max と同じ",
+  },
+  {
+    :ruby_title => "min_by",
+    :rust_title => "min_by_key",
+    :desc => "使い方は max_by_key と同じ",
+  },
+  {
+    :ruby_title => "?",
+    :rust_title => "min_by",
+    :desc => "使い方は max_by と同じ",
   },
 ]

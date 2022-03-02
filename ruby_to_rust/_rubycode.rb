@@ -1,3 +1,1 @@
-["a", "b", "c"].each do |e|
-  p e
-end
+[5, 6, 7, 8].partition(&:even?)  # =>
