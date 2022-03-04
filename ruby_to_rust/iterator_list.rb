@@ -52,21 +52,6 @@ ITERATOR_LIST = [
   },
   {
     :ruby_title => "?",
-    :rust_title => "skip",
-    :ruby_code => <<~EOT,
-      it = ["a", "b", "c"].each
-      2.times { it.next }
-      it.next  # =>
-    EOT
-    :rust_code => <<~EOT,
-      let it = ["a", "b", "c"].iter();
-      let mut it = it.skip(2);
-      it.next() // =>
-    EOT
-    :desc => "skip(n) を単に呼べば進むのではなく、新しいイテレータを受けとらないといけない",
-  },
-  {
-    :ruby_title => "?",
     :rust_title => "nth",
     :ruby_code => "",
     :rust_code => <<~EOT,
@@ -176,15 +161,42 @@ EOT
   },
 
   {
+    :ruby_title => "collect + find_all",
+    :rust_title => "filter_map",
+    :ruby_code => <<~EOT,
+      ["", "5", "", "6"].collect { |e| Integer(e, exception: false) }.compact # =>
+EOT
+    :rust_code => <<~EOT,
+      // ok() は Result の Ok を Some に変換し、Err を None にする
+      ["", "5", "", "6"].iter().filter_map(|e| e.parse::<isize>().ok()).collect::<Vec<_>>() // =>
+      // 分解すると map + filter + map 相当をしていることがわかる
+      ["", "5", "", "6"].iter().map(|e| e.parse::<isize>()).filter(|e| e.is_ok()).map(|e| e.unwrap()).collect::<Vec<_>>() // =>
+EOT
+    :desc => nil,
+  },
+
+  {
+    :ruby_title => "collect + compact + first",
+    :rust_title => "find_map",
+    :ruby_code => <<~EOT,
+      ["", "5", "", "6"].collect { |e| Integer(e, exception: false) }.compact.first # =>
+EOT
+    :rust_code => <<~EOT,
+      // ok() は Result の Ok を Some に変換し、Err を None にする
+      ["", "5", "", "6"].iter().find_map(|e| e.parse::<isize>().ok()) // =>
+EOT
+    :desc => nil,
+  },
+
+  #### take, drop 系
+  {
     :ruby_title => "take",
     :rust_title => "take",
     :ruby_code => <<~EOT,
-      ["a", "b", "c"].take(2)   # =>
-      (0..).lazy.take(2).force  # =>
+      [5, 6, 7, 8].take(2)   # =>
 EOT
     :rust_code => <<~EOT,
-      ["a", "b", "c"].iter().take(2).collect::<Vec<_>>() // =>
-      (0..).take(2).collect::<Vec<_>>()                  // =>
+      [5, 6, 7, 8].iter().take(2).collect::<Vec<_>>() // =>
 EOT
     :desc => nil,
   },
@@ -192,24 +204,46 @@ EOT
     :ruby_title => "take_while",
     :rust_title => "take_while",
     :ruby_code => <<~EOT,
-      [5, 6, 7, 8].take_while { |e| e < 7 } # =>
+      [5, 6, 7, 8].take_while { |e| e < 7 }  # =>
 EOT
     :rust_code => <<~EOT,
-      [5, 6, 7, 8].iter().take_while(|e| **e < 7).collect::<Vec<_>>() // =>
+      [5, 6, 7, 8].iter().take_while(|&&e| e < 7).collect::<Vec<_>>() // =>
 EOT
-    :desc => "**e とは？",
+    :desc => nil,
+  },
+  {
+    :ruby_title => "drop",
+    :rust_title => "skip",
+    :ruby_code => <<~EOT,
+      [5, 6, 7, 8].drop(2)   # =>
+EOT
+    :rust_code => <<~EOT,
+      [5, 6, 7, 8].iter().skip(2).collect::<Vec<_>>() // =>
+EOT
+    :desc => nil,
+  },
+  {
+    :ruby_title => "drop_while",
+    :rust_title => "skip_while",
+    :ruby_code => <<~EOT,
+      [5, 6, 7, 8].drop_while { |e| e < 7 }  # =>
+EOT
+    :rust_code => <<~EOT,
+      [5, 6, 7, 8].iter().skip_while(|&&e| e < 7).collect::<Vec<_>>() // =>
+EOT
+    :desc => nil,
   },
 
   {
     :ruby_title => "?",
     :rust_title => "step_by",
     :ruby_code => <<~EOT,
-      [2, 3, 4].each_slice(2).collect(&:first) # =>
+      [5, 6, 7, 8].each_slice(2).collect(&:first) # =>
 
-      v = [2, 3, 4]
+      v = [5, 6, 7, 8]
       v.values_at(*0.step(v.size - 1, by: 2)) # =>
 EOT
-    :rust_code => %([2, 3, 4].iter().step_by(2).collect::<Vec<_>>() // =>),
+    :rust_code => %([5, 6, 7, 8].iter().step_by(2).collect::<Vec<_>>() // =>),
     :desc => nil,
   },
   {
@@ -372,11 +406,82 @@ EOT
     :desc => nil,
   },
   {
-    :ruby_title => "==",
+    :ruby_title => "<=>",
     :rust_title => "cmp",
-    :ruby_code => %([2, 3, 4] == [2, 3, 4] # =>),
-    :rust_code => %([2, 3, 4].iter().cmp([2, 3, 4].iter()) == std::cmp::Ordering::Equal // =>),
-    :desc => "FIXME: もっとスマートな方法があると信じたい",
+    :ruby_code => <<~EOT,
+      ([1] <=> [1, 2])  # =>
+      ([1] <=> [1])     # =>
+      ([1, 2] <=> [1])  # =>
+EOT
+    :rust_code => <<~EOT,
+      [1].iter().cmp([1, 2].iter())  // =>
+      [1].iter().cmp([1].iter())     // =>
+      [1, 2].iter().cmp([1].iter())  // =>
+EOT
+    :desc => nil,
+  },
+
+  {
+    :ruby_title => "?",
+    :rust_title => "eq ne lt le gt ge",
+    :ruby_code => nil,
+    :rust_code => <<~EOT,
+      [1].iter().eq([1, 2].iter())  // =>
+      [1].iter().ne([1, 2].iter())  // =>
+      [1].iter().lt([1, 2].iter())  // =>
+      [1].iter().le([1, 2].iter())  // =>
+      [1].iter().gt([1, 2].iter())  // =>
+      [1].iter().ge([1, 2].iter())  // =>
+EOT
+    :desc => nil,
+  },
+
+  {
+    :ruby_title => "?",
+    :rust_title => "eq_by",
+    :ruby_code => <<~EOT,
+      [2, 3].collect { |e| e + e } == [4, 6]                     # =>
+      [2, 3].each.with_index.all? { |e, i| e + e == [4, 6][i] }  # =>
+
+      it = [4, 6].to_enum
+      [2, 3].all? { |a; b| b = it.next; a + a == b }             # =>
+EOT
+    :rust_code => <<~EOT,
+      [2, 3].iter().eq_by(&[4, 6], |&a, &b| a + a == b) // =>
+EOT
+    :rust_feature => "#![feature(iter_order_by)]",
+    :desc => "これは使いづらい",
+  },
+
+  ################################################################################
+
+  {
+    :hidden => true,
+    :ruby_title => "?",
+    :rust_title => "cloned",
+    :ruby_code => <<~EOT,
+EOT
+    :rust_code => <<~EOT,
+    [3, 4].iter().cloned().collect::<Vec<_>>()     // =>
+    // ↓これと同じことらしい
+    [3, 4].iter().map(|&e| e).collect::<Vec<_>>()  // =>
+EOT
+    :desc => nil,
+    :ref_url => "https://qiita.com/lo48576/items/34887794c146042aebf1#cloned-iteratort---iteratort",
+  },
+  {
+    :hidden => true,
+    :ruby_title => "?",
+    :rust_title => "copied",
+    :ruby_code => <<~EOT,
+EOT
+    :rust_code => <<~EOT,
+    [3, 4].iter().copied().collect::<Vec<_>>()     // =>
+    // ↓これと同じことらしい。って cloned のときと同じやん
+    [3, 4].iter().map(|&e| e).collect::<Vec<_>>()  // =>
+EOT
+    :desc => nil,
+    :ref_url => "https://qiita.com/lo48576/items/34887794c146042aebf1#copied-iteratort---iteratort-%E3%81%9F%E3%81%A0%E3%81%97-t-%E3%81%AF-copy",
   },
 
   ################################################################################

@@ -3,6 +3,7 @@
 #![feature(iter_intersperse)]
 #![feature(iter_partition_in_place)]
 #![feature(iter_is_partitioned)]
+#![feature(iter_order_by)]
 
 fn main() {
 
@@ -174,4 +175,38 @@ fn main() {
     // let b: Vec<_> = a.iter().collect();
     // println!("{:?}", b);
     // println!("{:?}", a);
+
+    // println!("{:?}", [5, 6, 7, 8].iter().filter(|&e| e % 2 == 0).collect::<Vec<_>>());
+    // println!("{:?}", [5, 6, 7, 8].iter().filter_map(|&e| e % 2 == 0).collect::<Vec<_>>());
+
+    // let a = ["1", "two", "NaN", "four", "5"];
+    // let mut iter = a.iter().map(|s| s.parse()).filter(|s| s.is_ok()).map(|s| s.unwrap());
+    // assert_eq!(iter.next(), Some(1));
+    // assert_eq!(iter.next(), Some(5));
+    // assert_eq!(iter.next(), None);
+
+    // let s = "1";
+    // println!("{:?}", s.parse::<isize>().ok());
+    // let s = vec![Some(1), None, Some(2), None];
+    // println!("{:?}", ["1", "", "2"].iter().filter_map(|e| e.parse::<isize>().ok()).collect::<Vec<_>>());
+    // println!("{:?}", ["1", "", "2"].iter().map(|e| e.parse::<isize>()).filter(|e| e.is_ok()).map(|e| e.unwrap()).collect::<Vec<_>>());
+
+    // println!("{:?}", [5, 6, 7, 8].iter().skip_while(|&&e| e < 7).collect::<Vec<_>>());
+    // println!("{:?}", [5, 6, 7, 8].iter().take_while(|&&e| e < 7).collect::<Vec<_>>());
+    // println!("{:?}", [5, 6, 7, 8].iter().skip(2).collect::<Vec<_>>());
+    // println!("{:?}", [5, 6, 7, 8].iter().take(2).collect::<Vec<_>>());
+
+    // println!("{:?}", ["1", "", "2"].iter().find_map(|e| e.parse::<isize>().ok()));
+    // println!("{:?}", ["1", "", "2"].iter().map(|e| e.parse::<isize>()).find(|e| e.is_ok()).map(|e| e.unwrap()));
+
+    // println!("{:?}", [1].iter().eq([1, 2].iter()));
+
+    // println!("{:?}", [3, 4].iter().cloned().collect::<Vec<_>>());
+    // println!("{:?}", [3, 4].iter().map(|&e| e).collect::<Vec<_>>());
+    // 
+    // println!("{:?}", [3, 4].iter().copied().collect::<Vec<_>>());
+    // println!("{:?}", [3, 4].iter().map(|&e| e).collect::<Vec<_>>());
+
+
+    println!("{:?}", [2, 3].iter().eq_by(&[4, 6], |&a, &b| a + a == b));
 }

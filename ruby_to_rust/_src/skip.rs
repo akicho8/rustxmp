@@ -1,5 +1,3 @@
 fn main() {
-    let it = ["a", "b", "c"].iter();
-let mut it = it.skip(2);
-println!("{:?}", it.next());
+    println!("{:?}", [5, 6, 7, 8].iter().skip(2).collect::<Vec<_>>());
 }

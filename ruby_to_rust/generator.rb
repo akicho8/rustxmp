@@ -19,12 +19,14 @@ class Generator
     if v = ARGV.first
       list = list.find_all { |e| [e[:ruby_title], e[:rust_title]].join("/").include?(v) }
     end
+    # list = list.reject { |e| e[:hidden] }
     list.each do |e|
       @out << ""
       title_process(e)
       ruby_process(e)
       rust_process(e)
       desc_process(e)
+      ref_process(e)
       ground_process(e)
     end
     puts "-" * 80
@@ -58,18 +60,25 @@ class Generator
 
   def rust_process(e)
     if !e[:rust_code].empty?
-      file = Pathname("_src/#{e[:rust_title]}.rs")
+      file = Pathname("_src/#{e[:rust_title]}.rs".gsub(/\s+/, "_"))
+      puts file
 
       FileUtils.makedirs(file.dirname)
       file.write(rust_code2(e))
       command = "cd _src && rustc #{file.basename} && ./#{file.basename('.*')}"
       result = `#{command}`
+      unless $?.success?
+        puts file
+        puts $?
+        exit
+      end
 
       result_lines = result.lines
       code2 = e[:rust_code].gsub(%r/=>/) { |s|
         r = result_lines.shift
         "#{s} #{r.rstrip}"
       }
+
       result_lines.each do |e|
         code2 += "// >> #{e.rstrip}\n"
       end
@@ -110,6 +119,12 @@ class Generator
   def desc_process(e)
     if e[:desc]
       @out << e[:desc]
+    end
+  end
+
+  def ref_process(e)
+    if v = e[:ref_url]
+      @out << %([こちらの方が詳しい](#{v}))
     end
   end
 
