@@ -111,18 +111,41 @@ EOT
     :ruby_title => "each",
     :rust_title => "for_each",
     :ruby_code => <<~EOT,
-      ["a", "b", "c"].each do |e|
-        p e
-      end
+      ["a", "b", "c"].each { |e| p e }
 EOT
     :rust_code => <<~EOT,
-      ["a", "b", "c"].iter().for_each(|e| {
-          println!("{:?}", e);
-      })
+      ["a", "b", "c"].iter().for_each(|e| println!("{:?}", e));
 EOT
     :rust_feature => nil,
-    :desc => "欲しかったのはこれ。for じゃない",
+    :desc => nil,
   },
+
+  {
+    :ruby_title => "each + break",
+    :rust_title => "try_for_each",
+    :ruby_code => <<~EOT,
+      r = ["a", "b", "c"].each do |e|
+        if e == "b"
+          break e
+        end
+      end
+      r # =>
+EOT
+    :rust_code => <<~EOT,
+      use std::ops::ControlFlow::{Break, Continue};
+
+      let r = ["a", "b", "c"].iter().try_for_each(|&e| {
+          if e == "b" {
+              return Break(e)
+          }
+          Continue(())
+      });
+      r // =>
+EOT
+    :rust_feature => nil,
+    :desc => nil,
+  },
+
   {
     :ruby_title => "tap",
     :rust_title => "inspect",
@@ -186,6 +209,21 @@ EOT
       ["", "5", "", "6"].iter().find_map(|e| e.parse::<isize>().ok()) // =>
 EOT
     :desc => nil,
+  },
+
+  {
+    :ruby_title => "?",
+    :rust_title => "scan",
+    :ruby_code => <<~EOT,
+EOT
+    :rust_code => <<~EOT,
+      let it = [2, 3].iter().scan(10, |a, &e| {
+          *a += e;
+          Some(*a)
+      });
+      it.collect::<Vec<_>>() // =>
+EOT
+    :desc => "",
   },
 
   #### take, drop 系
@@ -356,11 +394,51 @@ EOT
   },
 
   {
-    :ruby_title => "inject",
+    :ruby_title => "inject(0, :+)",
     :rust_title => "fold",
     :ruby_code => %([2, 3, 4].inject(0, :+) # =>),
     :rust_code => %([2, 3, 4].iter().fold(0, |a, e| a + e) // =>),
     :desc => nil,
+  },
+
+  {
+    :ruby_title => "inject(0, :+) + break",
+    :rust_title => "try_fold",
+    :ruby_code => <<~EOT,
+      sum = [5, 5, 5].inject(0) {|a, e|
+        if a >= 10
+          break
+        end
+        a + e
+      }
+      sum # =>
+EOT
+    :rust_code => <<~EOT,
+      let sum = [5, 5, 5].iter().try_fold(0, |a, &e| {
+          if a >= 10 {
+              return None
+          }
+          Some(a + e)
+      });
+      sum // =>
+EOT
+    :desc => nil,
+  },
+
+  {
+    :ruby_title => "inject(&:+)",
+    :rust_title => "reduce",
+    :ruby_code => %([5, 6].inject(:+) # =>),
+    :rust_code => %(vec![5, 6].into_iter().reduce(|a, e| a + e) // =>),
+    :desc => "fold の最初の引数(accumulator)を省略したもの",
+  },
+  {
+    :ruby_title => "inject(:+) + break",
+    :rust_title => "try_reduce",
+    :ruby_code => %(),
+    :rust_code => %(vec![5, 6].into_iter().try_reduce(|a, e| Some(a + e)) // =>),
+    :rust_feature => "#![feature(iterator_try_reduce)]",
+    :desc => "try_fold の最初の引数(accumulator)を省略したもの",
   },
 
   {
@@ -377,6 +455,7 @@ EOT
     :rust_code => %([2, 3, 4].iter().product::<isize>() // =>),
     :desc => nil,
   },
+
   {
     :ruby_title => "all?",
     :rust_title => "all",
@@ -412,21 +491,39 @@ EOT
     :rust_code => %([5, 6, 5].iter().rposition(|&e| e == 5) // =>),
     :desc => nil,
   },
+
+  ################################################################################
   {
-    :ruby_title => "<=>",
-    :rust_title => "cmp",
-    :ruby_code => <<~EOT,
-      ([1] <=> [1, 2])  # =>
-      ([1] <=> [1])     # =>
-      ([1, 2] <=> [1])  # =>
-EOT
-    :rust_code => <<~EOT,
-      [1].iter().cmp([1, 2].iter())  // =>
-      [1].iter().cmp([1].iter())     // =>
-      [1, 2].iter().cmp([1].iter())  // =>
-EOT
-    :desc => nil,
+    :ruby_title   => "<=>",
+    :rust_title   => "cmp",
+    :ruby_code    => %([5, 6] <=> [5, 6] # =>),
+    :rust_code    => %([5, 6].iter().cmp([5, 6].iter()) // =>),
+    :desc         => nil,
   },
+  {
+    :ruby_title   => "?",
+    :rust_title   => "cmp_by",
+    :ruby_code    => %(),
+    :rust_code    => %([5, 6].iter().cmp_by(&[5, 6], |&a, &b| a.cmp(&b)) // =>),
+    :rust_feature => "#![feature(iter_order_by)]",
+    :desc         => nil,
+  },
+  {
+    :ruby_title   => "<=>",
+    :rust_title   => "partial_cmp",
+    :ruby_code    => %([5, 6] <=> [5, 6] # =>),
+    :rust_code    => %([5, 6].iter().partial_cmp([5, 6].iter()) // =>),
+    :desc         => "Option でラップしている版",
+  },
+  {
+    :ruby_title   => "?",
+    :rust_title   => "partial_cmp_by",
+    :ruby_code    => %(),
+    :rust_code    => %([5, 6].iter().partial_cmp_by(&[5, 6], |&a, &b| a.partial_cmp(&b)) // =>),
+    :rust_feature => "#![feature(iter_order_by)]",
+    :desc         => "Option でラップしている版",
+  },
+  ################################################################################
 
   {
     :ruby_title => "?",
@@ -525,21 +622,21 @@ EOT
     :ruby_title => "max",
     :rust_title => "max",
     :ruby_code => %([2, 3, -4].max # =>),
-    :rust_code => %([2_i32, 3, -4].iter().max() // =>),
+    :rust_code => %([2_isize, 3, -4].iter().max() // =>),
     :desc => nil,
   },
   {
     :ruby_title => "max_by",
     :rust_title => "max_by_key",
     :ruby_code => %([2, 3, -4].max_by(&:abs) # =>),
-    :rust_code => %([2_i32, 3, -4].iter().max_by_key(|e| e.abs()) // =>),
+    :rust_code => %([2_isize, 3, -4].iter().max_by_key(|e| e.abs()) // =>),
     :desc => "Rust は元の値をなぜか key と呼んでいるので混乱しそう",
   },
   {
     :ruby_title => "?",
     :rust_title => "max_by",
     :ruby_code => %([2, 3, -4].sort { |a, b| a <=> b }.max # =>),
-    :rust_code => %([2_i32, 3, -4].iter().max_by(|a, b| a.cmp(b)) // =>),
+    :rust_code => %([2_isize, 3, -4].iter().max_by(|a, b| a.cmp(b)) // =>),
     :desc => "使いづらい",
   },
 
@@ -559,18 +656,39 @@ EOT
     :desc => "使い方は max_by と同じ",
   },
 
+  ################################################################################
+
   {
     :ruby_title => "?",
-    :rust_title => "scan",
+    :rust_title => "is_sorted",
     :ruby_code => <<~EOT,
+      v = [2, 3, 4]
+      v == v.sort # =>
 EOT
-    :rust_code => <<~EOT,
-      let it = [2, 3].iter().scan(10, |a, &e| {
-          *a += e;
-          Some(*a)
-      });
-      it.collect::<Vec<_>>() // =>
+    :rust_code => %([2, 3, 4].iter().is_sorted() // =>),
+    :rust_feature => "#![feature(is_sorted)]",
+    :desc => nil,
+  },
+  {
+    :ruby_title => "?",
+    :rust_title => "sort_by_key",
+    :ruby_code => <<~EOT,
+      v = [2, 3, 4]
+      v == v.sort { |a, b| a <=> b } # =>
 EOT
+    :rust_code => %([2, 3, 4].iter().is_sorted_by(|a, b| a.partial_cmp(b)) // =>),
+    :rust_feature => "#![feature(is_sorted)]",
+    :desc => "partial_cmp は Some(Less) みたいなのを返す",
+  },
+  {
+    :ruby_title => "?",
+    :rust_title => "is_sorted_by_key",
+    :ruby_code => <<~EOT,
+      v = [2, -3, 4]
+      v == v.sort_by(&:abs) # =>
+EOT
+    :rust_code => %([2_isize, -3, 4].iter().is_sorted_by_key(|e| e.abs()) // =>),
+    :rust_feature => "#![feature(is_sorted)]",
     :desc => "",
   },
 ]

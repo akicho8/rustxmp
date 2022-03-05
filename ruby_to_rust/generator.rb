@@ -144,4 +144,4 @@ class Generator
   end
 end
 
-Generator.new(list: ITERATOR_LIST, output: "iterator", target: :stable).run
+Generator.new(list: ITERATOR_LIST, output: "iterator", target: :nightly).run

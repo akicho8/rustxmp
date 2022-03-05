@@ -1,1 +1,2 @@
-[[2, 3], [4, 5]].flat_map(&:itself) # =>
+v = [2, -3, 4]
+v == v.sort_by(&:abs) # =>

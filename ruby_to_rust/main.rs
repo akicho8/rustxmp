@@ -1,9 +1,11 @@
 // -*- compile-command: "rustc main.rs && ./main" -*-
 
-// #![feature(iter_intersperse)]
-// #![feature(iter_partition_in_place)]
-// #![feature(iter_is_partitioned)]
-// #![feature(iter_order_by)]
+#![feature(iter_intersperse)]
+#![feature(iter_partition_in_place)]
+#![feature(iter_is_partitioned)]
+#![feature(iter_order_by)]
+#![feature(is_sorted)]
+#![feature(iterator_try_reduce)]
 
 fn main() {
 
@@ -215,7 +217,57 @@ fn main() {
     // });
     // println!("{:?}", it.collect::<Vec<_>>());
 
-    println!("{:?}", [[2, 3], [4, 5]].iter().flatten().collect::<Vec<_>>());
-    println!("{:?}", [[2, 3], [4, 5]].iter().flat_map(|e| e).collect::<Vec<_>>());
-    println!("{:?}", [[[2,1], [3,1]], [[2,1], [3,1]]].iter().flatten().collect::<Vec<_>>());
+    // println!("{:?}", [[2, 3], [4, 5]].iter().flatten().collect::<Vec<_>>());
+    // println!("{:?}", [[2, 3], [4, 5]].iter().flat_map(|e| e).collect::<Vec<_>>());
+    // println!("{:?}", [[[2,1], [3,1]], [[2,1], [3,1]]].iter().flatten().collect::<Vec<_>>());
+
+    // println!("{:?}", [5, 5, 5].iter().try_fold(0, |a, &e| Some(a + e)));
+    //
+    // let sum = [5, 5, 5].iter().try_fold(0, |a, &e| {
+    //     if a >= 10 {
+    //         return None
+    //     }
+    //     Some(a + e)
+    // });
+    // println!("{:?}", sum);
+
+    // use std::ops::ControlFlow::{Break, Continue};
+    // let r = ["a", "b", "c"].iter().try_for_each(|&e| {
+    //     if e == "b" {
+    //         return Break(e)
+    //     }
+    //     Continue(())
+    // });
+    // println!("{:?}", r);
+
+    // println!("{:?}", [2, 3, 4].iter().is_sorted());
+    // println!("{:?}", );
+    // println!("{:?}", 1.partial_cmp(&2));
+    // println!("{:?}", 1.cmp(&2));
+    // println!("{:?}", [2_isize, -3, 4].iter().is_sorted_by_key(|e| e.abs()));
+
+    // println!("{:?}", [5, 6].iter().cmp([5, 6].iter()));
+    // println!("{:?}", [5, 6].iter().cmp_by(&[5, 6], |&a, &b| a.cmp(&b)));
+    //
+    // println!("{:?}", [5, 6].iter().partial_cmp([5, 6].iter()));
+    // println!("{:?}", [5, 6].iter().partial_cmp_by(&[5, 6], |&a, &b| a.partial_cmp(&b)));
+
+    // let v = vec![1, 2, 3, 4, 5];
+    // let sum = v.into_iter().reduce(|x, y| x + y).unwrap();
+    // println!("{}", sum); // 15
+    //
+    // // 要素1個
+    // let v = vec![1];
+    // let sum = v.into_iter().reduce(|x, y| x + y).unwrap();
+    // println!("{}", sum); // 1
+    //
+    // // 要素無し
+    // let v = vec![0; 0];
+    // let sum = v.into_iter().reduce(|x, y| x + y);
+    // println!("{:?}", sum); // None
+
+    // // println!("{:?}", [5_isize, 6].iter().try_reduce(|x, y| x.checked_add(&y)));
+    // println!("{:?}", 1_isize.checked_add(2));
+    println!("{:?}", vec![5, 6].into_iter().reduce(|a, e| a + e));
+    println!("{:?}", vec![5, 6].into_iter().try_reduce(|a, e| Some(a + e)));
 }
