@@ -1,9 +1,9 @@
 // -*- compile-command: "rustc main.rs && ./main" -*-
 
-#![feature(iter_intersperse)]
-#![feature(iter_partition_in_place)]
-#![feature(iter_is_partitioned)]
-#![feature(iter_order_by)]
+// #![feature(iter_intersperse)]
+// #![feature(iter_partition_in_place)]
+// #![feature(iter_is_partitioned)]
+// #![feature(iter_order_by)]
 
 fn main() {
 
@@ -203,10 +203,19 @@ fn main() {
 
     // println!("{:?}", [3, 4].iter().cloned().collect::<Vec<_>>());
     // println!("{:?}", [3, 4].iter().map(|&e| e).collect::<Vec<_>>());
-    // 
+    //
     // println!("{:?}", [3, 4].iter().copied().collect::<Vec<_>>());
     // println!("{:?}", [3, 4].iter().map(|&e| e).collect::<Vec<_>>());
 
+    // println!("{:?}", [2, 3].iter().eq_by(&[4, 6], |&a, &b| a + a == b));
 
-    println!("{:?}", [2, 3].iter().eq_by(&[4, 6], |&a, &b| a + a == b));
+    // let it = [2, 3].iter().scan(10, |a, &e| {
+    //     *a += e;
+    //     Some(*a)
+    // });
+    // println!("{:?}", it.collect::<Vec<_>>());
+
+    println!("{:?}", [[2, 3], [4, 5]].iter().flatten().collect::<Vec<_>>());
+    println!("{:?}", [[2, 3], [4, 5]].iter().flat_map(|e| e).collect::<Vec<_>>());
+    println!("{:?}", [[[2,1], [3,1]], [[2,1], [3,1]]].iter().flatten().collect::<Vec<_>>());
 }

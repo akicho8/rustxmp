@@ -1,3 +1,6 @@
 fn main() {
-    println!("{:?}", [2, 3, 4].iter().nth(0));
+    let mut it = ['a', 'b', 'c', 'd'].iter();
+println!("{:?}", it.nth(1));
+println!("{:?}", it.nth(1));
+println!("{:?}", it.nth(1));
 }

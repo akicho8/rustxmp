@@ -1,3 +1,5 @@
 fn main() {
-    println!("{:?}", [2, 3, 4].iter().cmp([2, 3, 4].iter()) == std::cmp::Ordering::Equal);
+    println!("{:?}", [1].iter().cmp([1, 2].iter()));
+println!("{:?}", [1].iter().cmp([1].iter()));
+println!("{:?}", [1, 2].iter().cmp([1].iter()));
 }

@@ -15,25 +15,33 @@ class Generator
 
   def run
     @out = []
-    list = @params[:list]
-    if v = ARGV.first
-      list = list.find_all { |e| [e[:ruby_title], e[:rust_title]].join("/").include?(v) }
-    end
-    # list = list.reject { |e| e[:hidden] }
-    list.each do |e|
-      @out << ""
-      title_process(e)
-      ruby_process(e)
-      rust_process(e)
-      desc_process(e)
-      ref_process(e)
-      ground_process(e)
-    end
+    list.each { |e| process_all(e) }
     puts "-" * 80
     puts @out
     puts "-" * 80
     output_file = Pathname("_#{@params[:output]}.md")
     output_file.write(@out.join("\n") + "\n")
+  end
+
+  def list
+    av = @params[:list]
+    if @params[:target] == :stable
+      av = av.reject { |e| e[:rust_feature] }
+    end
+    if v = ARGV.first
+      av = av.find_all { |e| [e[:ruby_title], e[:rust_title]].join("/").include?(v) }
+    end
+    av
+  end
+
+  def process_all(e)
+    @out << ""
+    title_process(e)
+    ruby_process(e)
+    rust_process(e)
+    desc_process(e)
+    ref_process(e)
+    ground_process(e)
   end
 
   def title_process(e)
@@ -59,7 +67,7 @@ class Generator
   end
 
   def rust_process(e)
-    if !e[:rust_code].empty?
+    if !e[:rust_code].to_s.empty?
       file = Pathname("_src/#{e[:rust_title]}.rs".gsub(/\s+/, "_"))
       puts file
 
@@ -129,9 +137,11 @@ class Generator
   end
 
   def ground_process(e)
-    url = "https://play.rust-lang.org/?code=#{CGI.escape(rust_code2(e))}&version=nightly&edition=2021"
-    @out << %([Rust Playground で確認する](#{url}))
+    unless e[:rust_code].to_s.empty?
+      url = "https://play.rust-lang.org/?code=#{CGI.escape(rust_code2(e))}&version=nightly&edition=2021"
+      @out << %([Rust Playground で確認する](#{url}))
+    end
   end
 end
 
-Generator.new(list: ITERATOR_LIST, output: "iterator").run
+Generator.new(list: ITERATOR_LIST, output: "iterator", target: :stable).run

@@ -270,8 +270,15 @@ EOT
   {
     :ruby_title => "flatten",
     :rust_title => "flatten",
-    :ruby_code => %(([2, 3] + [4, 5]).flatten # =>),
+    :ruby_code => %([[2, 3], [4, 5]].flatten(1) # =>),
     :rust_code => %([[2, 3], [4, 5]].iter().flatten().collect::<Vec<_>>() // =>),
+    :desc => nil,
+  },
+  {
+    :ruby_title => "flat_map",
+    :rust_title => "flat_map",
+    :ruby_code => %([[2, 3], [4, 5]].flat_map(&:itself) # =>),
+    :rust_code => %([[2, 3], [4, 5]].iter().flat_map(|e| e).collect::<Vec<_>>() // =>),
     :desc => nil,
   },
 
@@ -550,5 +557,20 @@ EOT
     :ruby_title => "?",
     :rust_title => "min_by",
     :desc => "使い方は max_by と同じ",
+  },
+
+  {
+    :ruby_title => "?",
+    :rust_title => "scan",
+    :ruby_code => <<~EOT,
+EOT
+    :rust_code => <<~EOT,
+      let it = [2, 3].iter().scan(10, |a, &e| {
+          *a += e;
+          Some(*a)
+      });
+      it.collect::<Vec<_>>() // =>
+EOT
+    :desc => "",
   },
 ]

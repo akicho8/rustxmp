@@ -1,3 +1,3 @@
 fn main() {
-    println!("{:?}", [2, 3, 4].iter().step_by(2).collect::<Vec<_>>());
+    println!("{:?}", [5, 6, 7, 8].iter().step_by(2).collect::<Vec<_>>());
 }
