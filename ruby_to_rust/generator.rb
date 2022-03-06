@@ -19,8 +19,10 @@ class Generator
     puts "-" * 80
     puts @out
     puts "-" * 80
-    output_file = Pathname("_#{@params[:output]}.md")
-    output_file.write(@out.join("\n") + "\n")
+    body = @out.join("\n") + "\n"
+    file = Pathname("_md/#{@params[:output]}.md")
+    FileUtils.makedirs(file.dirname)
+    file.write(body)
   end
 
   def list
@@ -45,7 +47,7 @@ class Generator
   end
 
   def title_process(e)
-    if e[:rust_title] == e[:ruby_title]
+    if e[:rust_title] == e[:ruby_title] && false
       s = "## #{e[:ruby_title]}"
     else
       s = "## #{e[:ruby_title]} → #{e[:rust_title]}"
@@ -56,10 +58,13 @@ class Generator
 
   def ruby_process(e)
     if !e[:ruby_code].to_s.empty?
-      file = Pathname("_rubycode.rb")
+      basename = e[:ruby_title].gsub(/\W+/, "_")
+      file = Pathname("_src/#{basename}.rb")
       s = %(#{e[:ruby_code]})
+      FileUtils.makedirs(file.dirname)
       file.write(s)
-      result = `xmpfilter #{file}`.strip
+      command = "cd _src && xmpfilter #{file.basename}"
+      result = `#{command}`.strip
       @out << "```ruby:Ruby"
       @out << result
       @out << "```"
@@ -68,7 +73,8 @@ class Generator
 
   def rust_process(e)
     if !e[:rust_code].to_s.empty?
-      file = Pathname("_src/#{e[:rust_title]}.rs".gsub(/\s+/, "_"))
+      basename = e[:rust_title].gsub(/\W+/, "_")
+      file = Pathname("_src/#{basename}.rs")
       puts file
 
       FileUtils.makedirs(file.dirname)

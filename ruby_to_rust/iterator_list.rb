@@ -306,7 +306,7 @@ EOT
     :desc => nil,
   },
   {
-    :ruby_title => "flatten",
+    :ruby_title => "flatten(1)",
     :rust_title => "flatten",
     :ruby_code => %([[2, 3], [4, 5]].flatten(1) # =>),
     :rust_code => %([[2, 3], [4, 5]].iter().flatten().collect::<Vec<_>>() // =>),
@@ -345,7 +345,7 @@ EOT
       ary[index..].iter().collect::<Vec<_>>() // =>
 EOT
     :rust_feature => "#![feature(iter_partition_in_place)]",
-    :desc => "元の配列を破壊的に並び換える。ドキュメントでは個数を返すと言っているがピンとこないので「境界のインデックスを返す」と考えた方がよさそう。",
+    :desc => "レシーバを破壊的に並び換える。ドキュメントの「個数を返す」は「境界のインデックスを返す」とも考えてもよさそう。",
   },
   {
     :ruby_title => "?",
@@ -430,7 +430,7 @@ EOT
     :rust_title => "reduce",
     :ruby_code => %([5, 6].inject(:+) # =>),
     :rust_code => %(vec![5, 6].into_iter().reduce(|a, e| a + e) // =>),
-    :desc => "fold の最初の引数(accumulator)を省略したもの",
+    :desc => nil,
   },
   {
     :ruby_title => "inject(:+) + break",
@@ -438,7 +438,7 @@ EOT
     :ruby_code => %(),
     :rust_code => %(vec![5, 6].into_iter().try_reduce(|a, e| Some(a + e)) // =>),
     :rust_feature => "#![feature(iterator_try_reduce)]",
-    :desc => "try_fold の最初の引数(accumulator)を省略したもの",
+    :desc => nil,
   },
 
   {
@@ -513,7 +513,7 @@ EOT
     :rust_title   => "partial_cmp",
     :ruby_code    => %([5, 6] <=> [5, 6] # =>),
     :rust_code    => %([5, 6].iter().partial_cmp([5, 6].iter()) // =>),
-    :desc         => "Option でラップしている版",
+    :desc         => "Some でラップしてある",
   },
   {
     :ruby_title   => "?",
@@ -521,7 +521,7 @@ EOT
     :ruby_code    => %(),
     :rust_code    => %([5, 6].iter().partial_cmp_by(&[5, 6], |&a, &b| a.partial_cmp(&b)) // =>),
     :rust_feature => "#![feature(iter_order_by)]",
-    :desc         => "Option でラップしている版",
+    :desc         => "Some でラップしてある",
   },
   ################################################################################
 
@@ -630,7 +630,7 @@ EOT
     :rust_title => "max_by_key",
     :ruby_code => %([2, 3, -4].max_by(&:abs) # =>),
     :rust_code => %([2_isize, 3, -4].iter().max_by_key(|e| e.abs()) // =>),
-    :desc => "Rust は元の値をなぜか key と呼んでいるので混乱しそう",
+    :desc => "Rust は元の値を key と呼んでいる",
   },
   {
     :ruby_title => "?",

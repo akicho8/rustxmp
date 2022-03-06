@@ -1,0 +1,1 @@
+['a', 'b'].each.with_index.to_a # =>
