@@ -6,6 +6,7 @@
 #![feature(iter_order_by)]
 #![feature(is_sorted)]
 #![feature(iterator_try_reduce)]
+#![feature(iter_advance_by)]
 
 fn main() {
 
@@ -268,6 +269,29 @@ fn main() {
 
     // // println!("{:?}", [5_isize, 6].iter().try_reduce(|x, y| x.checked_add(&y)));
     // println!("{:?}", 1_isize.checked_add(2));
-    println!("{:?}", vec![5, 6].into_iter().reduce(|a, e| a + e));
-    println!("{:?}", vec![5, 6].into_iter().try_reduce(|a, e| Some(a + e)));
+    // println!("{:?}", vec![5, 6].into_iter().reduce(|a, e| a + e));
+    // println!("{:?}", vec![5, 6].into_iter().try_reduce(|a, e| Some(a + e)));
+
+    // let it = ["a", "b", "c"].iter();
+    // println!("{:?}", it.size_hint());
+
+    // let mut it = [5, 6, 7, 8].iter();
+    // println!("{:?}", it.advance_by(2));
+    // println!("{:?}", it.next());
+
+    // println!("{:?}", [3, 4].iter().map_while(|&e| Some(e)).collect::<Vec<_>>());
+    // println!("{:?}", [3, 4, 5].iter().map_while(|&e| if e < 4 { Some(e) } else { Option::<isize>::None }).collect::<Vec<_>>());
+
+    // let it = [3, 4, 5, 6].iter().map_while(|&e| {
+    //     if e < 5 {
+    //         Some(e * 2)
+    //     } else {
+    //         None
+    //     }
+    // });
+    // println!("{:?}", it.collect::<Vec<_>>());
+
+    let mut it = [5, 6, 7].iter();
+    println!("{:?}", it.by_ref().collect::<Vec<_>>());
+    println!("{:?}", it);
 }

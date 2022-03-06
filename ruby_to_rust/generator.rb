@@ -44,6 +44,7 @@ class Generator
     desc_process(e)
     ref_process(e)
     ground_process(e)
+    ground_process2(e)
   end
 
   def title_process(e)
@@ -146,6 +147,12 @@ class Generator
     unless e[:rust_code].to_s.empty?
       url = "https://play.rust-lang.org/?code=#{CGI.escape(rust_code2(e))}&version=nightly&edition=2021"
       @out << %([Rust Playground で確認する](#{url}))
+    end
+  end
+
+  def ground_process2(e)
+    if url = e[:source_url]
+      @out << %([本家のドキュメント](#{url}))
     end
   end
 end

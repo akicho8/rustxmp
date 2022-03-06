@@ -32,7 +32,21 @@ ITERATOR_LIST = [
        it.next() // =>
      EOT
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#tymethod.next",
   },
+  {
+    :ruby_title => "?",
+    :rust_title => "size_hint",
+    :ruby_code => <<~EOT,
+     EOT
+    :rust_code => <<~EOT,
+      let it = ["a", "b", "c"].iter();
+      it.size_hint() // =>
+     EOT
+    :desc => "イテレータの残りの長さの境界(下限と上限)を返す(？)",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.size_hint",
+  },
+
   {
     :ruby_title => "peek",
     :rust_title => "peek",
@@ -49,6 +63,7 @@ ITERATOR_LIST = [
       it.next()  // =>
     EOT
     :desc => "もともと peek() はなくて peekable() すると peek() が生えるっぽい",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.peekable",
   },
   {
     :ruby_title => "?",
@@ -60,8 +75,28 @@ ITERATOR_LIST = [
     it.nth(1)  // =>
     it.nth(1)  // =>
 EOT
-    :desc => "at(i) 相当かと思いきや内部でポインタを進めてからその位置の値を返すようだ。使いどころがわからない。",
+    :desc => "at(i) 相当かと思いきや内部でポインタを進めてからその位置の値を返すようだ",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.nth",
   },
+
+  {
+    :ruby_title => "?",
+    :rust_title => "advance_by",
+    :ruby_code => <<~EOT,
+      it = [5, 6, 7, 8].to_enum
+      2.times { it.next }
+      it.next // =>
+EOT
+    :rust_code => <<~EOT,
+    let mut it = [5, 6, 7, 8].iter();
+    it.advance_by(2) // =>
+    it.next()        // =>
+EOT
+    :rust_feature => "#![feature(iter_advance_by)]",
+    :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.advance_by",
+  },
+
   {
     :ruby_title => "?",
     :rust_title => "fuse",
@@ -97,6 +132,7 @@ EOT
       it.next() // =>
     EOT
     :desc => "fuse を呼んで最初の None が来てから None を継続する。どういうときに使うのかはわからない",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.fuse",
   },
 
   {
@@ -105,6 +141,7 @@ EOT
     :ruby_code => %([2, 3].each.to_a # =>),
     :rust_code => %([2, 3].iter().collect::<Vec<_>>() // =>),
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.collect",
   },
 
   {
@@ -118,6 +155,7 @@ EOT
 EOT
     :rust_feature => nil,
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.for_each",
   },
 
   {
@@ -144,6 +182,7 @@ EOT
 EOT
     :rust_feature => nil,
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_for_each",
   },
 
   {
@@ -157,6 +196,7 @@ EOT
 EOT
     :rust_feature => nil,
     :desc => "inspect は1つずつ要素が来るので tap とは少し異なる",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.inspect",
   },
 
   # array
@@ -167,6 +207,7 @@ EOT
     :ruby_code => %(["a", "b"].reverse # =>),
     :rust_code => %(["a", "b"].iter().rev().collect::<Vec<_>>() // =>),
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.rev",
   },
   {
     :ruby_title => "map",
@@ -174,6 +215,26 @@ EOT
     :ruby_code => %([2, 3].map { |e| e * 2 } # =>),
     :rust_code => %([2, 3].iter().map(|e| e * 2).collect::<Vec<_>>() // =>),
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.map",
+  },
+  {
+    :ruby_title => "?",
+    :rust_title => "map_while",
+    :ruby_code => <<~EOT,
+      [3, 4, 5, 6].find_all { |e| e < 5 }.map { |e| e * 2 } # =>
+EOT
+    :rust_code => <<~EOT,
+      let it = [3, 4, 5, 6].iter().map_while(|&e| {
+          if e < 5 {
+              Some(e * 2)
+          } else {
+              None
+          }
+      });
+      it.collect::<Vec<_>>() // =>
+EOT
+    :desc => "クロージャーがOptionで返す版。Noneなら打ち切る",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.map_while",
   },
   {
     :ruby_title => "find_all",
@@ -181,6 +242,7 @@ EOT
     :ruby_code => %([2, 3, 4].find_all { |e| e % 2 == 0 } # =>),
     :rust_code => %([2, 3, 4].iter().filter(|&e| e % 2 == 0).collect::<Vec<_>>() // =>),
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.filter",
   },
 
   {
@@ -196,6 +258,7 @@ EOT
       ["", "5", "", "6"].iter().map(|e| e.parse::<isize>()).filter(|e| e.is_ok()).map(|e| e.unwrap()).collect::<Vec<_>>() // =>
 EOT
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.filter_map",
   },
 
   {
@@ -209,6 +272,7 @@ EOT
       ["", "5", "", "6"].iter().find_map(|e| e.parse::<isize>().ok()) // =>
 EOT
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.find_map",
   },
 
   {
@@ -224,6 +288,7 @@ EOT
       it.collect::<Vec<_>>() // =>
 EOT
     :desc => "",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.scan",
   },
 
   #### take, drop 系
@@ -237,6 +302,7 @@ EOT
       [5, 6, 7, 8].iter().take(2).collect::<Vec<_>>() // =>
 EOT
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.take",
   },
   {
     :ruby_title => "take_while",
@@ -248,6 +314,7 @@ EOT
       [5, 6, 7, 8].iter().take_while(|&&e| e < 7).collect::<Vec<_>>() // =>
 EOT
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.take_while",
   },
   {
     :ruby_title => "drop",
@@ -259,6 +326,7 @@ EOT
       [5, 6, 7, 8].iter().skip(2).collect::<Vec<_>>() // =>
 EOT
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.skip",
   },
   {
     :ruby_title => "drop_while",
@@ -270,6 +338,7 @@ EOT
       [5, 6, 7, 8].iter().skip_while(|&&e| e < 7).collect::<Vec<_>>() // =>
 EOT
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.skip_while",
   },
 
   {
@@ -283,6 +352,7 @@ EOT
 EOT
     :rust_code => %([5, 6, 7, 8].iter().step_by(2).collect::<Vec<_>>() // =>),
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.step_by",
   },
   {
     :ruby_title => "zip",
@@ -290,6 +360,7 @@ EOT
     :ruby_code => %([2, 3].zip([4, 5]) # =>),
     :rust_code => %([2, 3].iter().zip([4, 5].iter()).collect::<Vec<_>>() // =>),
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.zip",
   },
   {
     :ruby_title => "with_index",
@@ -297,6 +368,7 @@ EOT
     :ruby_code => %(['a', 'b'].each.with_index.to_a # =>),
     :rust_code => %(['a', 'b'].iter().enumerate().collect::<Vec<_>>() // =>),
     :desc => "index の位置が逆なので注意",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.with_index",
   },
   {
     :ruby_title => "chain",
@@ -304,6 +376,7 @@ EOT
     :ruby_code => %([2, 3].chain([4, 5]).to_a # =>),
     :rust_code => %([2, 3].iter().chain([4, 5].iter()).collect::<Vec<_>>() // =>),
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.chain",
   },
   {
     :ruby_title => "flatten(1)",
@@ -311,6 +384,7 @@ EOT
     :ruby_code => %([[2, 3], [4, 5]].flatten(1) # =>),
     :rust_code => %([[2, 3], [4, 5]].iter().flatten().collect::<Vec<_>>() // =>),
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.flatten",
   },
   {
     :ruby_title => "flat_map",
@@ -318,6 +392,7 @@ EOT
     :ruby_code => %([[2, 3], [4, 5]].flat_map(&:itself) # =>),
     :rust_code => %([[2, 3], [4, 5]].iter().flat_map(|e| e).collect::<Vec<_>>() // =>),
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.flat_map",
   },
 
   {
@@ -330,6 +405,7 @@ EOT
       odd   // =>
 EOT
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.partition",
   },
 
   {
@@ -346,6 +422,7 @@ EOT
 EOT
     :rust_feature => "#![feature(iter_partition_in_place)]",
     :desc => "レシーバを破壊的に並び換える。ドキュメントの「個数を返す」は「境界のインデックスを返す」とも考えてもよさそう。",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.partition_in_place",
   },
   {
     :ruby_title => "?",
@@ -358,6 +435,7 @@ EOT
 EOT
     :rust_feature => "#![feature(iter_is_partitioned)]",
     :desc => "partition_in_place を適用した結果と同じなら true",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.is_partitioned",
   },
 
   {
@@ -367,6 +445,7 @@ EOT
     :rust_code => %(["a", "b", "c"].iter().intersperse(&"-").collect::<Vec<_>>() // =>),
     :rust_feature => "#![feature(iter_intersperse)]",
     :desc => "セパレータは毎回固定で良いとき用",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.intersperse",
   },
   {
     :ruby_title => "?",
@@ -375,6 +454,7 @@ EOT
     :rust_code => %(["a", "b", "c"].iter().intersperse_with(||&"-").collect::<Vec<_>>() // =>),
     :rust_feature => "#![feature(iter_intersperse)]",
     :desc => "セパレータを動的に切り替えたいとき用",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.intersperse_with",
   },
 
   ################################################################################ value
@@ -391,6 +471,7 @@ EOT
 [2, 3, 4].len()          // =>
 EOT
     :desc => "統一してほしい",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.count",
   },
 
   {
@@ -399,6 +480,7 @@ EOT
     :ruby_code => %([2, 3, 4].inject(0, :+) # =>),
     :rust_code => %([2, 3, 4].iter().fold(0, |a, e| a + e) // =>),
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.fold",
   },
 
   {
@@ -423,6 +505,7 @@ EOT
       sum // =>
 EOT
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_fold",
   },
 
   {
@@ -431,6 +514,7 @@ EOT
     :ruby_code => %([5, 6].inject(:+) # =>),
     :rust_code => %(vec![5, 6].into_iter().reduce(|a, e| a + e) // =>),
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.reduce",
   },
   {
     :ruby_title => "inject(:+) + break",
@@ -439,6 +523,7 @@ EOT
     :rust_code => %(vec![5, 6].into_iter().try_reduce(|a, e| Some(a + e)) // =>),
     :rust_feature => "#![feature(iterator_try_reduce)]",
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_reduce",
   },
 
   {
@@ -447,6 +532,7 @@ EOT
     :ruby_code => %([2, 3, 4].sum # =>),
     :rust_code => %([2, 3, 4].iter().sum::<isize>() // =>),
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.sum",
   },
   {
     :ruby_title => "inject(1, :*)",
@@ -454,6 +540,7 @@ EOT
     :ruby_code => %([2, 3, 4].inject(1, :*) # =>),
     :rust_code => %([2, 3, 4].iter().product::<isize>() // =>),
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.product",
   },
 
   {
@@ -462,6 +549,7 @@ EOT
     :ruby_code => %([2, 3, 4].all? { |e| e >= 0 } # =>),
     :rust_code => %([2, 3, 4].iter().all(|&e| e >= 0) // =>),
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.all",
   },
   {
     :ruby_title => "any?",
@@ -469,6 +557,7 @@ EOT
     :ruby_code => %([2, 3, 4].any? { |e| e >= 4 } # =>),
     :rust_code => %([2, 3, 4].iter().any(|&e| e >= 4) // =>),
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.any",
   },
   {
     :ruby_title => "find",
@@ -476,6 +565,7 @@ EOT
     :ruby_code => %([2, 3, 4].find { |e| e == 3 } # =>),
     :rust_code => %([2, 3, 4].iter().find(|&&e| e == 3) // =>),
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.find",
   },
   {
     :ruby_title => "index",
@@ -483,6 +573,7 @@ EOT
     :ruby_code => %([5, 6, 5].index { |e| e == 5 } # =>),
     :rust_code => %([5, 6, 5].iter().position(|&e| e == 5) // =>),
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.index",
   },
   {
     :ruby_title => "rindex",
@@ -490,6 +581,7 @@ EOT
     :ruby_code => %([5, 6, 5].rindex { |e| e == 5 } # =>),
     :rust_code => %([5, 6, 5].iter().rposition(|&e| e == 5) // =>),
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.rposition",
   },
 
   ################################################################################
@@ -499,6 +591,7 @@ EOT
     :ruby_code    => %([5, 6] <=> [5, 6] # =>),
     :rust_code    => %([5, 6].iter().cmp([5, 6].iter()) // =>),
     :desc         => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.cmp",
   },
   {
     :ruby_title   => "?",
@@ -507,6 +600,7 @@ EOT
     :rust_code    => %([5, 6].iter().cmp_by(&[5, 6], |&a, &b| a.cmp(&b)) // =>),
     :rust_feature => "#![feature(iter_order_by)]",
     :desc         => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.cmp_by",
   },
   {
     :ruby_title   => "<=>",
@@ -514,6 +608,7 @@ EOT
     :ruby_code    => %([5, 6] <=> [5, 6] # =>),
     :rust_code    => %([5, 6].iter().partial_cmp([5, 6].iter()) // =>),
     :desc         => "Some でラップしてある",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.partial_cmp",
   },
   {
     :ruby_title   => "?",
@@ -522,6 +617,7 @@ EOT
     :rust_code    => %([5, 6].iter().partial_cmp_by(&[5, 6], |&a, &b| a.partial_cmp(&b)) // =>),
     :rust_feature => "#![feature(iter_order_by)]",
     :desc         => "Some でラップしてある",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.partial_cmp_by",
   },
   ################################################################################
 
@@ -538,6 +634,7 @@ EOT
       [1].iter().ge([1, 2].iter())  // =>
 EOT
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.ge",
   },
 
   {
@@ -555,6 +652,7 @@ EOT
 EOT
     :rust_feature => "#![feature(iter_order_by)]",
     :desc => "これは使いづらい",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.eq_by",
   },
 
   ################################################################################
@@ -571,6 +669,7 @@ EOT
     [3, 4].iter().map(|&e| e).collect::<Vec<_>>()  // =>
 EOT
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.cloned",
     :ref_url => "https://qiita.com/lo48576/items/34887794c146042aebf1#cloned-iteratort---iteratort",
   },
   {
@@ -581,11 +680,29 @@ EOT
 EOT
     :rust_code => <<~EOT,
     [3, 4].iter().copied().collect::<Vec<_>>()     // =>
-    // ↓これと同じことらしい。って cloned のときと同じやん
+    // ↓これと同じことらしい
     [3, 4].iter().map(|&e| e).collect::<Vec<_>>()  // =>
 EOT
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.copied",
     :ref_url => "https://qiita.com/lo48576/items/34887794c146042aebf1#copied-iteratort---iteratort-%E3%81%9F%E3%81%A0%E3%81%97-t-%E3%81%AF-copy",
+  },
+
+  {
+    :hidden => true,
+    :ruby_title => "?",
+    :rust_title => "by_ref",
+    :ruby_code => <<~EOT,
+EOT
+    :rust_code => <<~EOT,
+    let mut it = [5, 6, 7].iter();
+    it.by_ref().collect::<Vec<_>>() // =>
+    // by_ref() がなければ次で失敗する
+    it                              // =>
+EOT
+    :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.by_ref",
+    :ref_url => nil,
   },
 
   ################################################################################
@@ -601,6 +718,7 @@ EOT
 [2, 3, 4].first()  // =>
 EOT
     :desc => "iter().last() はあるのに iter().first() はない",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.first",
   },
 
   {
@@ -616,6 +734,7 @@ EOT
 [2, 3, 4].iter().last() // =>
 EOT
     :desc => "単に最後が欲しいなら iter() を仲介しなくてよい",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.last",
   },
 
   {
@@ -624,6 +743,7 @@ EOT
     :ruby_code => %([2, 3, -4].max # =>),
     :rust_code => %([2_isize, 3, -4].iter().max() // =>),
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.max",
   },
   {
     :ruby_title => "max_by",
@@ -631,6 +751,7 @@ EOT
     :ruby_code => %([2, 3, -4].max_by(&:abs) # =>),
     :rust_code => %([2_isize, 3, -4].iter().max_by_key(|e| e.abs()) // =>),
     :desc => "Rust は元の値を key と呼んでいる",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.max_by_key",
   },
   {
     :ruby_title => "?",
@@ -638,22 +759,26 @@ EOT
     :ruby_code => %([2, 3, -4].sort { |a, b| a <=> b }.max # =>),
     :rust_code => %([2_isize, 3, -4].iter().max_by(|a, b| a.cmp(b)) // =>),
     :desc => "使いづらい",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.max_by",
   },
 
   {
     :ruby_title => "min",
     :rust_title => "min",
     :desc => "使い方は max と同じ",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.min",
   },
   {
     :ruby_title => "min_by",
     :rust_title => "min_by_key",
     :desc => "使い方は max_by_key と同じ",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.min_by_key",
   },
   {
     :ruby_title => "?",
     :rust_title => "min_by",
     :desc => "使い方は max_by と同じ",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.min_by",
   },
 
   ################################################################################
@@ -668,10 +793,11 @@ EOT
     :rust_code => %([2, 3, 4].iter().is_sorted() // =>),
     :rust_feature => "#![feature(is_sorted)]",
     :desc => nil,
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.is_sorted",
   },
   {
     :ruby_title => "?",
-    :rust_title => "sort_by_key",
+    :rust_title => "is_sorted_by",
     :ruby_code => <<~EOT,
       v = [2, 3, 4]
       v == v.sort { |a, b| a <=> b } # =>
@@ -679,6 +805,7 @@ EOT
     :rust_code => %([2, 3, 4].iter().is_sorted_by(|a, b| a.partial_cmp(b)) // =>),
     :rust_feature => "#![feature(is_sorted)]",
     :desc => "partial_cmp は Some(Less) みたいなのを返す",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.is_sorted_by",
   },
   {
     :ruby_title => "?",
@@ -690,5 +817,6 @@ EOT
     :rust_code => %([2_isize, -3, 4].iter().is_sorted_by_key(|e| e.abs()) // =>),
     :rust_feature => "#![feature(is_sorted)]",
     :desc => "",
+    :source_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.is_sorted_by_key",
   },
 ]
