@@ -1,12 +1,6 @@
-# https://doc.rust-lang.org/std/iter/trait.Iterator.html
-# https://danielkeep.github.io/itercheat_baked.html
-# https://qiita.com/drafts/f68495f5270ba29d45d4/edit
-
 require "pathname"
 require "fileutils"
-require "uri"
 require "cgi"
-require "./iterator_list"
 
 class Generator
   def initialize(params)
@@ -20,10 +14,12 @@ class Generator
     puts @out
     puts "-" * 80
     body = @out.join("\n") + "\n"
-    file = Pathname("_md/#{@params[:output]}.md")
+    file = Pathname("_md/#{@params[:name]}.md")
     FileUtils.makedirs(file.dirname)
     file.write(body)
   end
+
+  private
 
   def list
     av = @params[:list]
@@ -43,8 +39,12 @@ class Generator
     rust_process(e)
     desc_process(e)
     ref_process(e)
-    ground_process(e)
-    ground_process2(e)
+    s = []
+    s << play_ground_process(e)
+    s << doc_source_processs(e)
+    unless s.empty?
+      @out << s.join(" ")
+    end
   end
 
   def title_process(e)
@@ -60,11 +60,11 @@ class Generator
   def ruby_process(e)
     if !e[:ruby_code].to_s.empty?
       basename = e[:ruby_title].gsub(/\W+/, "_")
-      file = Pathname("_src/#{basename}.rb")
+      file = Pathname("_src/#{@params[:name]}/#{basename}.rb")
       s = %(#{e[:ruby_code]})
       FileUtils.makedirs(file.dirname)
       file.write(s)
-      command = "cd _src && xmpfilter #{file.basename}"
+      command = "xmpfilter #{file}"
       result = `#{command}`.strip
       @out << "```ruby:Ruby"
       @out << result
@@ -75,12 +75,12 @@ class Generator
   def rust_process(e)
     if !e[:rust_code].to_s.empty?
       basename = e[:rust_title].gsub(/\W+/, "_")
-      file = Pathname("_src/#{basename}.rs")
+      file = Pathname("_src/#{@params[:name]}/#{basename}.rs")
       puts file
 
       FileUtils.makedirs(file.dirname)
-      file.write(rust_code2(e))
-      command = "cd _src && rustc #{file.basename} && ./#{file.basename('.*')}"
+      file.write(main_rust_code(e))
+      command = "cd _src/#{@params[:name]} && rustc #{file.basename} && ./#{file.basename('.*')}"
       result = `#{command}`
       unless $?.success?
         puts file
@@ -89,9 +89,9 @@ class Generator
       end
 
       result_lines = result.lines
-      code2 = e[:rust_code].gsub(%r/=>/) { |s|
+      code2 = e[:rust_code].gsub(%r/=>.*/) { |s|
         r = result_lines.shift
-        "#{s} #{r.rstrip}"
+        "=> #{r.rstrip}"
       }
 
       result_lines.each do |e|
@@ -108,7 +108,7 @@ class Generator
     end
   end
 
-  def rust_code1(e)
+  def short_rust_code(e)
     e[:rust_code].lines.collect { |e|
       if e.include?("=>")
         e = e.sub(%r{\s*//\s*=>\s*}, "")
@@ -119,14 +119,14 @@ class Generator
     }
   end
 
-  def rust_code2(e)
+  def main_rust_code(e)
     code = []
     if e[:rust_feature]
       code << e[:rust_feature]
       code << ""
     end
     code << %(fn main() {)
-    code << %(    #{rust_code1(e).join.strip})
+    code << %(    #{short_rust_code(e).join.strip})
     code << %(})
     code.join("\n") + "\n"
   end
@@ -143,18 +143,17 @@ class Generator
     end
   end
 
-  def ground_process(e)
+  def play_ground_process(e)
     unless e[:rust_code].to_s.empty?
-      url = "https://play.rust-lang.org/?code=#{CGI.escape(rust_code2(e))}&version=nightly&edition=2021"
-      @out << %([Rust Playground で確認する](#{url}))
+      code = CGI.escape(main_rust_code(e))
+      url = "https://play.rust-lang.org/?code=#{code}&version=nightly&edition=2021"
+      %([実行](#{url}))
     end
   end
 
-  def ground_process2(e)
+  def doc_source_processs(e)
     if url = e[:source_url]
-      @out << %([本家のドキュメント](#{url}))
+      %([DOC](#{url}))
     end
   end
 end
-
-Generator.new(list: ITERATOR_LIST, output: "iterator", target: :nightly).run

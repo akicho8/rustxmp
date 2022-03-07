@@ -1,1 +1,3 @@
+https://doc.rust-lang.org/std/iter/trait.Iterator.html
+https://danielkeep.github.io/itercheat_baked.html
 https://qiita.com/drafts/f68495f5270ba29d45d4/edit

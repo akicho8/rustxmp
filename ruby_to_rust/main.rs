@@ -7,9 +7,10 @@
 #![feature(is_sorted)]
 #![feature(iterator_try_reduce)]
 #![feature(iter_advance_by)]
+#![feature(slice_group_by)]
+#![feature(slice_take)]
 
 fn main() {
-
     // // println!("{:?}", [-3_i32, 0, 1, 5, -10].iter().max_by_key(|x| x.abs()));
     //
     // // let mut it = [2, 3].iter();
@@ -291,7 +292,272 @@ fn main() {
     // });
     // println!("{:?}", it.collect::<Vec<_>>());
 
-    let mut it = [5, 6, 7].iter();
-    println!("{:?}", it.by_ref().collect::<Vec<_>>());
-    println!("{:?}", it);
+    // let mut it = [5, 6, 7].iter();
+    // println!("{:?}", it.by_ref().collect::<Vec<_>>());
+    // println!("{:?}", it);
+
+    // ▼with_capacity(n): 最初から n だけ確保しておく
+    let v: Vec<isize> = Vec::with_capacity(3);
+    println!("{:?}", v.len());
+    println!("{:?}", v.capacity());
+
+    // ▼reserve(n): 最低限 n は確保しておく
+    let mut v: Vec<isize> = Vec::with_capacity(0);
+    v.reserve(5);
+    println!("{:?}", v.capacity() >= 5);
+
+    // ▼reserve_exact(n): reserve よりも少なく確保する版？？？
+    let mut v: Vec<isize> = Vec::with_capacity(0);
+    v.reserve_exact(5);
+    println!("{:?}", v.capacity() >= 5);
+
+    // // ▼try_reserve(n): reserve の失敗するかもしれない版
+    // let mut v: Vec<isize> = Vec::with_capacity(0);
+    // v.try_reserve(5);
+    // println!("{:?}", v.capacity() >= 5);
+
+    // ▼swap_remove(i): iの位置を削除して詰める。O(1) なかわりに順序が変わる。最後の要素が来る
+    let mut v = vec![5, 6, 7, 8];
+    println!("{:?}", v.swap_remove(0)); // => 5
+    println!("{:?}", v);                // => [8, 6, 7]
+
+    // ▼remove(i): iの位置を削除して詰める。O(n) なかわりに順序は変わらない
+    let mut v = vec![5, 6, 7, 8];
+    println!("{:?}", v.remove(0)); // => 5
+    println!("{:?}", v);           // => [6, 7, 8]
+
+    // ▼insert(i): iの位置に入れてずらす
+    let mut v = vec![5, 7, 8];
+    v.insert(1, 6);
+    println!("{:?}", v);           // => [5, 6, 7, 8]
+
+    // ▼retain: select!
+    let mut v = vec![-1, -1, 1, 1];
+    v.retain(|&e| e > 0);
+    println!("{:?}", v);           // => [1, 1]
+
+    // ▼push: push
+    let mut v = vec![5, 6];
+    v.push(7);
+    println!("{:?}", v);           // => [5, 6, 7]
+
+    // ▼pop: pop
+    let mut v = vec![5, 6, 7];
+    println!("{:?}", v.pop());     // => Some(7)
+    println!("{:?}", v);           // => [5, 6]
+
+    // ▼append: concat
+    let mut a = vec![5, 6];
+    let mut b = vec![7, 8];
+    a.append(&mut b);
+    println!("{:?}", a);     // => [5, 6, 7, 8]
+    println!("{:?}", b);     // => []
+
+    // ▼is_empty: empty?
+    let v: Vec<isize> = vec![];
+    println!("{:?}", v.is_empty()); // => true
+
+    // ▼clear: clear
+    let mut v = vec![5, 6];
+    v.clear();
+    println!("{:?}", v);        // => []
+
+    // ▼len: length
+    let v = vec![5, 6];
+    println!("{:?}", v.len());  // => 2
+
+    // ▼split_at: ?
+    let v = vec![5, 6, 7, 8];
+    let (left, right) = v.split_at(2);
+    println!("{:?}", left);     // => [5, 6]
+    println!("{:?}", right);    // => [7, 8]
+    println!("{:?}", v);        // => [5, 6, 7, 8]
+
+    // ▼split_off: ?
+    let mut a = vec![5, 6, 7, 8];
+    let b = a.split_off(2);
+    println!("{:?}", a);  // => [5, 6]
+    println!("{:?}", b);  // => [7, 8]
+
+    // ▼first: first
+    let v = vec![5, 6, 7];
+    println!("{:?}", v.first()); // => Some(5)
+
+    // ▼last: last
+    let v = vec![5, 6, 7];
+    println!("{:?}", v.last()); // => Some(7)
+
+    // ▼get: at
+    let v = vec![5, 6, 7, 8];
+    println!("{:?}", v.get(1));     // => Some(6)
+    println!("{:?}", v.get(1..=2)); // => Some([6, 7])
+
+    // ▼swap: ?
+    let mut v = vec![5, 6, 7, 8];
+    println!("{:?}", v.swap(1, 2));  // => ()
+    println!("{:?}", v);             // => [5, 7, 6, 8]
+
+    // ▼windows: each_cons(2).to_a
+    let v = vec![5, 6, 7, 8];
+    println!("{:?}", v.windows(2).collect::<Vec<_>>()); // => [[5, 6], [6, 7], [7, 8]]
+
+    // ▼chunks: each_slice(2).to_a
+    let v = vec![5, 6, 7, 8, 9];
+    println!("{:?}", v.chunks(2).collect::<Vec<_>>()); // => [[5, 6], [7, 8], [9]]
+
+    // ▼rchunks: ?
+    let v = vec![5, 6, 7, 8, 9];
+    println!("{:?}", v.rchunks(2).collect::<Vec<_>>()); // => [[8, 9], [6, 7], [5]]
+
+    // ▼split: ?
+    let v = vec![5, 6, 0, 7, 8, 0, 9];
+    println!("{:?}", v.split(|&e| e == 0).collect::<Vec<_>>()); // => [[5, 6], [7, 8], [9]]
+
+    // ▼split_inclusive: ?
+    let v = vec![5, 6, 0, 7, 8, 0, 9];
+    println!("{:?}", v.split_inclusive(|&e| e == 0).collect::<Vec<_>>()); // => [[5, 6, 0], [7, 8, 0], [9]]
+
+    // ▼rsplit: ?
+    let v = vec![5, 6, 0, 7, 8, 0, 9];
+    println!("{:?}", v.rsplit(|&e| e == 0).collect::<Vec<_>>()); // => [[9], [7, 8], [5, 6]]
+
+    // ▼splitn: ?
+    let v = vec![5, 6, 0, 7, 8, 0, 9];
+    println!("{:?}", v.splitn(2, |&e| e == 0).collect::<Vec<_>>()); // => [[5, 6], [7, 8, 0, 9]]
+
+    // ▼rsplitn: ?
+    let v = vec![5, 6, 0, 7, 8, 0, 9];
+    println!("{:?}", v.rsplitn(2, |&e| e == 0).collect::<Vec<_>>()); // => [[9], [5, 6, 0, 7, 8]]
+
+    // ▼contains: ?
+    println!("{:?}", [5, 6, 7].contains(&6)); // => true
+
+    // ▼starts_with: ?
+    println!("{:?}", [5, 6, 7].starts_with(&[5, 6])); // => true
+
+    // ▼ends_with: ?
+    println!("{:?}", [5, 6, 7].ends_with(&[6, 7])); // => true
+
+    // ▼strip_prefix: ?
+    println!("{:?}", [5, 6, 7, 8].strip_prefix(&[5, 6])); // => Some([7, 8])
+
+    // ▼strip_suffix: ?
+    println!("{:?}", [5, 6, 7, 8].strip_suffix(&[7, 8])); // => Some([5, 6])
+
+    // ▼binary_search: ?
+    println!("{:?}", [5, 6, 7, 8].binary_search(&7)); // => Ok(2)
+
+    // ▼select_nth_unstable: ?
+    let mut v = vec![6, 8, 7, 5];
+    v.select_nth_unstable(0);
+    println!("{:?}", v); // => [5, 8, 7, 6]
+
+    // ▼select_nth_unstable_by: ?
+    let mut v = vec![6, 8, 7, 5];
+    v.select_nth_unstable_by(0, |a, b| a.cmp(b));
+    println!("{:?}", v); // => [5, 8, 7, 6]
+
+    // ▼select_nth_unstable_by_key: ?
+    let mut v = vec![6_i32, 8, 7, 5];
+    v.select_nth_unstable_by_key(0, |e| e.abs());
+    println!("{:?}", v); // => [5, 8, 7, 6]
+
+    // ▼rotate_left: ?
+    let mut v = vec![5, 6, 7];
+    v.rotate_left(1);
+    println!("{:?}", v); // => [6, 7, 5]
+
+    // ▼rotate_right: ?
+    let mut v = vec![5, 6, 7];
+    v.rotate_right(1);
+    println!("{:?}", v); // => [7, 5, 6]
+
+    // ▼fill: ?
+    let mut v = vec![5, 6, 7];
+    v.fill(8);
+    println!("{:?}", v);        // => [8, 8, 8]
+
+    // ▼fill_with: ?
+    let mut v = vec![5, 6, 7];
+    v.fill_with(|| 8);
+    println!("{:?}", v);        // => [8, 8, 8]
+
+    // ▼sort: ?
+    let mut v = vec![7, 6, 5];
+    v.sort();
+    println!("{:?}", v);        // => [5, 6, 7]
+
+    // ▼sort_by: ?
+    let mut v = vec![7, 6, 5];
+    v.sort_by(|a, b| a.cmp(b));
+    println!("{:?}", v);        // => [5, 6, 7]
+
+    // ▼sort_by_key: ?
+    let mut v = vec![7_i32, -6, 5];
+    v.sort_by_key(|e| e.abs());
+    println!("{:?}", v);        // => [5, -6, 7]
+
+    // ▼sort_by_cached_key: ?
+    let mut v = vec![7_i32, -6, 5];
+    v.sort_by_cached_key(|e| e.abs());
+    println!("{:?}", v);        // => [5, -6, 7]
+
+    // ▼sort_unstable: ?
+    let mut v = vec![6, 8, 7, 5];
+    v.sort_unstable();
+    println!("{:?}", v); // => [5, 6, 7, 8]
+
+    // ▼sort_unstable_by: ?
+    let mut v = vec![6, 8, 7, 5];
+    v.sort_unstable_by(|a, b| a.cmp(b));
+    println!("{:?}", v); // => [5, 6, 7, 8]
+
+    // ▼sort_unstable_by_key: ?
+    let mut v = vec![-6_i32, 8, -7, 5];
+    v.sort_unstable_by_key(|e| e.abs());
+    println!("{:?}", v); // => [5, -6, -7, 8]
+
+    // ▼is_sorted: ?
+    println!("{:?}", [5, 6, 7].is_sorted()); // => true
+
+    // ▼is_sorted_by: ?
+    println!("{:?}", [5, 6, 7].is_sorted_by(|a, b| a.partial_cmp(b))); // => true
+
+    // ▼is_sorted_by_key: ?
+    println!("{:?}", [5_i32, -6, 7].is_sorted_by_key(|e| e.abs())); // => true
+
+    // ▼take: ?
+    let mut v: &[_] = &[5, 6, 7];
+    println!("{:?}", v.take(..2)); // Some([5, 6])
+    println!("{:?}", v);           // [7]
+
+    // ▼take_first: ?
+    let mut v: &[_] = &[5, 6, 7];
+    println!("{:?}", v.take_first()); // Some(5)
+    println!("{:?}", v);              // [6, 7]
+
+    // ▼take_last: ?
+    let mut v: &[_] = &[5, 6, 7];
+    println!("{:?}", v.take_last()); // Some(7)
+    println!("{:?}", v);              // [5, 6]
+
+    // // ▼is_ascii: ?
+    // let mut v = vec![String::from("abc")];
+    // println!("{:?}", v.is_ascii());
+
+    // ▼to_vec: dup
+    let v = vec![5, 6, 7];
+    println!("{:?}", v.to_vec()); // => [5, 6, 7]
+
+    // ▼concat:
+    println!("{:?}", ["foo", "bar"].concat());     // => "foobar"
+    println!("{:?}", [["foo"], ["bar"]].concat()); // => ["foo", "bar"]
+    println!("{:?}", [[5, 6], [7, 8]].concat());   // => [5, 6, 7, 8]
+
+    // ▼join
+    println!("{:?}", ["foo", "bar"].join("-"));     // => "foo-bar"
+    println!("{:?}", [[5, 6], [7, 8]].join(&0));   // => [5, 6, 0, 7, 8]
+
+    // ▼group_by: chunk 相当
+    println!("{:?}", [5, 6, 6, 5].group_by(|a, b| a == b).collect::<Vec<_>>()); // => [[5], [6, 6], [5]]
 }
