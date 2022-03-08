@@ -1,5 +1,3 @@
 fn main() {
-    // ▼is_empty: empty?
-let v: Vec<isize> = vec![];
-println!("{:?}", v.is_empty());
+    println!("{:?}", Vec::<isize>::new().is_empty());
 }

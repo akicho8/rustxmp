@@ -1,3 +1,4 @@
+require "active_support/core_ext/array/wrap"
 require "pathname"
 require "fileutils"
 require "cgi"
@@ -26,7 +27,10 @@ class Generator
     if @params[:target] == :stable
       av = av.reject { |e| e[:rust_feature] }
     end
-    if v = ARGV.first
+    if v = @params[:range]
+      av = Array.wrap(av[eval(v)])
+    end
+    if v = @params[:match]
       av = av.find_all { |e| [e[:ruby_title], e[:rust_title]].join("/").include?(v) }
     end
     av

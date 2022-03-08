@@ -1,6 +1,5 @@
 fn main() {
-    // ▼get: at
-let v = vec![5, 6, 7, 8];
+    let v = vec![5, 6, 7, 8];
 println!("{:?}", v.get(1));
 println!("{:?}", v.get(1..=2));
 }

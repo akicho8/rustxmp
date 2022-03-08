@@ -1,4 +1,3 @@
 fn main() {
-    // ▼strip_suffix: ?
-println!("{:?}", [5, 6, 7, 8].strip_suffix(&[7, 8]));
+    println!("{:?}", [5, 6, 7].strip_suffix(&[6, 7]));
 }
