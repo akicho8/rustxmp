@@ -561,7 +561,10 @@ fn main() {
     // ▼group_by: chunk 相当
     println!("{:?}", [5, 6, 6, 5].group_by(|a, b| a == b).collect::<Vec<_>>()); // => [[5], [6, 6], [5]]
 
-    let mut v: &[_] = &[5, 6, 7, 8];
-    println!("{:?}", v.take(2)); // Some([5, 6])
-    println!("{:?}", v);           // [7]
+    // let mut v: &[_] = &[5, 6, 7, 8];
+    // println!("{:?}", v.take(2)); // Some([5, 6])
+    // println!("{:?}", v);           // [7]
+
+    println!("{:?}", [0; 0].is_empty());
+
 }

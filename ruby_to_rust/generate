@@ -5,14 +5,14 @@ require "./iterator_list"
 require "./vec_list"
 
 class Generate < Thor
-  desc "markdown", "markdownに変換"
+  desc "runner", "一括変換"
   option :range,  type: :string, aliases: "-r", default: "0..-1", desc: "範囲"
   option :match,  type: :string, aliases: "-m", default: nil,     desc: "対象"
-  def markdown
+  def runner
     new_options = options.transform_keys(&:to_sym)
     ARGV.shift
     [
-      # { :list => ITERATOR_LIST, :name => "iterator", :target => "nightly", },
+      { :list => ITERATOR_LIST, :name => "iterator", :target => "nightly", },
       { :list => VEC_LIST,      :name => "vec",      :target => "nightly", },
     ].each do |e|
       Generator.new(e.merge(new_options)).run
