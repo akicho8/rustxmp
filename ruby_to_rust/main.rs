@@ -560,18 +560,8 @@ fn main() {
 
     // ▼group_by: chunk 相当
     println!("{:?}", [5, 6, 6, 5].group_by(|a, b| a == b).collect::<Vec<_>>()); // => [[5], [6, 6], [5]]
-    
-    println!("{:?}", "aaaaaaaaaaaaa");
-    
-    // ▼sort_by_key: ?
-    let mut v = vec![7_i32, -6, 5];
-    v.sort_by_key(|e|
-                  {
-                      println!("{:?}", e);
-                      e.abs()
-                  });
-    println!("{:?}", v);        // => [5, -6, 7]
-    
-    
 
+    let mut v: &[_] = &[5, 6, 7, 8];
+    println!("{:?}", v.take(2)); // Some([5, 6])
+    println!("{:?}", v);           // [7]
 }

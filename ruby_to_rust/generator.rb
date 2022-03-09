@@ -31,7 +31,7 @@ class Generator
       av = Array.wrap(av[eval(v)])
     end
     if v = @params[:match]
-      av = av.find_all { |e| [e[:ruby_title], e[:rust_title]].join("/").include?(v) }
+      av = av.find_all { |e| [e[:ruby_method], e[:rust_method]].join("/").include?(v) }
     end
     av
   end
@@ -52,20 +52,20 @@ class Generator
   end
 
   def title_process(e)
-    if e[:rust_title] == e[:ruby_title] && false
-      s = "## #{e[:ruby_title]}"
+    if e[:rust_method] == e[:ruby_method] && false
+      s = "## #{e[:ruby_method]}"
     else
-      s = "## #{e[:ruby_title]} → #{e[:rust_title]}"
+      s = "## #{e[:ruby_method]} → #{e[:rust_method]}"
     end
     puts s
     @out << s
   end
 
   def ruby_process(e)
-    if !e[:ruby_code].to_s.empty?
-      basename = e[:ruby_title].gsub(/\W+/, "_")
+    if !e[:ruby_example].to_s.empty?
+      basename = e[:ruby_method].gsub(/\W+/, "_")
       file = Pathname("_src/#{@params[:name]}/#{basename}.rb")
-      s = %(#{e[:ruby_code]})
+      s = %(#{e[:ruby_example]})
       FileUtils.makedirs(file.dirname)
       file.write(s)
       command = "xmpfilter #{file}"
@@ -77,13 +77,13 @@ class Generator
   end
 
   def rust_process(e)
-    if !e[:rust_code].to_s.empty?
-      basename = e[:rust_title].gsub(/\W+/, "_")
+    if !e[:rust_example].to_s.empty?
+      basename = e[:rust_method].gsub(/\W+/, "_")
       file = Pathname("_src/#{@params[:name]}/#{basename}.rs")
       puts file
 
       FileUtils.makedirs(file.dirname)
-      file.write(main_rust_code(e))
+      file.write(main_rust_example(e))
       command = "cd _src/#{@params[:name]} && rustc #{file.basename} && ./#{file.basename('.*')}"
       result = `#{command}`
       unless $?.success?
@@ -93,7 +93,7 @@ class Generator
       end
 
       result_lines = result.lines
-      code2 = e[:rust_code].gsub(%r/=>.*/) { |s|
+      code2 = e[:rust_example].gsub(%r/=>.*/) { |s|
         r = result_lines.shift
         "=> #{r.rstrip}"
       }
@@ -112,8 +112,8 @@ class Generator
     end
   end
 
-  def short_rust_code(e)
-    e[:rust_code].lines.collect { |e|
+  def short_rust_example(e)
+    e[:rust_example].lines.collect { |e|
       if e.include?("=>")
         e = e.sub(%r{\s*//\s*=>\s*}, "")
         %(println!("{:?}", #{e});\n)
@@ -123,14 +123,14 @@ class Generator
     }
   end
 
-  def main_rust_code(e)
+  def main_rust_example(e)
     code = []
     if e[:rust_feature]
       code << e[:rust_feature]
       code << ""
     end
     code << %(fn main() {)
-    code << %(    #{short_rust_code(e).join.strip})
+    code << %(    #{short_rust_example(e).join.strip})
     code << %(})
     code.join("\n") + "\n"
   end
@@ -148,15 +148,15 @@ class Generator
   end
 
   def play_ground_process(e)
-    unless e[:rust_code].to_s.empty?
-      code = CGI.escape(main_rust_code(e))
+    unless e[:rust_example].to_s.empty?
+      code = CGI.escape(main_rust_example(e))
       url = "https://play.rust-lang.org/?code=#{code}&version=nightly&edition=2021"
       %([実行](#{url}))
     end
   end
 
   def doc_source_processs(e)
-    if url = e[:source_url]
+    if url = e[:doc_url]
       %([DOC](#{url}))
     end
   end
