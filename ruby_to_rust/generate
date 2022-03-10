@@ -1,23 +1,32 @@
 #!/usr/bin/env ruby
+
 require "thor"
 require "./generator"
+
 require "./iterator_list"
 require "./vec_list"
+require "./string_list"
 
 class Generate < Thor
   desc "runner", "一括変換"
-  option :range,  type: :string, aliases: "-r", default: "0..-1", desc: "範囲"
-  option :match,  type: :string, aliases: "-m", default: nil,     desc: "対象"
+  option :range,   type: :string, aliases: "-r", default: "0..-1",   desc: "範囲"
+  option :target,  type: :string, aliases: "-t", default: "nightly", desc: "rustc の種類"
+  option :method,  type: :string, aliases: "-m", default: nil,       desc: "対象メソッド"
+  option :class,   type: :string, aliases: "-c", default: nil,       desc: "対象クラス"
   def runner
+    list = [
+      VEC_LIST,
+      ITERATOR_LIST,
+      STRING_LIST,
+    ]
+    if v = options[:class]
+      list = list.find_all { |e| e[:name].match?(v) }
+    end
     new_options = options.transform_keys(&:to_sym)
-    ARGV.shift
-    [
-      { :list => ITERATOR_LIST, :name => "iterator", :target => "nightly", },
-      { :list => VEC_LIST,      :name => "vec",      :target => "nightly", },
-    ].each do |e|
+    list.each do |e|
       Generator.new(e.merge(new_options)).run
     end
   end
 end
 
-Generate.start(ARGV)
+Generate.start

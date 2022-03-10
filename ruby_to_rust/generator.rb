@@ -40,7 +40,7 @@ class Generator
     if v = @params[:range]
       av = Array.wrap(av[eval(v)])
     end
-    if v = @params[:match]
+    if v = @params[:method]
       av = av.find_all { |e| [e[:ruby_method], e[:rust_method]].join("/").include?(v) }
     end
     av
@@ -72,6 +72,7 @@ class Generator
     end
 
     def render_all
+      validate!
       title_process
       ruby_process
       rust_process
@@ -94,7 +95,7 @@ class Generator
 
     def title_process
       if @params[:rust_method] == @params[:ruby_method] && false
-        s = "## #{@params[:ruby_method]}"
+        s = "# #{@params[:ruby_method]}"
       else
         s = "## `#{@params[:ruby_method]}` → `#{@params[:rust_method]}`"
       end
@@ -201,6 +202,17 @@ class Generator
     def doc_source_processs
       if url = @params[:doc_url]
         %([DOC](#{url}))
+      end
+    end
+
+    def validate!
+      if url = @params[:doc_url]
+        methods = @params[:rust_method].to_s.scan(/\w+/)
+        if methods.one?
+          unless url.include?(methods.first)
+            abort @params.inspect
+          end
+        end
       end
     end
   end

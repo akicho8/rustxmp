@@ -9,6 +9,8 @@
 #![feature(iter_advance_by)]
 #![feature(slice_group_by)]
 #![feature(slice_take)]
+#![feature(vec_retain_mut)]
+#![feature(slice_partition_dedup)]
 
 fn main() {
     // // println!("{:?}", [-3_i32, 0, 1, 5, -10].iter().max_by_key(|x| x.abs()));
@@ -565,6 +567,58 @@ fn main() {
     // println!("{:?}", v.take(2)); // Some([5, 6])
     // println!("{:?}", v);           // [7]
 
-    println!("{:?}", [0; 0].is_empty());
+    // println!("{:?}", [0; 0].is_empty());
+
+    // let mut v = vec![
+    //     String::from("a"),
+    //     String::from("b"),
+    //     String::from("c"),
+    // ];
+    // v.retain_mut(|e| {
+    //     if e == "b" || e == "c" {
+    //         if e == "b" {
+    //             *e = e.to_uppercase();
+    //         }
+    //         true
+    //     } else {
+    //         false
+    //     }
+    // });
+    // println!("{:?}", v);
+
+    // let mut v = vec![5, 5, 6, 6, 5, 5, 5];
+    // v.dedup_by_key(|e| *e);
+    // println!("{:?}", v);
+
+    // let mut v = vec![5, 5, 6, 6, 5, 5, 5];
+    // v.dedup_by(|a, b| a == b);
+    // println!("{:?}", v);
+
+    // println!("{:?}", [0x41, 0x42, 0x43].is_ascii());
+
+    // let mut v = [97, 66, 99, 68];   // "aBcD"
+    // v.make_ascii_uppercase();
+    // println!("{:?}", v);        // [65, 66, 67, 68]
+
+    // let mut v = [97, 66, 99, 68];   // "aBcD"
+    // v.make_ascii_lowercase();
+    // println!("{:?}", v);        // [97, 98, 99, 100]
+
+    // let v = [5, 6];
+    // println!("{:?}", v.repeat(2));
+    // println!("{:?}", [5, 6].repeat(2));
+
+    // let mut slice = [5, 5, 6, 7, 7, 6, 5, 5];
+    // let (dedup, duplicates) = slice.partition_dedup();
+    // println!("{:?}", dedup);
+    // println!("{:?}", duplicates);
+
+    // println!("{:?}", ["a", "b"].join("-"));
+    // println!("{:?}", vec![5, 6].join(0));
+
+    // ▼fill_with: ?
+    let mut v = vec![5, 6, 7];
+    v.fill_with(|| 8);
+    println!("{:?}", v);        // => [8, 8, 8]
 
 }
