@@ -336,7 +336,7 @@ v # => [8, 8, 8]
       v             // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => "前に詰めるので最悪 O(n) かかる",
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.remove",
     },
     {
@@ -356,7 +356,7 @@ v  # =>
       v                 // =>
   EOT
       :rust_feature => nil,
-      :desc => "順番を気にしないのであれば remove より速い。スライドしないので O(1) で消せる。",
+      :desc => "順番を気にしないとき用。前に詰めないので O(1) で消せる",
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.swap_remove",
     },
     {
@@ -395,7 +395,7 @@ v  # =>
     },
 
     {
-      :ruby_method => "select! 要素も更新する",
+      :ruby_method => "select! しつつ要素も更新",
       :rust_method => "retain_mut",
       :ruby_example => <<~EOT,
 # あまりおすすめしない書き方です
