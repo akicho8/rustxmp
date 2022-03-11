@@ -1,6 +1,6 @@
 fn main() {
     println!(
         "{:?}",
-        [2, 3].iter().chain([4, 5].iter()).collect::<Vec<_>>()
+        [5, 6].iter().chain([7, 8].iter()).collect::<Vec<_>>()
     );
 }

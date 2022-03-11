@@ -1,3 +1,3 @@
 fn main() {
-    println!("{:?}", [2_isize, 3, -4].iter().max());
+    println!("{:?}", [5_isize, 6, -7].iter().max());
 }

@@ -1,1 +1,1 @@
-[[2, 3], [4, 5]].flat_map(&:itself) # =>
+[[5, 6], [7, 8]].flat_map(&:itself) # =>

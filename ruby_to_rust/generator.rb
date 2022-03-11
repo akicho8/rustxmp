@@ -21,9 +21,7 @@ class Generator
     @out = []
     table_build
     list.each { |e| render_all(e) }
-    puts "-" * 80
-    puts @out
-    puts "-" * 80
+    confirm
     body = @out.join("\n") + "\n"
     file = Pathname("_md/#{@params[:name]}.md")
     FileUtils.makedirs(file.dirname)
@@ -62,6 +60,14 @@ class Generator
     @out << ""
     @element = Element.new(self, e)
     @out += @element.render_all
+  end
+
+  def confirm
+    if @params[:range] || @params[:method]
+      puts "-" * 80
+      puts @out
+      puts "-" * 80
+    end
   end
 
   class Element

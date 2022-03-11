@@ -1,1 +1,1 @@
-['a', 'b'].each.with_index.to_a # =>
+["a", "b"].each.with_index.entries # =>

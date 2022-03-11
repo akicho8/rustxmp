@@ -3,6 +3,6 @@
 fn main() {
     println!(
         "{:?}",
-        [2, 3, 4].iter().is_sorted_by(|a, b| a.partial_cmp(b))
+        [5, 6, 7].iter().is_sorted_by(|a, b| a.partial_cmp(b))
     );
 }

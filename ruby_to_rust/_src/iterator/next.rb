@@ -1,4 +1,4 @@
-it = [2, 3].each
-it.next # =>
-it.next # =>
+it = [5, 6].each
+it.next           # =>
+it.next           # =>
 it.next rescue $! # =>

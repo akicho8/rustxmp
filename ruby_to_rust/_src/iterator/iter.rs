@@ -1,3 +1,3 @@
 fn main() {
-    println!("{:?}", [2, 3].iter());
+    println!("{:?}", [5, 6, 7].iter());
 }

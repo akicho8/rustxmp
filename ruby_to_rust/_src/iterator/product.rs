@@ -1,3 +1,3 @@
 fn main() {
-    println!("{:?}", [2, 3, 4].iter().product::<isize>());
+    println!("{:?}", [5, 6, 7].iter().product::<isize>());
 }

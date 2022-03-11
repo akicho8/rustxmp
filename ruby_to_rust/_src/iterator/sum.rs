@@ -1,3 +1,3 @@
 fn main() {
-    println!("{:?}", [2, 3, 4].iter().sum::<isize>());
+    println!("{:?}", [5, 6, 7].iter().sum::<isize>());
 }

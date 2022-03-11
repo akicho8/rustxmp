@@ -9,7 +9,7 @@ require "./string_list"
 
 class Generate < Thor
   desc "runner", "一括変換"
-  option :range,   type: :string, aliases: "-r", default: "0..-1",   desc: "範囲"
+  option :range,   type: :string, aliases: "-r", default: nil,       desc: "範囲"
   option :target,  type: :string, aliases: "-t", default: "nightly", desc: "rustc の種類"
   option :method,  type: :string, aliases: "-m", default: nil,       desc: "対象メソッド"
   option :class,   type: :string, aliases: "-c", default: nil,       desc: "対象クラス"

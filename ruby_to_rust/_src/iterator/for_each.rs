@@ -1,3 +1,3 @@
 fn main() {
-    ["a", "b", "c"].iter().for_each(|e| println!("{:?}", e));
+    [5, 6, 7].iter().for_each(|e| println!("{:?}", e));
 }

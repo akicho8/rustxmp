@@ -1,4 +1,6 @@
-v = [5, 5, 6, 7, 7, 6, 5, 5]
-a = v.chunk(&:itself).entries
-a.collect(&:first)                                   # => [5, 6, 7, 6, 5]
-a.find_all { |_, e| e.length >= 2 }.collect(&:first) # => [5, 7, 5]
+# [].reduce(&:*)                  # => nil
+# [].reduce(1, &:*)                  # => 1
+
+# [5, 6, 7, 8].find(&:even?) * 10 # => 60
+
+[6].find(&:even?)&.* 10 # => 60

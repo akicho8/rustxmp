@@ -1,3 +1,6 @@
 fn main() {
-    println!("{:?}", [2, 3].iter().zip([4, 5].iter()).collect::<Vec<_>>());
+    println!(
+        "{:?}",
+        [5, 6, 7].iter().zip([7, 8].iter()).collect::<Vec<_>>()
+    );
 }

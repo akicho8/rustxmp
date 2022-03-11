@@ -3,7 +3,7 @@ fn main() {
         counter: i32,
     }
 
-    // 偶数番目だけ番号を返す
+    // カウンタが偶数のときだけその値を返す
     impl Iterator for Foo {
         type Item = i32;
 

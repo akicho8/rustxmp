@@ -1,3 +1,3 @@
 fn main() {
-    println!("{:?}", [2, 3, 4].iter().find(|&&e| e == 3));
+    println!("{:?}", [5, 6, 7].iter().find(|&&e| e == 6));
 }

@@ -1,4 +1,4 @@
 fn main() {
-    println!("{:?}", [2, 3, 4].iter().count());
-    println!("{:?}", [2, 3, 4].len());
+    println!("{:?}", [5, 6, 7].iter().count());
+    println!("{:?}", [5, 6, 7].len());
 }

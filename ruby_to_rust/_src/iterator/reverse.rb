@@ -1,1 +1,1 @@
-["a", "b"].reverse # =>
+[5, 6, 7].reverse # =>

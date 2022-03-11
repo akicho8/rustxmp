@@ -1,20 +1,16 @@
 fn main() {
-    // ok() は Result の Ok を Some に変換し、Err を None にする
+    let r = [5, 6, 7, 8]
+        .iter()
+        .filter_map(|&e| if e % 2 == 0 { Some(e * 10) } else { None });
+    println!("{:?}", r.collect::<Vec<_>>());
+
+    // 混乱しにくい書き方
     println!(
         "{:?}",
-        ["", "5", "", "6"]
+        [5, 6, 7, 8]
             .iter()
-            .filter_map(|e| e.parse::<isize>().ok())
-            .collect::<Vec<_>>()
-    );
-    // 分解すると map + filter + map 相当をしていることがわかる
-    println!(
-        "{:?}",
-        ["", "5", "", "6"]
-            .iter()
-            .map(|e| e.parse::<isize>())
-            .filter(|e| e.is_ok())
-            .map(|e| e.unwrap())
+            .filter(|&e| e % 2 == 0)
+            .map(|e| e * 10)
             .collect::<Vec<_>>()
     );
 }

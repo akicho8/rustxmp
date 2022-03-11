@@ -1,3 +1,3 @@
 fn main() {
-    println!("{:?}", [2, 3, 4].iter().any(|&e| e >= 4));
+    println!("{:?}", [5, 6, 7].iter().any(|&e| e >= 6));
 }

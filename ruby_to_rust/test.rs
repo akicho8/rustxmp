@@ -617,8 +617,43 @@ fn main() {
     // println!("{:?}", vec![5, 6].join(0));
 
     // ▼fill_with: ?
-    let mut v = vec![5, 6, 7];
-    v.fill_with(|| 8);
-    println!("{:?}", v);        // => [8, 8, 8]
+    // let mut v = vec![5, 6, 7];
+    // v.fill_with(|| 8);
+    // println!("{:?}", v);        // => [8, 8, 8]
 
+    // println!("{:?}", ["a", "b"].iter().enumerate().collect::<Vec<_>>());
+
+    // let v: u8 = 0;
+    // println!("{:?}", v.checked_add(300));
+
+    // let r = vec![5, 6, 7].into_iter().try_reduce(|a, e| {
+    //     if a >= 10 {
+    //         return None
+    //     }
+    //     Some(a + e)
+    // });
+    // println!("{:?}", r);
+
+    // let v = [4, 5, 6];
+    // println!("{:?}", v.iter().filter(|&e| e % 2 == 0).collect::<Vec<_>>() );
+    // println!("{:?}", v);
+
+    // let r = [5, 6, 7].iter().filter_map(|&e| {
+    //     if e == 6 { None } else { Some(e) }
+    // });
+    // println!("{:?}", r.collect::<Vec<_>>());
+
+    // let r = [6, 6, 6, 6].iter().find_map(|&e| {
+    //     if e % 2 == 0 {
+    //        Some(e * 10)
+    //     } else {
+    //        None
+    //     }
+    // });
+    //
+    // println!("{:?}", r);
+
+    if let Some(v) = [5, 6, 7, 8].iter().find(|&e| e % 2 == 0) {
+        println!("{:?}", v * 10);
+    }
 }

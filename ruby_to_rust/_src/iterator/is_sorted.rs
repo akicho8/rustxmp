@@ -1,5 +1,5 @@
 #![feature(is_sorted)]
 
 fn main() {
-    println!("{:?}", [2, 3, 4].iter().is_sorted());
+    println!("{:?}", [5, 6, 7].iter().is_sorted());
 }

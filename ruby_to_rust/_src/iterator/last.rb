@@ -1,2 +1,2 @@
-[2, 3, 4].last           # =>
-[2, 3, 4].each.to_a.last # =>
+[5, 6, 7].last              # =>
+[5, 6, 7].each.entries.last # =>
