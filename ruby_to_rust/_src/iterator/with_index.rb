@@ -1,1 +1,0 @@
-["a", "b"].each.with_index.entries # =>
