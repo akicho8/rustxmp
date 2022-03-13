@@ -236,7 +236,7 @@ vec![5, 6, 7, 8, 9].get(2..)  // =>
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.get",
     },
     {
-      :ruby_method => "drop の破壊版",
+      :ruby_method => "drop(n) の破壊版",
       :rust_method => "split_off(n)",
       :ruby_example => <<~EOT,
 a = [5, 6, 7, 8]
@@ -924,7 +924,7 @@ EOT
     {
       :ruby_method => "max {}",
       :rust_method => "iter.max_by",
-      :ruby_example => %([5, 6, -7].max { |a, b| a <=> b }.max # =>),
+      :ruby_example => %([5, 6, -7].max { |a, b| a <=> b } # =>),
       :rust_example => %([5_isize, 6, -7].iter().max_by(|a, b| a.cmp(b)) // =>),
       :desc => "使いづらい",
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.max_by",
@@ -1629,7 +1629,7 @@ EOT
   EOT
       :rust_feature => "#![feature(slice_partition_dedup)]",
       :mutable => true,
-      :desc => "他の dedup と同じだけど、ついでに連続した値たちも返す。破壊された元の値の並びは、戻値のタプルの要素を結合したものになっているようだけどそれは知らなくていいっぽい。",
+      :desc => "他の dedup と同じだけど、ついでに連続した値たちも返す。破壊された元の値の並びは戻値のタプルの要素を結合したものになっているようだけどドキュメントに明記されていないので知らなくていいっぽい。",
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.partition_dedup",
     },
 
@@ -1808,9 +1808,15 @@ EOT
       :ruby_method => "entries",
       :rust_method => "iter.collect",
       :ruby_example => %([5, 6, 7].each.entries # =>),
-      :rust_example => %([5, 6, 7].iter().collect::<Vec<_>>() // =>),
-      :desc => "よく使うことになると思われる。型が伝わっているときは `::<Vec<_>>` がいらない。が、いるときもあったりする。よくわからない。",
+      :rust_example => <<~EOT,
+[5, 6, 7].iter().collect::<Vec<_>>() // =>
+
+use itertools::Itertools;
+[5, 6, 7].iter().collect_vec() // =>
+EOT
+      :desc => "よく使うことになると思われる。型が伝わっているときは `::<Vec<_>>` がいらない。が、いるときもあったりする。よくわからない。itertools を入れると `collect::<Vec<_>>()` がすっきり書ける。itertools は広く使われていて ActiveSupport の一部のような立ち位置のライブラリらしい。",
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.collect",
+      :build_by => :cargo,
     },
 
     {

@@ -126,31 +126,12 @@ class Generator
 
     def rust_process
       if !@params[:rust_example].to_s.empty?
-        basename = @params[:rust_method].gsub(/\W+/, "_")
-        file = Pathname("playground/examples/_#{@base.params[:name]}_#{basename}.rs")
-        # puts file
-
-        FileUtils.makedirs(file.dirname)
-        file.write(main_rust_example)
-        if @params[:direct_run]
-          command = "cd playground/examples && rustc #{file.basename} && ./#{file.basename('.*')}"
-        else
-          command = "cd playground && cargo run -q --example #{file.basename('.*')}"
-        end
-        result = `#{command}`
-        unless $?.success?
-          puts file
-          puts $?
-          exit
-        end
-
-        result_lines = result.lines
+        lines = rust_run.lines
         code2 = @params[:rust_example].gsub(%r/=>.*/) { |s|
-          r = result_lines.shift
+          r = lines.shift
           "=> #{r.rstrip}"
         }
-
-        result_lines.each do |e|
+        lines.each do |e|
           code2 += "// >> #{e.rstrip}\n"
         end
         if @params[:rust_feature]
@@ -162,6 +143,26 @@ class Generator
         @out << code2.strip
         @out << "```"
       end
+    end
+
+    def rust_run
+      basename = [@params[:ruby_method], "as", @params[:rust_method]].join("_").gsub(/\W+/, "_")
+      file = Pathname("playground/examples/_#{@base.params[:name]}_#{basename}.rs")
+
+      FileUtils.makedirs(file.dirname)
+      file.write(main_rust_example)
+      if @params[:build_by] == :cargo
+        command = "cd playground && cargo run -q --example #{file.basename('.*')}"
+      else
+        command = "cd playground/examples && rustc #{file.basename} && ./#{file.basename('.*')}"
+      end
+      result = `#{command}`
+      unless $?.success?
+        puts file
+        puts $?
+        exit
+      end
+      result
     end
 
     def short_rust_example
@@ -176,17 +177,19 @@ class Generator
     end
 
     def main_rust_example
-      code = []
-      if @params[:rust_feature]
-        code << @params[:rust_feature]
-        code << ""
+      @main_rust_example ||= yield_self do
+        code = []
+        if @params[:rust_feature]
+          code << @params[:rust_feature]
+          code << ""
+        end
+        code << %(fn main() {)
+        code << %(    #{short_rust_example.join.strip})
+        code << %(})
+        code = code.join("\n") + "\n"
+        code, *_ = Open3.capture2("rustfmt", stdin_data: code)
+        code
       end
-      code << %(fn main() {)
-      code << %(    #{short_rust_example.join.strip})
-      code << %(})
-      code = code.join("\n") + "\n"
-      code, *_ = Open3.capture2("rustfmt", stdin_data: code)
-      code
     end
 
     def desc_process

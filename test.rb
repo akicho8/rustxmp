@@ -1,6 +1,1 @@
-["a", "b"].each.each_entry do |e|
-  p e
-end
-
-# >> "a"
-# >> "b"
+[5, 6, -7].max { |a, b| a <=> b } # => 6
