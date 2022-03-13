@@ -1914,7 +1914,7 @@ EOT
     #     ################################################################################
     {
       :ruby_method   => "<=>",
-      :rust_method   => "cmp",
+      :rust_method   => "iter.cmp",
       :ruby_example    => %([5, 6] <=> [5, 6] # =>),
       :rust_example    => %([5, 6].iter().cmp([5, 6].iter()) // =>),
       :desc         => nil,
@@ -1922,7 +1922,7 @@ EOT
     },
     {
       :ruby_method   => "?",
-      :rust_method   => "cmp_by",
+      :rust_method   => "iter.cmp_by",
       :ruby_example    => %(),
       :rust_example    => %([5, 6].iter().cmp_by(&[5, 6], |&a, &b| a.cmp(&b)) // =>),
       :rust_feature => "#![feature(iter_order_by)]",
@@ -1940,7 +1940,7 @@ EOT
 
     {
       :ruby_method   => "?",
-      :rust_method   => "partial_cmp_by",
+      :rust_method   => "iter.partial_cmp_by",
       :ruby_example    => %(),
       :rust_example    => %([5, 6].iter().partial_cmp_by(&[5, 6], |&a, &b| a.partial_cmp(&b)) // =>),
       :rust_feature => "#![feature(iter_order_by)]",

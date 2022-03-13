@@ -21,7 +21,7 @@ class Generator
     tp @params[:name]
     @out = []
     table_build
-    list.each { |e| render_all(e) }
+    records.each { |e| render_all(e) }
     confirm
     body = @out.join("\n") + "\n"
     file = Pathname("_md/#{@params[:name]}.md")
@@ -31,27 +31,28 @@ class Generator
 
   private
 
-  def list
-    av = @params[:list]
-    if @params[:target] == :stable
-      av = av.reject { |e| e[:rust_feature] }
+  def records
+    @records ||= yield_self do
+      av = @params[:list]
+      if @params[:target] == :stable
+        av = av.reject { |e| e[:rust_feature] }
+      end
+      if v = @params[:range]
+        av = Array.wrap(av[eval(v)])
+      end
+      if v = @params[:method]
+        av = av.find_all { |e| [e[:ruby_method], e[:rust_method]].join("/").include?(v) }
+      end
+      av.collect { |e| Element.new(self, e) }
     end
-    if v = @params[:range]
-      av = Array.wrap(av[eval(v)])
-    end
-    if v = @params[:method]
-      av = av.find_all { |e| [e[:ruby_method], e[:rust_method]].join("/").include?(v) }
-    end
-    av
   end
 
   def table_build
-    rows = list.collect do |e|
-      element = Element.new(self, e)
+    rows = records.collect do |e|
       {
         "Ruby" => e[:ruby_method],
         "Rust" => e[:rust_method],
-        ""     => element.other_links,
+        ""     => e.other_links,
       }.transform_values { |e| e.gsub("|", "\\\\\\\\|") }
     end
     @out << rows.to_t(markdown: true, truncate: false)
@@ -59,8 +60,7 @@ class Generator
 
   def render_all(e)
     @out << ""
-    @element = Element.new(self, e)
-    @out += @element.render_all
+    @out += e.render_all
   end
 
   def confirm
@@ -72,6 +72,8 @@ class Generator
   end
 
   class Element
+    delegate :[], to: :@params
+
     def initialize(base, params)
       @base = base
       @params = params
@@ -100,14 +102,13 @@ class Generator
       end
     end
 
+    def title
+      "`#{@params[:ruby_method]}` → `#{@params[:rust_method]}`"
+    end
+
     def title_process
-      if @params[:rust_method] == @params[:ruby_method] && false
-        s = "# #{@params[:ruby_method]}"
-      else
-        s = "## `#{@params[:ruby_method]}` → `#{@params[:rust_method]}`"
-      end
-      puts s
-      @out << s
+      puts title
+      @out << "## #{title}"
     end
 
     def ruby_process
@@ -189,6 +190,7 @@ class Generator
         code << %(})
         code = code.join("\n") + "\n"
         code, *_ = Open3.capture2("rustfmt", stdin_data: code)
+        p "[rustfmt] #{title}"
         code
       end
     end
