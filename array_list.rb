@@ -588,12 +588,12 @@ v  # =>
       :ruby_method => "map",
       :rust_method => "iter.map",
       :ruby_example => <<~EOT,
-[5, 6, 7].map { |e| e * 10 }       # =>
-[5, 6, 7].lazy.map { |e| e * 10 }  # =>
+[5, 6].map { |e| e * 10 }       # =>
+[5, 6].lazy.map { |e| e * 10 }  # =>
 EOT
       :rust_example => <<~EOT,
-[5, 6, 7].iter().map(|e| e * 10).collect::<Vec<_>>() // =>
-[5, 6, 7].iter().map(|e| e * 10)                     // =>
+[5, 6].iter().map(|e| e * 10).collect::<Vec<_>>() // =>
+[5, 6].iter().map(|e| e * 10)                     // =>
 EOT
       :desc => <<~EOT,
 元を破壊しないので使いやすい。
@@ -621,7 +621,7 @@ EOT
       });
       it.collect::<Vec<_>>() // =>
 EOT
-      :desc => "",
+      :desc => "書き方は inject に似ているけど map のように配列を返す",
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.scan",
     },
     {
@@ -659,10 +659,10 @@ EOT
       :ruby_method => "take_while + collect",
       :rust_method => "iter.map_while",
       :ruby_example => <<~EOT,
-[5, 6, 7, 8].take_while(&:even?).collect { |e| e * 10 } # =>
+[6, 6, 7, 6].take_while(&:even?).collect { |e| e * 10 } # =>
 EOT
       :rust_example => <<~EOT,
-      let it = [5, 6, 7, 8].iter().map_while(|&e| {
+      let it = [6, 6, 7, 6].iter().map_while(|&e| {
           if e % 2 == 0 {
               Some(e * 10)
           } else {
@@ -672,7 +672,7 @@ EOT
       it.collect::<Vec<_>>() // =>
 
       // 混乱しにくい書き方
-      [5, 6, 7, 8].iter().take_while(|&e| e % 2 == 0).map(|e| e * 10).collect::<Vec<_>>() // =>
+      [6, 6, 7, 6].iter().take_while(|&e| e % 2 == 0).map(|e| e * 10).collect::<Vec<_>>() // =>
 EOT
       :desc => "filter_map の先頭から続く有効なものだけ版。take_while + map の方がわかりやすい。",
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.map_while",
@@ -775,7 +775,7 @@ v  # =>
     },
 
     {
-      :ruby_method => "inject(0, :+)",
+      :ruby_method => "inject(acc) {}",
       :rust_method => "iter.fold",
       :ruby_example => %([5, 6, 7].inject(0, :+) # =>),
       :rust_example => %([5, 6, 7].iter().fold(0, |a, e| a + e) // =>),
@@ -784,7 +784,7 @@ v  # =>
     },
 
     {
-      :ruby_method => "inject(0, :+) + break",
+      :ruby_method => "inject(acc) { break }",
       :rust_method => "iter.try_fold",
       :ruby_example => <<~EOT,
       sum = [5, 6, 7].inject(0) {|a, e|
@@ -809,7 +809,7 @@ EOT
     },
 
     {
-      :ruby_method => "inject(&:+)",
+      :ruby_method => "inject {}",
       :rust_method => "iter.reduce",
       :ruby_example => %([5, 6, 7].inject(:+) # =>),
       :rust_example => %(vec![5, 6, 7].into_iter().reduce(|a, e| a + e) // =>),
@@ -818,7 +818,7 @@ EOT
     },
 
     {
-      :ruby_method => "inject(:+) + break",
+      :ruby_method => "inject { break }",
       :rust_method => "iter.try_reduce",
       :ruby_example => <<~EOT,
       sum = [5, 6, 7].inject {|a, e|
@@ -1035,7 +1035,7 @@ EOT
   EOT
       :rust_feature => nil,
       :mutable => false,
-      :desc => "別の動作をするRubyと同名のメソッドは混乱する",
+      :desc => "Rubyにも似た名前のメソッドがあって別の動作をすると混乱してしまう",
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.chunks",
     },
     {
@@ -1238,7 +1238,7 @@ end
   EOT
       :rust_feature => "#![feature(slice_take)]",
       :mutable => true,
-      :desc => "破壊しないでほしいときは get を使おう。引数は OneSidedRange 型なので 1..=2 とか書くとエラーになる",
+      :desc => "破壊しないでほしいときは get を使おう。引数は範囲の片方しか指定しちゃいけない型なので 1..=2 とか書くとエラーになってしまう。",
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.take",
     },
     {
@@ -1834,7 +1834,7 @@ EOT
     },
 
     {
-      :ruby_method => "each + break",
+      :ruby_method => "each { break }",
       :rust_method => "iter.try_for_each",
       :ruby_example => <<~EOT,
       r = [5, 6, 7].each do |e|
@@ -2057,22 +2057,22 @@ EOT
       :ruby_method => "?",
       :rust_method => "it.nth",
       :ruby_example => <<~EOT,
-it = [5, 6, 7].to_enum
+it = [5, 6, 7, 8].to_enum
 nth = -> n {
-  n.times { it.next }
-  it.peek rescue nil
+  n.times { it.next rescue nil }
+  it.next rescue nil
 }
-nth[1] # => 6
-nth[1] # => 7
-nth[1] # => nil
+nth[1] # =>
+nth[1] # =>
+nth[1] # =>
 EOT
       :rust_example => <<~EOT,
-    let mut it = [5, 6, 7].iter();
+    let mut it = [5, 6, 7, 8].iter();
     it.nth(1)  // =>
     it.nth(1)  // =>
     it.nth(1)  // =>
 EOT
-      :desc => "指定の位置の値を返すだけではないので注意。指定の数だけ**最初に位置を進めて**その位置の値を返す。",
+      :desc => "メソッド名からは想像が難しいが指定回数スキップして next する",
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.nth",
     },
 
@@ -2096,7 +2096,7 @@ EOT
 
     {
       :ruby_method => "?",
-      :rust_method => "it = it.fuse",
+      :rust_method => "it.fuse",
       :ruby_example => <<~EOT,
 class Foo < Enumerator
   def fuse!

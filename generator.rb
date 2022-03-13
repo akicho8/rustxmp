@@ -18,6 +18,7 @@ class Generator
   end
 
   def output_md
+    tp @params[:name]
     @out = []
     table_build
     list.each { |e| render_all(e) }

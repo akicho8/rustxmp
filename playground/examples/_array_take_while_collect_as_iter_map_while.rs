@@ -1,5 +1,5 @@
 fn main() {
-    let it = [5, 6, 7, 8]
+    let it = [6, 6, 7, 6]
         .iter()
         .map_while(|&e| if e % 2 == 0 { Some(e * 10) } else { None });
     println!("{:?}", it.collect::<Vec<_>>());
@@ -7,7 +7,7 @@ fn main() {
     // 混乱しにくい書き方
     println!(
         "{:?}",
-        [5, 6, 7, 8]
+        [6, 6, 7, 6]
             .iter()
             .take_while(|&e| e % 2 == 0)
             .map(|e| e * 10)
