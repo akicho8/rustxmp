@@ -17,5 +17,5 @@ with_position = -> v {
   end
 }
 
-with_position.([5, 6, 7]).to_a  # => [[5, :first], [6, :middle], [7, :last]]
-with_position.([5]).to_a        # => [[5, :only]]
+with_position.([5, 6, 7]).to_a  # =>
+with_position.([5]).to_a        # =>

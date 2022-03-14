@@ -61,7 +61,7 @@ EOT
       :build_by => :cargo,
     },
     {
-      :ruby_method => "map + tally",
+      :ruby_method => "map.tally",
       :rust_method => "iter.counts_by",
       :ruby_example => <<~EOT,
 [5, 5, 6].map { |e| e }.tally  # =>
@@ -72,6 +72,36 @@ use itertools::Itertools;
 EOT
       :desc => nil,
       :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.counts_by",
+      :build_by => :cargo,
+    },
+
+    {
+      :ruby_method => "uniq.size <= 1",
+      :rust_method => "iter.all_equal",
+      :ruby_example => <<~EOT,
+[5, 5, 5].uniq.size <= 1  # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5, 5, 5].iter().all_equal()  // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.all_equal",
+      :build_by => :cargo,
+    },
+    {
+      :ruby_method => "v == v.uniq",
+      :rust_method => "iter.all_unique",
+      :ruby_example => <<~EOT,
+v = [5, 6, 7]
+v == v.uniq  # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5, 6, 7].iter().all_unique()  // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.all_unique",
       :build_by => :cargo,
     },
 
@@ -184,6 +214,20 @@ EOT
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.take",
     },
     {
+      :ruby_method => "[...-n]",
+      :rust_method => "iter.dropping_back(n)",
+      :ruby_example => <<~EOT,
+[5, 6, 7, 8, 9][...-2]  # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5, 6, 7, 8, 9].iter().dropping_back(2) // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.dropping_back",
+      :build_by => :cargo,
+    },
+    {
       :ruby_method => "take_while",
       :rust_method => "iter.take_while",
       :ruby_example => <<~EOT,
@@ -283,6 +327,20 @@ vec![5, 6, 7, 8, 9].get(2..)  // =>
       :mutable => false,
       :desc => "",
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.get",
+    },
+    {
+      :ruby_method => "drop(n)",
+      :rust_method => "iter.dropping",
+      :ruby_example => <<~EOT,
+[5, 6, 7, 8, 9].drop(2)  # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5, 6, 7, 8, 9].iter().dropping(2) // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.dropping",
+      :build_by => :cargo,
     },
     {
       :ruby_method => "drop(n) の破壊版",
@@ -690,11 +748,11 @@ EOT
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.filter",
     },
     {
-      :ruby_method => "filter_map (find_all + collect)",
+      :ruby_method => "filter_map",
       :rust_method => "iter.filter_map",
       :ruby_example => <<~EOT,
-[5, 6, 7, 8].find_all(&:even?).collect { |e| e * 10 } # =>
-[5, 6, 7, 8].filter_map { |e| e * 10 if e.even? }     # =>
+[5, 6, 7, 8].filter_map { |e| e * 10 if e.even? } # =>
+[5, 6, 7, 8].find_all(&:even?).map { |e| e * 10 } # =>
 EOT
       :rust_example => <<~EOT,
     let r = [5, 6, 7, 8].iter().filter_map(|&e| {
@@ -888,6 +946,42 @@ EOT
     },
 
     {
+      :ruby_method => "find || first",
+      :rust_method => "iter.find_or_first",
+      :ruby_example => <<~EOT,
+v = [5, 6, 7]
+v.find { |e| e == 6 } || v.first # =>
+v.find { |e| e == 0 } || v.first # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5, 6, 7].iter().find_or_first(|&&e| e == 6) // =>
+[5, 6, 7].iter().find_or_first(|&&e| e == 0) // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.find_or_first",
+      :build_by => :cargo,
+    },
+
+    {
+      :ruby_method => "find || last",
+      :rust_method => "iter.find_or_last",
+      :ruby_example => <<~EOT,
+v = [5, 6, 7]
+v.find { |e| e == 6 } || v.last # =>
+v.find { |e| e == 0 } || v.last # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5, 6, 7].iter().find_or_last(|&&e| e == 6) // =>
+[5, 6, 7].iter().find_or_last(|&&e| e == 0) // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.find_or_last",
+      :build_by => :cargo,
+    },
+
+    {
       :ruby_method => "index {}",
       :rust_method => "iter.position",
       :ruby_example => %([5, 6, 5].index { |e| e == 5 } # =>),
@@ -994,18 +1088,62 @@ EOT
     {
       :ruby_method => "sum",
       :rust_method => "iter.sum",
-      :ruby_example => %([5, 6, 7].sum # =>),
-      :rust_example => %([5, 6, 7].iter().sum::<isize>() // =>),
+      :ruby_example => <<~EOT,
+[5, 6, 7].sum # =>
+[].sum        # =>
+EOT
+      :rust_example => <<~EOT,
+[5, 6, 7].iter().sum::<isize>()  // =>
+[].iter().sum::<isize>()         // =>
+EOT
       :desc => nil,
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.sum",
     },
     {
+      :ruby_method => "inject(:+)",
+      :rust_method => "ter.sum1",
+      :ruby_example => <<~EOT,
+[5, 6, 7].inject(:+) # =>
+[].inject(:+)        # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5, 6, 7].iter().sum1::<isize>() // =>
+[].iter().sum1::<isize>()        // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.sum1",
+      :build_by => :cargo,
+    },
+    {
       :ruby_method => "inject(1, :*)",
       :rust_method => "iter.product",
-      :ruby_example => %([5, 6, 7].inject(1, :*) # =>),
-      :rust_example => %([5, 6, 7].iter().product::<isize>() // =>),
+      :ruby_example => <<~EOT,
+[5, 2, 10].inject(1, :*) # =>
+[].inject(1, :*)         # =>
+EOT
+      :rust_example => <<~EOT,
+[5, 2, 10].iter().product::<isize>() // =>
+[].iter().product::<isize>()         // =>
+EOT
       :desc => nil,
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.product",
+    },
+    {
+      :ruby_method => "inject(:*)",
+      :rust_method => "ter.product1",
+      :ruby_example => <<~EOT,
+[5, 2, 10].inject(:*) # =>
+[].inject(:*)         # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5, 2, 10].iter().product1::<isize>() // =>
+[].iter().product1::<isize>()         // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.product1",
+      :build_by => :cargo,
     },
 
     {
@@ -1130,7 +1268,7 @@ EOT
 use itertools::Itertools;
 [5, 6, 7].iter().combinations(2).collect::<Vec<_>>() // =>
 EOT
-      :desc => "リーグ戦のような組み合わせを生成する",
+      :desc => nil,
       :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.combinations",
       :build_by => :cargo,
     },
@@ -1144,7 +1282,7 @@ EOT
 use itertools::Itertools;
 [5, 6, 7].iter().permutations(2).collect::<Vec<_>>() // =>
 EOT
-      :desc => "順番ありの組み合わせを生成する。先後を入れ替えて同じ人と2回戦うリーグ戦と考えると覚えやすい。",
+      :desc => nil,
       :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.permutations",
       :build_by => :cargo,
     },
@@ -1476,6 +1614,36 @@ use itertools::Itertools;
 EOT
       :desc => "文字列の配列は join できる。しかし数値の配列は join できない。でも Itertools を入れると iter 経由で join できる。",
       :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.join",
+      :build_by => :cargo,
+    },
+
+    {
+      :ruby_method => "",
+      :rust_method => "iter.format",
+      :ruby_example => <<~EOT,
+s = [1.5, 1.5].collect { |e| "%.f" % e }.join("-") # =>
+"<\#{s}>"                                           # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+format!("<{:.0}>", [1.5, 1.5].iter().format("-")) // =>
+EOT
+      :desc => "実行順番がよくわからない",
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.format",
+      :build_by => :cargo,
+    },
+    {
+      :ruby_method => "",
+      :rust_method => "iter.format_with",
+      :ruby_example => <<~EOT,
+[1.5, 1.5].collect { |e| "(%.f)" % e }.join("-") # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+format!("{}", [1.5, 1.5].iter().format_with("-", |e, f| f(&format_args!("({:.0})", e)))) // =>
+EOT
+      :desc => "format_with のときにはまだ文字列になっていない。format! を通したとき文字列になるっぽい。",
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.format_with",
       :build_by => :cargo,
     },
 
@@ -2022,8 +2190,10 @@ EOT
       :ruby_method => "to_enum",
       :rust_method => "iter",
       :ruby_example => %([5, 6, 7].to_enum # =>),
-      :rust_example => %([5, 6, 7].iter() // =>),
-      :desc => "いちいち `iter` を呼ばないといけない理由は、更新の有無や所有権が絡んで `iter` `iter_mut` `into_iter` などを使い分けないといけないから",
+      :rust_example => <<~EOT,
+[5, 6, 7].iter()  // =>
+EOT
+      :desc => "所有権が移動するときは into_iter で破壊的操作のときは iter_mut を使う",
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.iter",
     },
 
@@ -2033,12 +2203,22 @@ EOT
       :ruby_example => %([5, 6, 7].each.entries # =>),
       :rust_example => <<~EOT,
 [5, 6, 7].iter().collect::<Vec<_>>() // =>
+EOT
+      :desc => "`::<Vec<_>>` の暗号はいったい何なのでしょう",
+      :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.collect",
+      :build_by => :cargo,
+    },
 
+    {
+      :ruby_method => "to_a",
+      :rust_method => "iter.collect_vec",
+      :ruby_example => %([5, 6, 7].each.to_a # =>),
+      :rust_example => <<~EOT,
 use itertools::Itertools;
 [5, 6, 7].iter().collect_vec() // =>
 EOT
-      :desc => "よく使うことになると思われる。型が伝わっているときは `::<Vec<_>>` がいらない。が、いるときもあったりする。よくわからない。itertools を入れると `collect::<Vec<_>>()` がすっきり書ける。itertools は広く使われていて ActiveSupport の一部のような立ち位置のライブラリらしい。",
-      :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.collect",
+      :desc => "Itertools を使うと簡潔に書けるようだ",
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.collect_vec",
       :build_by => :cargo,
     },
 
@@ -2089,6 +2269,43 @@ EOT
       :desc => "Enumerable 的なものを連想してしまう。用語がぜんぜん違うので注意。index の位置が逆なのも注意。",
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.enumerate",
     },
+
+    {
+      :ruby_method => "with_index の抽象化",
+      :rust_method => "iter.with_position",
+      :ruby_example => <<~EOT,
+with_position = -> v {
+  Enumerator.new do |y|
+    v.each_with_index do |e, i|
+      if v.size == 1
+        y << [e, :only]
+      else
+        if i == 0
+          pos = :first
+        elsif i < v.size - 1
+          pos = :middle
+        else
+          pos = :last
+        end
+        y << [e, pos]
+      end
+    end
+  end
+}
+
+with_position.([5, 6, 7]).to_a  # =>
+with_position.([5]).to_a        # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5, 6, 7].iter().with_position().collect_vec() // =>
+[5].iter().with_position().collect_vec()       // =>
+EOT
+      :desc => "お気に入り",
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.with_position",
+      :build_by => :cargo,
+    },
+
     {
       :ruby_method => "tap { |e| e.each {} }",
       :rust_method => "iter.inspect",
