@@ -1,1 +1,1 @@
-[5, 6, 7].to_enum.each_entry { |e| p e }
+[5, 6, 7].each { |e| p e }

@@ -149,7 +149,8 @@ class Generator
 
     def rust_run
       basename = [@params[:ruby_method], "as", @params[:rust_method]].join("_").gsub(/\W+/, "_")
-      file = Pathname("playground/examples/_#{@base.params[:name]}_#{basename}.rs")
+      basename = "_#{@base.params[:name]}_#{basename}.rs".gsub(/_+/, "_")
+      file = Pathname("playground/examples/#{basename}")
 
       FileUtils.makedirs(file.dirname)
       file.write(main_rust_example)
