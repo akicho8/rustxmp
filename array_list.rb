@@ -445,7 +445,7 @@ b # => []
   EOT
       :rust_feature => nil,
       :mutable => true,
-      :desc => "push の別名ではない。中身が**移動する**ので注意。",
+      :desc => "push の別名ではない。中身が**移動する**ので注意しよう。",
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.append",
     },
     {
@@ -728,7 +728,7 @@ EOT
       });
       it.collect::<Vec<_>>() // =>
 EOT
-      :desc => "書き方は inject に似ているけど map のように配列を返す",
+      :desc => "書き方は inject に似ているけど map のように配列を返す。each_with_object の代用としても使えそう。",
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.scan",
     },
     {
@@ -907,7 +907,7 @@ EOT
       :ruby_method => "uniq {}",
       :rust_method => "iter.unique_by",
       :ruby_example => <<~EOT,
-[5, 6, 6, 7].uniq # =>
+[5, 6, 6, 7].uniq { |e| e } # =>
 EOT
       :rust_example => <<~EOT,
 use itertools::Itertools;
@@ -1171,7 +1171,7 @@ EOT
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.max_by",
     },
     {
-      :ruby_method => "v.index(v.max)",
+      :ruby_method => "index(max)",
       :rust_method => "iter.position_max",
       :ruby_example => <<~EOT,
 v = [5, 6, 7]
@@ -1205,7 +1205,7 @@ EOT
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.min_by",
     },
     {
-      :ruby_method => "v.index(v.min)",
+      :ruby_method => "index(min)",
       :rust_method => "iter.position_min",
       :ruby_example => <<~EOT,
 EOT
@@ -1290,8 +1290,8 @@ EOT
     ################################################################################
 
     {
-      :ruby_method => "each_cons",
-      :rust_method => "windows",
+      :ruby_method => "each_cons(n)",
+      :rust_method => "windows(n)",
       :ruby_example => <<~EOT,
 [5, 6, 7, 8].each_cons(2).entries  # =>
   EOT
@@ -1304,6 +1304,64 @@ EOT
       :desc => "これほど検索しづらいメソッド名はないかもしれない",
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.windows",
     },
+
+    {
+      :ruby_method => "each_cons 個数で指定しない",
+      :rust_method => "iter.tuple_windows",
+      :ruby_example => <<~EOT,
+[5, 6, 7, 8].each_cons(2).entries # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5, 6, 7, 8].iter().tuple_windows::<(_, _)>().collect::<Vec<_>>() // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#tuple_windows",
+      :build_by => :cargo,
+    },
+    {
+      :ruby_method => "each_cons 一周する",
+      :rust_method => "iter.circular_tuple_windows",
+      :ruby_example => <<~EOT,
+class Array
+  def circular_tuple_windows(n)
+    size.times.collect do |i|
+      n.times.collect { |j| at((i + j).modulo(size)) }
+    end
+  end
+end
+
+[5, 6, 7].circular_tuple_windows(2) # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5, 6, 7].iter().circular_tuple_windows::<(_, _)>().collect::<Vec<_>>() // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#circular_tuple_windows",
+      :build_by => :cargo,
+    },
+    {
+      :ruby_method => "each_cons 余り除去",
+      :rust_method => "iter.tuples",
+      :ruby_example => <<~EOT,
+class Array
+  def tuples(n)
+    take((size / n) * n).each_slice(n)
+  end
+end
+
+[5, 6, 7, 8, 9].tuples(2).to_a # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5, 6, 7, 8].iter().tuples::<(_, _)>().collect::<Vec<_>>() // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#tuples",
+      :build_by => :cargo,
+    },
+
     {
       :ruby_method => "chunk",
       :rust_method => "group_by",
@@ -1618,7 +1676,22 @@ EOT
     },
 
     {
-      :ruby_method => "",
+      :ruby_method => "collect.join",
+      :rust_method => "iter.format_with",
+      :ruby_example => <<~EOT,
+[1.5, 1.5].collect { |e| "(%.f)" % e }.join("-") # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+format!("{}", [1.5, 1.5].iter().format_with("-", |e, f| f(&format_args!("({:.0})", e)))) // =>
+EOT
+      :desc => "format_with のときにはまだ文字列になっていない。format! を通したとき文字列になるっぽい。",
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.format_with",
+      :build_by => :cargo,
+    },
+
+    {
+      :ruby_method => "collect.join の簡易版",
       :rust_method => "iter.format",
       :ruby_example => <<~EOT,
 s = [1.5, 1.5].collect { |e| "%.f" % e }.join("-") # =>
@@ -1630,20 +1703,6 @@ format!("<{:.0}>", [1.5, 1.5].iter().format("-")) // =>
 EOT
       :desc => "実行順番がよくわからない",
       :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.format",
-      :build_by => :cargo,
-    },
-    {
-      :ruby_method => "",
-      :rust_method => "iter.format_with",
-      :ruby_example => <<~EOT,
-[1.5, 1.5].collect { |e| "(%.f)" % e }.join("-") # =>
-EOT
-      :rust_example => <<~EOT,
-use itertools::Itertools;
-format!("{}", [1.5, 1.5].iter().format_with("-", |e, f| f(&format_args!("({:.0})", e)))) // =>
-EOT
-      :desc => "format_with のときにはまだ文字列になっていない。format! を通したとき文字列になるっぽい。",
-      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.format_with",
       :build_by => :cargo,
     },
 
@@ -1741,7 +1800,7 @@ v  # =>
   EOT
       :rust_feature => nil,
       :mutable => true,
-      :desc => "値を参照するたびにクロージャが呼ばれるので注意。sort_by_cached_key の方を使おう。",
+      :desc => "値を参照するたびにクロージャが呼ばれるので注意しよう。sort_by_cached_key の方を使おう。",
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.sort_by_key",
     },
     {
@@ -2266,7 +2325,7 @@ EOT
       :rust_method => "iter.enumerate",
       :ruby_example => %(["a", "b"].each.with_index.entries # =>),
       :rust_example => %(["a", "b"].iter().enumerate().collect::<Vec<_>>() // =>),
-      :desc => "Enumerable 的なものを連想してしまう。用語がぜんぜん違うので注意。index の位置が逆なのも注意。",
+      :desc => "Enumerable 的なものを連想してしまう。用語がぜんぜん違うので注意しよう。index の位置が逆なのも注意しよう。",
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.enumerate",
     },
 
@@ -2338,12 +2397,132 @@ EOT
     },
 
     {
-      :ruby_method => "zip",
+      :ruby_method => "zip 余り除去",
       :rust_method => "iter.zip",
-      :ruby_example => %([5, 6].zip([7, 8]) # =>),
-      :rust_example => %([5, 6].iter().zip([7, 8].iter()).collect::<Vec<_>>() // =>),
-      :desc => "Rustのほうは引数が1つしか取れないし要素の数が合わないと切り捨てられたりするので注意",
+      :ruby_example => <<~EOT,
+zip = -> a, b {
+  enums = [a, b].collect(&:to_enum)
+  Enumerator.new do |y|
+    loop do
+      enums.collect(&:next).each do |e|
+        y << e
+      end
+    end
+  end
+}
+
+zip.([100, 200], [5, 6, 7, 8]).to_a  # =>
+zip.([5, 6, 7, 8], [100, 200]).to_a  # =>
+EOT
+      :rust_example => <<~EOT,
+[100, 200].iter().zip([5, 6, 7, 8].iter()).collect::<Vec<_>>() // =>
+[5, 6, 7, 8].iter().zip([100, 200].iter()).collect::<Vec<_>>() // =>
+EOT
+      :desc => "ペアになれなかった要素は無視されるので注意しよう。また引数は1つしか与えられない。",
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.zip",
+    },
+
+    {
+      :ruby_method => "zip 捨てない 詰める",
+      :rust_method => "iter.interleave",
+      :ruby_example => <<~EOT,
+interleave = -> a, b {
+  enums = [a, b].collect(&:to_enum)
+  Enumerator.new do |y|
+    loop do
+      exist = false
+      enums.each do |e|
+        begin
+          y << e.next
+          exist = true
+        rescue StopIteration
+        end
+      end
+      unless exist
+        break
+      end
+    end
+  end
+}
+
+interleave.([5, 6, 7, 8], [100, 200]).to_a  # =>
+interleave.([100, 200], [5, 6, 7, 8]).to_a  # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5, 6, 7, 8].iter().interleave(&[100, 200]).collect::<Vec<_>>() // =>
+[100, 200].iter().interleave(&[5, 6, 7, 8]).collect::<Vec<_>>() // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.interleave",
+      :build_by => :cargo,
+    },
+
+    {
+      :ruby_method => "zip 捨てない 詰める 富豪的",
+      :rust_method => "iter.zip_longest",
+      :ruby_example => <<~EOT,
+zip_longest = -> a, b {
+  a = a.to_enum
+  b = b.to_enum
+  none = Object.new
+  Enumerator.new do |y|
+    loop do
+      l = a.next rescue none
+      r = b.next rescue none
+      case
+      when l != none && r != none
+        y << [:both, l, r]
+      when l != none
+        y << [:left, l]
+      when r != none
+        y << [:right, r]
+      else
+        break
+      end
+    end
+  end
+}
+
+zip_longest.([5, 6, 7, 8], [100, 200]).to_a  # => [[:both, 5, 100], [:both, 6, 200], [:left, 7], [:left, 8]]
+zip_longest.([100, 200], [5, 6, 7, 8]).to_a  # => [[:both, 100, 5], [:both, 200, 6], [:right, 7], [:right, 8]]
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5, 6, 7, 8].iter().zip_longest(&[100, 200]).collect::<Vec<_>>() // =>
+[100, 200].iter().zip_longest(&[5, 6, 7, 8]).collect::<Vec<_>>() // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.zip_longest",
+      :build_by => :cargo,
+    },
+
+    {
+      :ruby_method => "zip の次が無いと終わり版",
+      :rust_method => "iter.interleave_shortest",
+      :ruby_example => <<~EOT,
+interleave_shortest = -> a, b {
+  enums = [a, b].collect(&:to_enum)
+  Enumerator.new do |y|
+    loop do
+      enums.each do |e|
+        y << e.next
+      end
+    end
+  end
+}
+
+interleave_shortest.([5, 6, 7, 8], [100, 200]).to_a  # => [5, 100, 6, 200, 7]
+interleave_shortest.([100, 200], [5, 6, 7, 8]).to_a  # => [100, 5, 200, 6]
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5, 6, 7, 8].iter().interleave_shortest(&[100, 200]).collect::<Vec<_>>() // =>
+[100, 200].iter().interleave_shortest(&[5, 6, 7, 8]).collect::<Vec<_>>() // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.interleave_shortest",
+      :build_by => :cargo,
     },
 
     ################################################################################ value
@@ -2429,7 +2608,7 @@ EOT
       :ruby_example => nil,
       :rust_example => %(["a", "b", "c"].iter().intersperse(&"-").collect::<Vec<_>>() // =>),
       :rust_feature => "#![feature(iter_intersperse)]",
-      :desc => "セパレータは毎回固定で良いとき用",
+      :desc => "セパレータは毎回固定で良いとき用。Itertools にも同名のメソッドがある。",
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.intersperse",
     },
 
@@ -2439,7 +2618,7 @@ EOT
       :ruby_example => nil,
       :rust_example => %(["a", "b", "c"].iter().intersperse_with(||&"-").collect::<Vec<_>>() // =>),
       :rust_feature => "#![feature(iter_intersperse)]",
-      :desc => "intersperse のクロージャ版",
+      :desc => "intersperse のクロージャ版。Itertools にも同名のメソッドがある。",
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.intersperse_with",
     },
 

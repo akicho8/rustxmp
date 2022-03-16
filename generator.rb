@@ -148,7 +148,7 @@ class Generator
     end
 
     def rust_run
-      basename = [@params[:ruby_method], "as", @params[:rust_method]].join("_").gsub(/\W+/, "_")
+      basename = [@params[:ruby_method], "as", @params[:rust_method]].join("_").gsub(/\W+/, "_").downcase
       basename = "_#{@base.params[:name]}_#{basename}.rs".gsub(/_+/, "_")
       file = Pathname("playground/examples/#{basename}")
 

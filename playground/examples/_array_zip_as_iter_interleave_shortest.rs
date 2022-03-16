@@ -1,16 +1,17 @@
 fn main() {
-    println!(
-        "{:?}",
-        [100, 200]
-            .iter()
-            .zip([5, 6, 7, 8].iter())
-            .collect::<Vec<_>>()
-    );
+    use itertools::Itertools;
     println!(
         "{:?}",
         [5, 6, 7, 8]
             .iter()
-            .zip([100, 200].iter())
+            .interleave_shortest(&[100, 200])
+            .collect::<Vec<_>>()
+    );
+    println!(
+        "{:?}",
+        [100, 200]
+            .iter()
+            .interleave_shortest(&[5, 6, 7, 8])
             .collect::<Vec<_>>()
     );
 }
