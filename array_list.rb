@@ -162,11 +162,10 @@ v[1]           # =>
       :ruby_method => "first",
       :rust_method => "first",
       :ruby_example => <<~EOT,
-[5, 6, 7].first  # =>
+[5, 6, 7].first   # =>
   EOT
       :rust_example => <<~EOT,
-      let v = vec![5, 6, 7];
-      v.first()  // =>
+[5, 6, 7].first() // =>
   EOT
       :rust_feature => nil,
       :mutable => false,
@@ -180,7 +179,7 @@ v[1]           # =>
 [5, 6, 7].first(2)  # =>
   EOT
       :rust_example => <<~EOT,
-vec![5, 6, 7].get(..2)  // =>
+[5, 6, 7].get(..2)  // =>
   EOT
       :rust_feature => nil,
       :mutable => false,
@@ -194,7 +193,7 @@ vec![5, 6, 7].get(..2)  // =>
 [5, 6, 7, 8, 9].take(2)  # =>
   EOT
       :rust_example => <<~EOT,
-vec![5, 6, 7, 8, 9].get(..2)  // =>
+[5, 6, 7, 8, 9].get(..2) // =>
   EOT
       :rust_feature => nil,
       :mutable => false,
@@ -205,10 +204,10 @@ vec![5, 6, 7, 8, 9].get(..2)  // =>
       :ruby_method => "take(n)",
       :rust_method => "iter.take(n)",
       :ruby_example => <<~EOT,
-      [5, 6, 7, 8].take(2)   # =>
+[5, 6, 7, 8].take(2)   # =>
 EOT
       :rust_example => <<~EOT,
-      [5, 6, 7, 8].iter().take(2).collect::<Vec<_>>() // =>
+[5, 6, 7, 8].iter().take(2).collect::<Vec<_>>() // =>
 EOT
       :desc => nil,
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.take",
@@ -243,16 +242,28 @@ EOT
       :ruby_method => "last",
       :rust_method => "last",
       :ruby_example => <<~EOT,
-[5, 6, 7].last  # =>
+[5, 6, 7].last   # =>
   EOT
       :rust_example => <<~EOT,
-      let v = vec![5, 6, 7];
-      v.last()  // =>
+[5, 6, 7].last() // =>
   EOT
       :rust_feature => nil,
       :mutable => false,
       :desc => nil,
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.last",
+    },
+    {
+      :ruby_method => "last",
+      :rust_method => "iter.last",
+      :ruby_example => <<~EOT,
+[5, 6, 7].each.entries.last # =>
+EOT
+
+      :rust_example => <<~EOT,
+[5, 6, 7].iter().last() // =>
+EOT
+      :desc => "`iter().last()` はあるのに `iter().first()` はない",
+      :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.last",
     },
     {
       :ruby_method => "last(n)",
@@ -268,19 +279,6 @@ v.get((v.len() - 2)..)   // =>
       :mutable => false,
       :desc => "専用メソッドがありそうだが見つからなかった。引数は `v.len() - 2..` と書いてもいいけど読み間違いそう。",
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.get",
-    },
-    {
-      :ruby_method => "last",
-      :rust_method => "iter.last",
-      :ruby_example => <<~EOT,
-[5, 6, 7].each.entries.last # =>
-EOT
-
-      :rust_example => <<~EOT,
-[5, 6, 7].iter().last() // =>
-EOT
-      :desc => "iter().last() はあるのに iter().first() はない。単に最後が欲しいなら iter() を仲介しなくてよい。",
-      :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.last",
     },
     {
       :ruby_method => "clear",
@@ -656,12 +654,17 @@ v # => [8, 8, 8]
       :ruby_method => "v[i] = v.pop",
       :rust_method => "swap_remove(i)",
       :ruby_example => <<~EOT,
+class Array
+  def swap_remove(i)
+    self[i].tap do
+      self[i] = pop
+    end
+  end
+end
+
 v = [5, 6, 7, 8]
-i = 1
-r = v[i]
-v[i] = v.pop
-r  # =>
-v  # =>
+v.swap_remove(1)  # =>
+v                 # =>
   EOT
       :rust_example => <<~EOT,
       let mut v = vec![5, 6, 7, 8];
@@ -767,7 +770,7 @@ EOT
     // 混乱しにくい書き方
     [5, 6, 7, 8].iter().filter(|&e| e % 2 == 0).map(|e| e * 10).collect::<Vec<_>>() // =>
 EOT
-      :desc => "2つのことを同時に行うメソッドは混乱してしまう。filter + map の方がわかりやすい。",
+      :desc => "2つのことを同時に行うメソッドは混乱してしまう。よっぽのどのことがなければ filter + map を使おう。",
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.filter_map",
     },
     {
@@ -949,9 +952,14 @@ EOT
       :ruby_method => "find || first",
       :rust_method => "iter.find_or_first",
       :ruby_example => <<~EOT,
-v = [5, 6, 7]
-v.find { |e| e == 6 } || v.first # =>
-v.find { |e| e == 0 } || v.first # =>
+module Enumerable
+  def find_or_first(&block)
+    find(&block) || first
+  end
+end
+
+[5, 6, 7].find_or_first { |e| e == 6 } # =>
+[5, 6, 7].find_or_first { |e| e == 0 } # =>
 EOT
       :rust_example => <<~EOT,
 use itertools::Itertools;
@@ -967,9 +975,14 @@ EOT
       :ruby_method => "find || last",
       :rust_method => "iter.find_or_last",
       :ruby_example => <<~EOT,
-v = [5, 6, 7]
-v.find { |e| e == 6 } || v.last # =>
-v.find { |e| e == 0 } || v.last # =>
+module Enumerable
+  def find_or_last(&block)
+    find(&block) || last
+  end
+end
+
+[5, 6, 7].find_or_last { |e| e == 6 } # =>
+[5, 6, 7].find_or_last { |e| e == 0 } # =>
 EOT
       :rust_example => <<~EOT,
 use itertools::Itertools;
@@ -1242,10 +1255,13 @@ EOT
       :ruby_method => "?",
       :rust_method => "iter.position_minmax",
       :ruby_example => <<~EOT,
-v = [5, 6, 7]
-min, max = v.minmax
-v.index(min)  # =>
-v.index(max)  # =>
+module Enumerable
+  def position_minmax
+    [index(min), index(max)]
+  end
+end
+
+[5, 6, 7].position_minmax # =>
 EOT
       :rust_example => <<~EOT,
 use itertools::Itertools;
@@ -1286,6 +1302,28 @@ EOT
       :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.permutations",
       :build_by => :cargo,
     },
+    {
+      :ruby_method => "combination の重ね掛け",
+      :rust_method => "iter.powerset",
+      :ruby_example => <<~EOT,
+module Enumerable
+  def powerset
+    (0..size).collect_concat do |i|
+      combination(i).entries
+    end
+  end
+end
+
+[5, 6, 7].powerset # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5, 6, 7].iter().powerset().collect::<Vec<_>>() // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.powerset",
+      :build_by => :cargo,
+    },
 
     ################################################################################
 
@@ -1323,7 +1361,7 @@ EOT
       :ruby_method => "each_cons 一周する",
       :rust_method => "iter.circular_tuple_windows",
       :ruby_example => <<~EOT,
-class Array
+module Enumerable
   def circular_tuple_windows(n)
     size.times.collect do |i|
       n.times.collect { |j| at((i + j).modulo(size)) }
@@ -1345,7 +1383,7 @@ EOT
       :ruby_method => "each_cons 余り除去",
       :rust_method => "iter.tuples",
       :ruby_example => <<~EOT,
-class Array
+module Enumerable
   def tuples(n)
     take((size / n) * n).each_slice(n)
   end
@@ -1355,7 +1393,7 @@ end
 EOT
       :rust_example => <<~EOT,
 use itertools::Itertools;
-[5, 6, 7, 8].iter().tuples::<(_, _)>().collect::<Vec<_>>() // =>
+[5, 6, 7, 8, 9].iter().tuples::<(_, _)>().collect::<Vec<_>>() // =>
 EOT
       :desc => nil,
       :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#tuples",
@@ -2333,27 +2371,27 @@ EOT
       :ruby_method => "with_index の抽象化",
       :rust_method => "iter.with_position",
       :ruby_example => <<~EOT,
-with_position = -> v {
-  Enumerator.new do |y|
-    v.each_with_index do |e, i|
-      if v.size == 1
-        y << [e, :only]
+module Enumerable
+  def with_position
+    collect.with_index do |e, i|
+      if size == 1
+        [e, :only]
       else
         if i == 0
           pos = :first
-        elsif i < v.size - 1
+        elsif i < size - 1
           pos = :middle
         else
           pos = :last
         end
-        y << [e, pos]
+        [e, pos]
       end
     end
   end
-}
+end
 
-with_position.([5, 6, 7]).to_a  # =>
-with_position.([5]).to_a        # =>
+[5, 6, 7].with_position  # =>
+[5].with_position        # =>
 EOT
       :rust_example => <<~EOT,
 use itertools::Itertools;
@@ -2400,25 +2438,25 @@ EOT
       :ruby_method => "zip 余り除去",
       :rust_method => "iter.zip",
       :ruby_example => <<~EOT,
-zip = -> a, b {
-  enums = [a, b].collect(&:to_enum)
-  Enumerator.new do |y|
-    loop do
-      enums.collect(&:next).each do |e|
-        y << e
+module Enumerable
+  def zip2(*args)
+    enums = [self, *args].collect(&:to_enum)
+    Enumerator.new do |y|
+      loop do
+        y << enums.collect(&:next)
       end
     end
   end
-}
+end
 
-zip.([100, 200], [5, 6, 7, 8]).to_a  # =>
-zip.([5, 6, 7, 8], [100, 200]).to_a  # =>
+[100, 200].zip2([5, 6, 7, 8]).to_a  # =>
+[5, 6, 7, 8].zip2([100, 200]).to_a  # =>
 EOT
       :rust_example => <<~EOT,
 [100, 200].iter().zip([5, 6, 7, 8].iter()).collect::<Vec<_>>() // =>
 [5, 6, 7, 8].iter().zip([100, 200].iter()).collect::<Vec<_>>() // =>
 EOT
-      :desc => "ペアになれなかった要素は無視されるので注意しよう。また引数は1つしか与えられない。",
+      :desc => "ペアになれなかった要素は無視されるので注意しよう",
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.zip",
     },
 
@@ -2426,27 +2464,29 @@ EOT
       :ruby_method => "zip 捨てない 詰める",
       :rust_method => "iter.interleave",
       :ruby_example => <<~EOT,
-interleave = -> a, b {
-  enums = [a, b].collect(&:to_enum)
-  Enumerator.new do |y|
-    loop do
-      exist = false
-      enums.each do |e|
-        begin
-          y << e.next
-          exist = true
-        rescue StopIteration
+module Enumerable
+  def interleave(*args)
+    enums = [self, *args].collect(&:to_enum)
+    Enumerator.new do |y|
+      loop do
+        exist = false
+        enums.each do |e|
+          begin
+            y << e.next
+            exist = true
+          rescue StopIteration
+          end
         end
-      end
-      unless exist
-        break
+        unless exist
+          break
+        end
       end
     end
   end
-}
+end
 
-interleave.([5, 6, 7, 8], [100, 200]).to_a  # =>
-interleave.([100, 200], [5, 6, 7, 8]).to_a  # =>
+[5, 6, 7, 8].interleave([100, 200]).to_a  # => [5, 100, 6, 200, 7, 8]
+[100, 200].interleave([5, 6, 7, 8]).to_a  # => [100, 5, 200, 6, 7, 8]
 EOT
       :rust_example => <<~EOT,
 use itertools::Itertools;
@@ -2462,30 +2502,32 @@ EOT
       :ruby_method => "zip 捨てない 詰める 富豪的",
       :rust_method => "iter.zip_longest",
       :ruby_example => <<~EOT,
-zip_longest = -> a, b {
-  a = a.to_enum
-  b = b.to_enum
-  none = Object.new
-  Enumerator.new do |y|
-    loop do
-      l = a.next rescue none
-      r = b.next rescue none
-      case
-      when l != none && r != none
-        y << [:both, l, r]
-      when l != none
-        y << [:left, l]
-      when r != none
-        y << [:right, r]
-      else
-        break
+module Enumerable
+  def zip_longest(other)
+    a = to_enum
+    b = other.to_enum
+    none = Object.new
+    Enumerator.new do |y|
+      loop do
+        l = a.next rescue none
+        r = b.next rescue none
+        case
+        when l != none && r != none
+          y << [:both, l, r]
+        when l != none
+          y << [:left, l]
+        when r != none
+          y << [:right, r]
+        else
+          break
+        end
       end
     end
   end
-}
+end
 
-zip_longest.([5, 6, 7, 8], [100, 200]).to_a  # => [[:both, 5, 100], [:both, 6, 200], [:left, 7], [:left, 8]]
-zip_longest.([100, 200], [5, 6, 7, 8]).to_a  # => [[:both, 100, 5], [:both, 200, 6], [:right, 7], [:right, 8]]
+[5, 6, 7, 8].zip_longest([100, 200]).to_a  # => [[:both, 5, 100], [:both, 6, 200], [:left, 7], [:left, 8]]
+[100, 200].zip_longest([5, 6, 7, 8]).to_a  # => [[:both, 100, 5], [:both, 200, 6], [:right, 7], [:right, 8]]
 EOT
       :rust_example => <<~EOT,
 use itertools::Itertools;
@@ -2501,19 +2543,21 @@ EOT
       :ruby_method => "zip の次が無いと終わり版",
       :rust_method => "iter.interleave_shortest",
       :ruby_example => <<~EOT,
-interleave_shortest = -> a, b {
-  enums = [a, b].collect(&:to_enum)
-  Enumerator.new do |y|
-    loop do
-      enums.each do |e|
-        y << e.next
+module Enumerable
+  def interleave_shortest(*others)
+    enums = [self, *others].collect(&:to_enum)
+    Enumerator.new do |y|
+      loop do
+        enums.each do |e|
+          y << e.next
+        end
       end
     end
   end
-}
+end
 
-interleave_shortest.([5, 6, 7, 8], [100, 200]).to_a  # => [5, 100, 6, 200, 7]
-interleave_shortest.([100, 200], [5, 6, 7, 8]).to_a  # => [100, 5, 200, 6]
+[5, 6, 7, 8].interleave_shortest([100, 200]).to_a  # => [5, 100, 6, 200, 7]
+[100, 200].interleave_shortest([5, 6, 7, 8]).to_a  # => [100, 5, 200, 6]
 EOT
       :rust_example => <<~EOT,
 use itertools::Itertools;

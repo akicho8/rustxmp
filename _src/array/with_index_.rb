@@ -1,21 +1,21 @@
-with_position = -> v {
-  Enumerator.new do |y|
-    v.each_with_index do |e, i|
-      if v.size == 1
-        y << [e, :only]
+module Enumerable
+  def with_position
+    collect.with_index do |e, i|
+      if size == 1
+        [e, :only]
       else
         if i == 0
           pos = :first
-        elsif i < v.size - 1
+        elsif i < size - 1
           pos = :middle
         else
           pos = :last
         end
-        y << [e, pos]
+        [e, pos]
       end
     end
   end
-}
+end
 
-with_position.([5, 6, 7]).to_a  # =>
-with_position.([5]).to_a        # =>
+[5, 6, 7].with_position  # =>
+[5].with_position        # =>

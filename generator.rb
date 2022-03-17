@@ -120,6 +120,10 @@ class Generator
         file.write(s)
         command = "xmpfilter #{file}"
         result = `#{command}`.strip
+        if result.match?(/syntax error/)
+          puts result
+          abort
+        end
         @out << "```ruby:Ruby"
         @out << result
         @out << "```"

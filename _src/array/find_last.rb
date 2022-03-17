@@ -1,3 +1,8 @@
-v = [5, 6, 7]
-v.find { |e| e == 6 } || v.last # =>
-v.find { |e| e == 0 } || v.last # =>
+module Enumerable
+  def find_or_last(&block)
+    find(&block) || last
+  end
+end
+
+[5, 6, 7].find_or_last { |e| e == 6 } # =>
+[5, 6, 7].find_or_last { |e| e == 0 } # =>

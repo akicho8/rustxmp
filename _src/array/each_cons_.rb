@@ -1,4 +1,4 @@
-class Array
+module Enumerable
   def tuples(n)
     take((size / n) * n).each_slice(n)
   end
