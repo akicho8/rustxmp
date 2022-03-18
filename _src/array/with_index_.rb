@@ -2,7 +2,7 @@ module Enumerable
   def with_position
     collect.with_index do |e, i|
       if size == 1
-        [e, :only]
+        pos = :only
       else
         if i == 0
           pos = :first
@@ -11,8 +11,8 @@ module Enumerable
         else
           pos = :last
         end
-        [e, pos]
       end
+      [e, pos]
     end
   end
 end

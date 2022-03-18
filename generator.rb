@@ -133,9 +133,9 @@ class Generator
     def rust_process
       if !@params[:rust_example].to_s.empty?
         lines = rust_run.lines
-        code2 = @params[:rust_example].gsub(%r/=>.*/) { |s|
+        code2 = @params[:rust_example].gsub(%r{// =>.*}) { |s|
           r = lines.shift
-          "=> #{r.rstrip}"
+          "// => #{r.rstrip}"
         }
         lines.each do |e|
           code2 += "// >> #{e.rstrip}\n"
@@ -172,9 +172,9 @@ class Generator
       result
     end
 
-    def short_rust_example
+    def rust_with_println
       @params[:rust_example].lines.collect { |e|
-        if e.include?("=>")
+        if e.match?(%r{//\s*=>\s*})
           e = e.sub(%r{\s*//\s*=>\s*}, "")
           %(println!("{:?}", #{e});\n)
         else
@@ -191,7 +191,7 @@ class Generator
           code << ""
         end
         code << %(fn main() {)
-        code << %(    #{short_rust_example.join.strip})
+        code << %(    #{rust_with_println.join.strip})
         code << %(})
         code = code.join("\n") + "\n"
         code, *_ = Open3.capture2("rustfmt", stdin_data: code)

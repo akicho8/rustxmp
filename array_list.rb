@@ -344,16 +344,16 @@ EOT
       :ruby_method => "drop(n) の破壊版",
       :rust_method => "split_off(n)",
       :ruby_example => <<~EOT,
-a = [5, 6, 7, 8]
-b = a.slice!(2..)
-a  # =>
-b  # =>
+v = [5, 6, 7, 8, 9]
+r = v.slice!(2..)
+r  # =>
+v  # =>
   EOT
       :rust_example => <<~EOT,
-      let mut a = vec![5, 6, 7, 8];
-      let b = a.split_off(2);
-      a  // =>
-      b  // =>
+      let mut v = vec![5, 6, 7, 8, 9];
+      let r = v.split_off(2);
+      r  // =>
+      v  // =>
   EOT
       :rust_feature => nil,
       :mutable => true,
@@ -940,6 +940,31 @@ EOT
     },
 
     {
+      :ruby_method => "one? && first",
+      :rust_method => "iter.at_most_one",
+      :ruby_example => <<~EOT,
+module Enumerable
+  def at_most_one
+    one? && first
+  end
+end
+
+[5, 6].at_most_one # =>
+[5].at_most_one    # =>
+[].at_most_one     # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5, 6, 7].iter().at_most_one()           // =>
+[5].iter().at_most_one()                 // =>
+Vec::<isize>::new().iter().at_most_one() // =>
+EOT
+      :desc => "at most one の意味は「せいぜい1つ」",
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.at_most_one",
+      :build_by => :cargo,
+    },
+
+    {
       :ruby_method => "find",
       :rust_method => "iter.find",
       :ruby_example => %([5, 6, 7].find { |e| e == 6 } # =>),
@@ -1016,9 +1041,15 @@ EOT
       :ruby_method => "?",
       :rust_method => "iter.find_position",
       :ruby_example => <<~EOT,
-v = [5, 6, 7]
-i = v.find_index { |e| e > 5 }
-[i, v[i]]  # =>
+module Enumerable
+  def find_position(&block)
+    if i = find_index(&block)
+      [i, self[i]]
+    end
+  end
+end
+
+[5, 6, 7].find_position { |e| e > 5 } # =>
 EOT
       :rust_example => <<~EOT,
 use itertools::Itertools;
@@ -1187,8 +1218,13 @@ EOT
       :ruby_method => "index(max)",
       :rust_method => "iter.position_max",
       :ruby_example => <<~EOT,
-v = [5, 6, 7]
-v.index(v.max)  # => 2
+module Enumerable
+  def position_max
+    index(max)
+  end
+end
+
+[5, 6, 7].position_max # =>
 EOT
       :rust_example => <<~EOT,
 use itertools::Itertools;
@@ -1419,12 +1455,69 @@ EOT
       :rust_method => "iter.partition",
       :ruby_example => %([5, 6, 7, 8].partition(&:even?)  # =>),
       :rust_example => <<~EOT,
-      let (even, odd): (Vec<isize>, Vec<isize>) = [5, 6, 7, 8].iter().partition(|&e| e % 2 == 0);
-      even  // =>
-      odd   // =>
+let (even, odd): (Vec<isize>, Vec<isize>) = [5, 6, 7, 8].iter().partition(|&e| e % 2 == 0);
+even  // =>
+odd   // =>
 EOT
       :desc => nil,
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.partition",
+    },
+
+    {
+      :ruby_method => "partition + map",
+      :rust_method => "iter.partition_map",
+      :ruby_example => <<~EOT,
+even, odd = [5, 6, 7, 8].partition(&:even?)
+even                       # =>
+odd.collect { |e| e * 2 }  # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+use itertools::Either;
+let (even, odd): (Vec<_>, Vec<_>) = [5, 6, 7, 8].iter().partition_map(|&e| {
+    if e % 2 == 0 {
+        Either::Left(e)
+    } else {
+        Either::Right(e * 2)
+    }
+});
+even  // =>
+odd   // =>
+EOT
+      :desc => "partition で bool 型を返すのではなく、Either::{Left, Right} で値をラップして返す。言い変えると「分けたあとで値を操作するのではなく」のではなく「分けながら値を操作する」。わかりにくいのでよっぽどのことがなければ別々に書いた方がよさそう。どうやらこれは partition_result のプラベート実装を汎用化したもので、ほぼ partition_result 専用と思われるので知らなくてもいいかもしれない。",
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.partition_map",
+      :build_by => :cargo,
+    },
+
+    {
+      :ruby_method => "?",
+      :rust_method => "iter.partition_result",
+      :ruby_example => <<~EOT,
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+
+// これが
+use itertools::Either;
+let v = vec![Ok(5), Err(6), Ok(7), Err(8)];
+let (successes, failures): (Vec<_>, Vec<_>) = v.into_iter().partition_map(|e| {
+    match e {
+        Ok(v)  => Either::Left(v),
+        Err(v) => Either::Right(v),
+    }
+});
+successes // =>
+failures  // =>
+
+// 簡潔に書ける
+let v = vec![Ok(5), Err(6), Ok(7), Err(8)];
+let (successes, failures): (Vec<_>, Vec<_>) = v.into_iter().partition_result();
+successes // =>
+failures  // =>
+EOT
+      :desc => "Result 型の要素の配列を対象として Ok と Err に分ける。配列が要素に依存したメソッドを持っているのはいいのだろうか？",
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.partition_result",
+      :build_by => :cargo,
     },
 
     {
@@ -1789,6 +1882,21 @@ EOT
     },
 
     {
+      :ruby_method => "sort",
+      :rust_method => "iter.sorted",
+      :ruby_example => <<~EOT,
+[7, 6, 5].sort  # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[7, 6, 5].iter().sorted().collect_vec()  // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.sorted",
+      :build_by => :cargo,
+    },
+
+    {
       :ruby_method => "sort!",
       :rust_method => "sort",
       :ruby_example => <<~EOT,
@@ -1810,9 +1918,9 @@ v  # =>
       :ruby_method => "sort! {}",
       :rust_method => "sort_by",
       :ruby_example => <<~EOT,
-      v = [7, 6, 5]
-      v.sort! { |a, b| a <=> b }
-      v  # =>
+v = [7, 6, 5]
+v.sort! { |a, b| a <=> b }
+v  # =>
   EOT
       :rust_example => <<~EOT,
       let mut v = vec![7, 6, 5];
@@ -1825,12 +1933,44 @@ v  # =>
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.sort_by",
     },
     {
-      :ruby_method => "sort_by! ???",
+      :ruby_method => "sort {}",
+      :rust_method => "iter.sorted_by",
+      :ruby_example => <<~EOT,
+[7, 6, 5].sort { |a, b| a <=> b }  # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[7, 6, 5].iter().sorted_by(|a, b| a.cmp(b)).collect_vec()  // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.sorted_by",
+      :build_by => :cargo,
+    },
+
+    {
+      :ruby_method => "sort_by ブロック呼びすぎ版",
+      :rust_method => "iter.sorted_by_key",
+      :ruby_example => <<~EOT,
+[7, -6, 5].sort_by(&:abs)  # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+let mut c = 0;
+[7_isize, -6, 5].iter().sorted_by_key(|&e| { c += 1; e.abs() }).collect::<Vec<_>>() // =>
+c // =>
+EOT
+      :desc => "クロージャがめっちゃ呼ばれるので注意しよう",
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.sorted_by_key",
+      :build_by => :cargo,
+    },
+
+    {
+      :ruby_method => "sort_by! ブロック呼びすぎ版",
       :rust_method => "sort_by_key",
       :ruby_example => <<~EOT,
   EOT
       :rust_example => <<~EOT,
-      let mut v = vec![7_i32, -6, 5];
+      let mut v = vec![7_isize, -6, 5];
       let mut c = 0;
       v.sort_by_key(|e| { c += 1; e.abs() });
       v  // =>
@@ -1841,24 +1981,38 @@ v  # =>
       :desc => "値を参照するたびにクロージャが呼ばれるので注意しよう。sort_by_cached_key の方を使おう。",
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.sort_by_key",
     },
+
+    {
+      :ruby_method => "sort_by",
+      :rust_method => "iter.sorted_by_cached_key",
+      :ruby_example => <<~EOT,
+[7, 6, 5].sort_by { |e| e }  # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[7, 6, 5].iter().sorted_by_cached_key(|&e| e).collect::<Vec<_>>() // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.sorted_by_cached_key",
+      :build_by => :cargo,
+    },
+
     {
       :ruby_method => "sort_by!",
       :rust_method => "sort_by_cached_key",
       :ruby_example => <<~EOT,
-      v = [7, -6, 5]
-      v.sort_by!(&:abs)
+      v = [7, 6, 5]
+      v.sort_by! { |e| e }
       v  # =>
   EOT
       :rust_example => <<~EOT,
-      let mut v = vec![7_i32, -6, 5];
-      let mut c = 0;
-      v.sort_by_cached_key(|e| { c += 1; e.abs() });
+      let mut v = vec![7, 6, 5];
+      v.sort_by_cached_key(|&e| e);
       v  // =>
-      c  // =>
   EOT
       :rust_feature => nil,
       :mutable => true,
-      :desc => "欲しかったのはこっちです",
+      :desc => nil,
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.sort_by_cached_key",
     },
     {
@@ -1897,7 +2051,7 @@ v  # =>
       :ruby_example => <<~EOT,
   EOT
       :rust_example => <<~EOT,
-      let mut v = vec![7_i32, -6, 5];
+      let mut v = vec![7_isize, -6, 5];
       let mut c = 0;
       v.sort_unstable_by_key(|e| { c += 1; e.abs() });
       v  // =>
@@ -1940,7 +2094,7 @@ EOT
       :ruby_example => <<~EOT,
   EOT
       :rust_example => <<~EOT,
-      [5_i32, -6, 7].is_sorted_by_key(|e| e.abs())  // =>
+      [5_isize, -6, 7].is_sorted_by_key(|e| e.abs())  // =>
   EOT
       :rust_feature => "#![feature(is_sorted)]",
       :mutable => false,
@@ -1984,7 +2138,7 @@ EOT
       :ruby_example => <<~EOT,
   EOT
       :rust_example => <<~EOT,
-      let mut v = vec![7_i32, 6, 5];
+      let mut v = vec![7_isize, 6, 5];
       v.select_nth_unstable_by_key(0, |e| e.abs());
       v  // =>
   EOT
@@ -2375,7 +2529,7 @@ module Enumerable
   def with_position
     collect.with_index do |e, i|
       if size == 1
-        [e, :only]
+        pos = :only
       else
         if i == 0
           pos = :first
@@ -2384,8 +2538,8 @@ module Enumerable
         else
           pos = :last
         end
-        [e, pos]
       end
+      [e, pos]
     end
   end
 end
@@ -2540,7 +2694,7 @@ EOT
     },
 
     {
-      :ruby_method => "zip の次が無いと終わり版",
+      :ruby_method => "zip 次が無いと終わり",
       :rust_method => "iter.interleave_shortest",
       :ruby_example => <<~EOT,
 module Enumerable
@@ -2566,6 +2720,21 @@ use itertools::Itertools;
 EOT
       :desc => nil,
       :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.interleave_shortest",
+      :build_by => :cargo,
+    },
+
+    {
+      :ruby_method => "sort.take(n)",
+      :rust_method => "iter.k_smallest(n)",
+      :ruby_example => <<~EOT,
+[6, 7, 5].sort.take(2) # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[6, 7, 5].iter().k_smallest(2).collect::<Vec<_>>() // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.k_smallest",
       :build_by => :cargo,
     },
 
@@ -2800,14 +2969,14 @@ it.next  # =>
 EOT
       :rust_example => <<~EOT,
       struct Foo {
-          counter: i32,
+          counter: isize,
       }
 
       // カウンタが偶数のときだけその値を返す
       impl Iterator for Foo {
-          type Item = i32;
+          type Item = isize;
 
-          fn next(&mut self) -> Option<i32> {
+          fn next(&mut self) -> Option<isize> {
               let val = self.counter;
               self.counter += 1;
               if val % 2 == 0 {

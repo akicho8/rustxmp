@@ -1,13 +1,13 @@
 fn main() {
     struct Foo {
-        counter: i32,
+        counter: isize,
     }
 
     // カウンタが偶数のときだけその値を返す
     impl Iterator for Foo {
-        type Item = i32;
+        type Item = isize;
 
-        fn next(&mut self) -> Option<i32> {
+        fn next(&mut self) -> Option<isize> {
             let val = self.counter;
             self.counter += 1;
             if val % 2 == 0 {
