@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+
+require "thor"
+require "./ruby_to_rust_one"
+
+require "./array_list"
+require "./string_list"
+
+class RubyToRust < Thor
+  default_command :runner
+
+  desc "runner", "一括変換"
+  option :range,   type: :string, aliases: "-r", default: nil,       desc: "範囲"
+  option :target,  type: :string, aliases: "-t", default: "nightly", desc: "rustc の種類"
+  option :method,  type: :string, aliases: "-m", default: nil,       desc: "対象メソッド"
+  option :class,   type: :string, aliases: "-c", default: nil,       desc: "対象クラス"
+  def runner
+    list = [
+      ARRAY_LIST,
+      STRING_LIST,
+    ]
+    if v = options[:class]
+      list = list.find_all { |e| e[:name].match?(v) }
+    end
+    new_options = options.transform_keys(&:to_sym)
+    list.each do |e|
+      RubyToRustOne.new(e.merge(new_options)).run
+    end
+  end
+end
+
+RubyToRust.start
+# ~> /usr/local/var/rbenv/versions/3.1.0/lib/ruby/3.1.0/rubygems/dependency.rb:313:in `to_specs': Could not find 'activesupport' (< 7) - did find: [activesupport-7.0.2.3] (Gem::MissingSpecVersionError)
+# ~> Checked in 'GEM_PATH=/Users/ikeda/.gem/ruby/3.1.0:/usr/local/var/rbenv/versions/3.1.0/lib/ruby/gems/3.1.0' , execute `gem env` for more information
+# ~> 	from /usr/local/var/rbenv/versions/3.1.0/lib/ruby/3.1.0/rubygems/dependency.rb:323:in `to_spec'
+# ~> 	from /usr/local/var/rbenv/versions/3.1.0/lib/ruby/3.1.0/rubygems/core_ext/kernel_gem.rb:62:in `gem'
+# ~> 	from -:3:in `<main>'

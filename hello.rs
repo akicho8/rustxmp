@@ -1,4 +1,4 @@
 fn main() {
-    println!("{:?}", 4);     // >> 4
-    println!("{:?}", "foo"); // >> "foo"
+    println!("{:?}", 4+1);   // >> 5
+    // println!("{:?}", "foo"); // >> "foo"
 }

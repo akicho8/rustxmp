@@ -1,4 +1,7 @@
 fn main() {
     use itertools::Itertools;
-    println!("{:?}", vec![Ok(5), Err(6), Ok(7)].into_iter().map_ok(|e| e * 2).collect::<Vec<_>>());
+    println!(
+        "{:?}",
+        [5_i32, 6, 7].iter().map_into::<f64>().collect::<Vec<_>>()
+    );
 }

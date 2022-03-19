@@ -5,8 +5,7 @@ require "cgi"
 require "open3"
 require "active_support/isolated_execution_state"
 require "table_format"
-
-require
+require "./embed_processor"
 
 class Generator
   attr_accessor :params
@@ -134,14 +133,9 @@ class Generator
 
     def rust_process
       if !@params[:rust_example].to_s.empty?
-        lines = rust_run.lines
-        code2 = @params[:rust_example].gsub(%r{// =>.*}) { |s|
-          r = lines.shift
-          "// => #{r.rstrip}"
-        }
-        lines.each do |e|
-          code2 += "// >> #{e.rstrip}\n"
-        end
+        basename = [@params[:ruby_method], "as", @params[:rust_method]].join("_").gsub(/\W+/, "_").downcase
+        basename = "_#{@base.params[:name]}_#{basename}".gsub(/_+/, "_")
+        code2 = EmbedProcessor.new(source_code: main_rust_example, replace_code: @params[:rust_example], mark: "=>", basename: basename).to_s
         if @params[:rust_feature]
           lang = "Rust (nightly)"
         else
@@ -151,27 +145,6 @@ class Generator
         @out << code2.strip
         @out << "```"
       end
-    end
-
-    def rust_run
-      basename = [@params[:ruby_method], "as", @params[:rust_method]].join("_").gsub(/\W+/, "_").downcase
-      basename = "_#{@base.params[:name]}_#{basename}.rs".gsub(/_+/, "_")
-      file = Pathname("playground/examples/#{basename}")
-
-      FileUtils.makedirs(file.dirname)
-      file.write(main_rust_example)
-      if @params[:build_by] == :cargo
-        command = "cd playground && cargo run -q --example #{file.basename('.*')}"
-      else
-        command = "cd playground/examples && rustc #{file.basename} && ./#{file.basename('.*')}"
-      end
-      result = `#{command}`
-      unless $?.success?
-        puts file
-        puts $?
-        exit
-      end
-      result
     end
 
     def rust_with_println
