@@ -30,8 +30,3 @@ class RubyToRust < Thor
 end
 
 RubyToRust.start
-# ~> /usr/local/var/rbenv/versions/3.1.0/lib/ruby/3.1.0/rubygems/dependency.rb:313:in `to_specs': Could not find 'activesupport' (< 7) - did find: [activesupport-7.0.2.3] (Gem::MissingSpecVersionError)
-# ~> Checked in 'GEM_PATH=/Users/ikeda/.gem/ruby/3.1.0:/usr/local/var/rbenv/versions/3.1.0/lib/ruby/gems/3.1.0' , execute `gem env` for more information
-# ~> 	from /usr/local/var/rbenv/versions/3.1.0/lib/ruby/3.1.0/rubygems/dependency.rb:323:in `to_spec'
-# ~> 	from /usr/local/var/rbenv/versions/3.1.0/lib/ruby/3.1.0/rubygems/core_ext/kernel_gem.rb:62:in `gem'
-# ~> 	from -:3:in `<main>'

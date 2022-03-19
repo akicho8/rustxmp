@@ -3116,19 +3116,19 @@ EOT
       :build_by => :cargo,
     },
 
-    {
-      :ruby_method => "?",
-      :rust_method => "iter.map_into",
-      :ruby_example => <<~EOT,
-EOT
-      :rust_example => <<~EOT,
-use itertools::Itertools;
-[5_i32, 6, 7].iter().map_into::<f64>().collect::<Vec<_>>() // =>
-EOT
-      :desc => nil,
-      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.map_into",
-      :build_by => :cargo,
-    },
+#     {
+#       :ruby_method => "?",
+#       :rust_method => "iter.map_into",
+#       :ruby_example => <<~EOT,
+# EOT
+#       :rust_example => <<~EOT,
+# use itertools::Itertools;
+# [5_i32, 6, 7].iter().map_into::<f64>().collect::<Vec<_>>() // =>
+# EOT
+#       :desc => nil,
+#       :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.map_into",
+#       :build_by => :cargo,
+#     },
 
   ],
 }

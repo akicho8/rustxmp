@@ -7,7 +7,7 @@ require "active_support/isolated_execution_state"
 require "table_format"
 require "./embed_processor"
 
-class Generator
+class RubyToRustOne
   attr_accessor :params
 
   def initialize(params)
