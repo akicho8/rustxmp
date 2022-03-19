@@ -6,6 +6,8 @@ require "open3"
 require "active_support/isolated_execution_state"
 require "table_format"
 
+require
+
 class Generator
   attr_accessor :params
 

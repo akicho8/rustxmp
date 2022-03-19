@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+
+require "thor"
+require "./processor"
+
+module RustXmpfilter
+  class CLI < Thor
+    default_command :runner
+
+    desc "runner", "実行"
+    option :overwrite, type: :boolean, aliases: "-w", default: false, desc: "ファイルをオーバライドする"
+    def runner(*files)
+      if File.pipe?(STDIN) || File.select([STDIN], [], [], 0)
+        puts Processor.new(options.merge(source_code: STDIN.read)).to_s
+      else
+        files.each do |e|
+          Processor.new(options.merge(source_code: e.read)).run
+          if options[:overwrite]
+            e.write(to_s)
+          else
+            puts to_s
+          end
+        end
+      end
+    end
+  end
+end
+
+RustXmpfilter::CLI.start

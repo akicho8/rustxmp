@@ -1308,6 +1308,292 @@ EOT
       :build_by => :cargo,
     },
 
+    {
+      :ruby_method => "to_enum",
+      :rust_method => "iter",
+      :ruby_example => %([5, 6, 7].to_enum # =>),
+      :rust_example => <<~EOT,
+[5, 6, 7].iter()  // =>
+EOT
+      :desc => "所有権が移動するときは into_iter で破壊的操作のときは iter_mut を使う",
+      :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.iter",
+    },
+
+    {
+      :ruby_method => "entries",
+      :rust_method => "iter.collect",
+      :ruby_example => %([5, 6, 7].each.entries # =>),
+      :rust_example => <<~EOT,
+[5, 6, 7].iter().collect::<Vec<_>>() // =>
+EOT
+      :desc => "`::<Vec<_>>` の暗号はいったい何なのでしょう",
+      :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.collect",
+      :build_by => :cargo,
+    },
+
+    {
+      :ruby_method => "to_a",
+      :rust_method => "iter.collect_vec",
+      :ruby_example => %([5, 6, 7].each.to_a # =>),
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5, 6, 7].iter().collect_vec() // =>
+EOT
+      :desc => "Itertools を使うと簡潔に書けるようだ",
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.collect_vec",
+      :build_by => :cargo,
+    },
+
+    {
+      :ruby_method => "each",
+      :rust_method => "iter.for_each",
+      :ruby_example => <<~EOT,
+      [5, 6, 7].each { |e| p e }
+EOT
+      :rust_example => <<~EOT,
+      [5, 6, 7].iter().for_each(|e| println!("{:?}", e));
+EOT
+      :rust_feature => nil,
+      :desc => "`for` は先後が逆になって混乱するので `for_each` を使いたい。",
+      :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.for_each",
+    },
+    {
+      :ruby_method => "each { break }",
+      :rust_method => "iter.try_for_each",
+      :ruby_example => <<~EOT,
+      r = [5, 6, 7].each do |e|
+        if e == 6
+          break e * 10
+        end
+      end
+      r # =>
+EOT
+      :rust_example => <<~EOT,
+      use std::ops::ControlFlow::{Break, Continue};
+
+      let r = [5, 6, 7].iter().try_for_each(|&e| {
+          if e == 6 {
+              return Break(e * 10)
+          }
+          Continue(())
+      });
+      r // =>
+EOT
+      :rust_feature => nil,
+      :desc => "for_each で break できる版。ただ Continue を毎回呼ばないといけないのが奇妙ではある。",
+      :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_for_each",
+    },
+    {
+      :ruby_method => "with_index",
+      :rust_method => "iter.enumerate",
+      :ruby_example => %(["a", "b"].each.with_index.entries # =>),
+      :rust_example => %(["a", "b"].iter().enumerate().collect::<Vec<_>>() // =>),
+      :desc => "Enumerable 的なものを連想してしまう。用語がぜんぜん違うので注意しよう。index の位置が逆なのも注意しよう。",
+      :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.enumerate",
+    },
+
+    {
+      :ruby_method => "with_index の抽象化",
+      :rust_method => "iter.with_position",
+      :ruby_example => <<~EOT,
+module Enumerable
+  def with_position
+    collect.with_index do |e, i|
+      if size == 1
+        pos = :only
+      else
+        if i == 0
+          pos = :first
+        elsif i < size - 1
+          pos = :middle
+        else
+          pos = :last
+        end
+      end
+      [e, pos]
+    end
+  end
+end
+
+[5, 6, 7].with_position  # =>
+[5].with_position        # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5, 6, 7].iter().with_position().collect_vec() // =>
+[5].iter().with_position().collect_vec()       // =>
+EOT
+      :desc => "お気に入り",
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.with_position",
+      :build_by => :cargo,
+    },
+
+    {
+      :ruby_method => "tap { |e| e.each {} }",
+      :rust_method => "iter.inspect",
+      :ruby_example => %([5, 6, 7].tap { |e| p e }.entries # =>),
+      :rust_example => <<~EOT,
+      let mut v = Vec::new();
+      [5, 6, 7].iter().inspect(|&e| v.push(e)).collect::<Vec<_>>() // =>
+      v // =>
+EOT
+      :rust_feature => nil,
+      :desc => "1つずつ要素が来るので注意",
+      :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.inspect",
+    },
+
+    #     # array
+    #
+
+    {
+      :ruby_method => "each_slice(n).collect(&:first)",
+      :rust_method => "iter.step_by(n)",
+      :ruby_example => <<~EOT,
+      [5, 6, 7, 8].each_slice(2).collect(&:first) # =>
+
+      v = [5, 6, 7, 8]
+      v.values_at(*0.step(v.size - 1, by: 2)) # =>
+EOT
+      :rust_example => %([5, 6, 7, 8].iter().step_by(2).collect::<Vec<_>>() // =>),
+      :desc => nil,
+      :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.step_by",
+    },
+
+    {
+      :ruby_method => "zip 余り除去",
+      :rust_method => "iter.zip",
+      :ruby_example => <<~EOT,
+module Enumerable
+  def zip2(*args)
+    enums = [self, *args].collect(&:to_enum)
+    Enumerator.new do |y|
+      loop do
+        y << enums.collect(&:next)
+      end
+    end
+  end
+end
+
+[100, 200].zip2([5, 6, 7, 8]).to_a  # =>
+[5, 6, 7, 8].zip2([100, 200]).to_a  # =>
+EOT
+      :rust_example => <<~EOT,
+[100, 200].iter().zip([5, 6, 7, 8].iter()).collect::<Vec<_>>() // =>
+[5, 6, 7, 8].iter().zip([100, 200].iter()).collect::<Vec<_>>() // =>
+EOT
+      :desc => "ペアになれなかった要素は無視されるので注意しよう",
+      :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.zip",
+    },
+
+    {
+      :ruby_method => "zip 捨てない 詰める",
+      :rust_method => "iter.interleave",
+      :ruby_example => <<~EOT,
+module Enumerable
+  def interleave(*args)
+    enums = [self, *args].collect(&:to_enum)
+    Enumerator.new do |y|
+      loop do
+        exist = false
+        enums.each do |e|
+          begin
+            y << e.next
+            exist = true
+          rescue StopIteration
+          end
+        end
+        unless exist
+          break
+        end
+      end
+    end
+  end
+end
+
+[5, 6, 7, 8].interleave([100, 200]).to_a  # => [5, 100, 6, 200, 7, 8]
+[100, 200].interleave([5, 6, 7, 8]).to_a  # => [100, 5, 200, 6, 7, 8]
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5, 6, 7, 8].iter().interleave(&[100, 200]).collect::<Vec<_>>() // =>
+[100, 200].iter().interleave(&[5, 6, 7, 8]).collect::<Vec<_>>() // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.interleave",
+      :build_by => :cargo,
+    },
+
+    {
+      :ruby_method => "zip 捨てない 詰める 富豪的",
+      :rust_method => "iter.zip_longest",
+      :ruby_example => <<~EOT,
+module Enumerable
+  def zip_longest(other)
+    a = to_enum
+    b = other.to_enum
+    none = Object.new
+    Enumerator.new do |y|
+      loop do
+        l = a.next rescue none
+        r = b.next rescue none
+        case
+        when l != none && r != none
+          y << [:both, l, r]
+        when l != none
+          y << [:left, l]
+        when r != none
+          y << [:right, r]
+        else
+          break
+        end
+      end
+    end
+  end
+end
+
+[5, 6, 7, 8].zip_longest([100, 200]).to_a  # => [[:both, 5, 100], [:both, 6, 200], [:left, 7], [:left, 8]]
+[100, 200].zip_longest([5, 6, 7, 8]).to_a  # => [[:both, 100, 5], [:both, 200, 6], [:right, 7], [:right, 8]]
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5, 6, 7, 8].iter().zip_longest(&[100, 200]).collect::<Vec<_>>() // =>
+[100, 200].iter().zip_longest(&[5, 6, 7, 8]).collect::<Vec<_>>() // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.zip_longest",
+      :build_by => :cargo,
+    },
+
+    {
+      :ruby_method => "zip 次が無いと終わり",
+      :rust_method => "iter.interleave_shortest",
+      :ruby_example => <<~EOT,
+module Enumerable
+  def interleave_shortest(*others)
+    enums = [self, *others].collect(&:to_enum)
+    Enumerator.new do |y|
+      loop do
+        enums.each do |e|
+          y << e.next
+        end
+      end
+    end
+  end
+end
+
+[5, 6, 7, 8].interleave_shortest([100, 200]).to_a  # => [5, 100, 6, 200, 7]
+[100, 200].interleave_shortest([5, 6, 7, 8]).to_a  # => [100, 5, 200, 6]
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5, 6, 7, 8].iter().interleave_shortest(&[100, 200]).collect::<Vec<_>>() // =>
+[100, 200].iter().interleave_shortest(&[5, 6, 7, 8]).collect::<Vec<_>>() // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.interleave_shortest",
+      :build_by => :cargo,
+    },
+
     ################################################################################
 
     {
@@ -1484,7 +1770,8 @@ let (even, odd): (Vec<_>, Vec<_>) = [5, 6, 7, 8].iter().partition_map(|&e| {
 even  // =>
 odd   // =>
 EOT
-      :desc => "partition で bool 型を返すのではなく、Either::{Left, Right} で値をラップして返す。言い変えると「分けたあとで値を操作するのではなく」のではなく「分けながら値を操作する」。わかりにくいのでよっぽどのことがなければ別々に書いた方がよさそう。どうやらこれは partition_result のプラベート実装を汎用化したもので、ほぼ partition_result 専用と思われるので知らなくてもいいかもしれない。",
+      :desc => "true か false で分けるのではなく `Either::{Left, Right}` で値をラップして返す。言い変えると分けたあとで値を操作するのではなく分けながら値を操作する。わかりにくいのでよっぽどのことがなければ別々に書いた方がよさそう。
+どうやらこれは partition_result の内部実装を汎用化したもので、ほぼ partition_result のためにあると思われる。",
       :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.partition_map",
       :build_by => :cargo,
     },
@@ -1515,7 +1802,7 @@ let (successes, failures): (Vec<_>, Vec<_>) = v.into_iter().partition_result();
 successes // =>
 failures  // =>
 EOT
-      :desc => "Result 型の要素の配列を対象として Ok と Err に分ける。配列が要素に依存したメソッドを持っているのはいいのだろうか？",
+      :desc => "Result 型要素の配列内容を Ok と Err に分ける。配列が要素に依存したメソッドを持っているのはいいのだろうか？",
       :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.partition_result",
       :build_by => :cargo,
     },
@@ -1914,6 +2201,22 @@ v  # =>
       :desc => "同じ値は並び変えないらしい。そこにこだわりがなければ sort_unstable の方を使おう。",
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.sort",
     },
+
+    {
+      :ruby_method => "sort {}",
+      :rust_method => "iter.sorted_by",
+      :ruby_example => <<~EOT,
+[7, 6, 5].sort { |a, b| a <=> b }  # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[7, 6, 5].iter().sorted_by(|a, b| a.cmp(b)).collect_vec()  // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.sorted_by",
+      :build_by => :cargo,
+    },
+
     {
       :ruby_method => "sort! {}",
       :rust_method => "sort_by",
@@ -1931,20 +2234,6 @@ v  # =>
       :mutable => true,
       :desc => nil,
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.sort_by",
-    },
-    {
-      :ruby_method => "sort {}",
-      :rust_method => "iter.sorted_by",
-      :ruby_example => <<~EOT,
-[7, 6, 5].sort { |a, b| a <=> b }  # =>
-EOT
-      :rust_example => <<~EOT,
-use itertools::Itertools;
-[7, 6, 5].iter().sorted_by(|a, b| a.cmp(b)).collect_vec()  // =>
-EOT
-      :desc => nil,
-      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.sorted_by",
-      :build_by => :cargo,
     },
 
     {
@@ -2061,91 +2350,6 @@ EOT
       :mutable => true,
       :desc => "クロージャが要素数よりも多く呼ばれるので注意",
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.sort_unstable_by_key",
-    },
-    {
-      :ruby_method => "?",
-      :rust_method => "is_sorted",
-      :ruby_example => <<~EOT,
-EOT
-      :rust_example => <<~EOT,
-      [5, 6, 7].is_sorted()  // =>
-  EOT
-      :rust_feature => "#![feature(is_sorted)]",
-      :mutable => false,
-      :desc => "ソートしてあるか調べるぐらいならソートすればよくね？ って思うけど、利用する側でソート済みならソートを省略するように書けばトータルで計算量を減らせたりする場合があってそれを考慮して用意されているメソッドだろうか。",
-      :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.is_sorted",
-    },
-    {
-      :ruby_method => "?",
-      :rust_method => "is_sorted_by",
-      :ruby_example => <<~EOT,
-  EOT
-      :rust_example => <<~EOT,
-      [5, 6, 7].is_sorted_by(|a, b| a.partial_cmp(b))  // =>
-  EOT
-      :rust_feature => "#![feature(is_sorted)]",
-      :mutable => false,
-      :desc => nil,
-      :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.is_sorted_by",
-    },
-    {
-      :ruby_method => "?",
-      :rust_method => "is_sorted_by_key",
-      :ruby_example => <<~EOT,
-  EOT
-      :rust_example => <<~EOT,
-      [5_isize, -6, 7].is_sorted_by_key(|e| e.abs())  // =>
-  EOT
-      :rust_feature => "#![feature(is_sorted)]",
-      :mutable => false,
-      :desc => nil,
-      :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.is_sorted_by_key",
-    },
-
-    {
-      :ruby_method => "?",
-      :rust_method => "select_nth_unstable",
-      :ruby_example => <<~EOT,
-  EOT
-      :rust_example => <<~EOT,
-      let mut v = vec![7, 6, 5];
-      v.select_nth_unstable(0); // [0] が 5 になることだけは保証する
-      v  // =>
-  EOT
-      :rust_feature => nil,
-      :mutable => true,
-      :desc => "指定の位置の値だけはソート後と同じにする。ソート処理の一部分だけを切り出したような機能。いざ必要になったときこのメソッドのことを忘れている自信はある。",
-      :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.select_nth_unstable",
-    },
-    {
-      :ruby_method => "?",
-      :rust_method => "select_nth_unstable_by",
-      :ruby_example => <<~EOT,
-  EOT
-      :rust_example => <<~EOT,
-      let mut v = vec![7, 6, 5];
-      v.select_nth_unstable_by(0, |a, b| a.cmp(b));
-      v  // =>
-  EOT
-      :rust_feature => nil,
-      :mutable => true,
-      :desc => nil,
-      :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.select_nth_unstable_by",
-    },
-    {
-      :ruby_method => "?",
-      :rust_method => "select_nth_unstable_by_key",
-      :ruby_example => <<~EOT,
-  EOT
-      :rust_example => <<~EOT,
-      let mut v = vec![7_isize, 6, 5];
-      v.select_nth_unstable_by_key(0, |e| e.abs());
-      v  // =>
-  EOT
-      :rust_feature => nil,
-      :mutable => true,
-      :desc => nil,
-      :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.select_nth_unstable_by_key",
     },
 
     {
@@ -2436,292 +2640,6 @@ EOT
     #     },
 
     ################################################################################
-
-    {
-      :ruby_method => "to_enum",
-      :rust_method => "iter",
-      :ruby_example => %([5, 6, 7].to_enum # =>),
-      :rust_example => <<~EOT,
-[5, 6, 7].iter()  // =>
-EOT
-      :desc => "所有権が移動するときは into_iter で破壊的操作のときは iter_mut を使う",
-      :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.iter",
-    },
-
-    {
-      :ruby_method => "entries",
-      :rust_method => "iter.collect",
-      :ruby_example => %([5, 6, 7].each.entries # =>),
-      :rust_example => <<~EOT,
-[5, 6, 7].iter().collect::<Vec<_>>() // =>
-EOT
-      :desc => "`::<Vec<_>>` の暗号はいったい何なのでしょう",
-      :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.collect",
-      :build_by => :cargo,
-    },
-
-    {
-      :ruby_method => "to_a",
-      :rust_method => "iter.collect_vec",
-      :ruby_example => %([5, 6, 7].each.to_a # =>),
-      :rust_example => <<~EOT,
-use itertools::Itertools;
-[5, 6, 7].iter().collect_vec() // =>
-EOT
-      :desc => "Itertools を使うと簡潔に書けるようだ",
-      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.collect_vec",
-      :build_by => :cargo,
-    },
-
-    {
-      :ruby_method => "each",
-      :rust_method => "iter.for_each",
-      :ruby_example => <<~EOT,
-      [5, 6, 7].each { |e| p e }
-EOT
-      :rust_example => <<~EOT,
-      [5, 6, 7].iter().for_each(|e| println!("{:?}", e));
-EOT
-      :rust_feature => nil,
-      :desc => "`for` は先後が逆になって混乱するので `for_each` を使いたい。",
-      :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.for_each",
-    },
-    {
-      :ruby_method => "each { break }",
-      :rust_method => "iter.try_for_each",
-      :ruby_example => <<~EOT,
-      r = [5, 6, 7].each do |e|
-        if e == 6
-          break e * 10
-        end
-      end
-      r # =>
-EOT
-      :rust_example => <<~EOT,
-      use std::ops::ControlFlow::{Break, Continue};
-
-      let r = [5, 6, 7].iter().try_for_each(|&e| {
-          if e == 6 {
-              return Break(e * 10)
-          }
-          Continue(())
-      });
-      r // =>
-EOT
-      :rust_feature => nil,
-      :desc => "for_each で break できる版。ただ Continue を毎回呼ばないといけないのが奇妙ではある。",
-      :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.try_for_each",
-    },
-    {
-      :ruby_method => "with_index",
-      :rust_method => "iter.enumerate",
-      :ruby_example => %(["a", "b"].each.with_index.entries # =>),
-      :rust_example => %(["a", "b"].iter().enumerate().collect::<Vec<_>>() // =>),
-      :desc => "Enumerable 的なものを連想してしまう。用語がぜんぜん違うので注意しよう。index の位置が逆なのも注意しよう。",
-      :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.enumerate",
-    },
-
-    {
-      :ruby_method => "with_index の抽象化",
-      :rust_method => "iter.with_position",
-      :ruby_example => <<~EOT,
-module Enumerable
-  def with_position
-    collect.with_index do |e, i|
-      if size == 1
-        pos = :only
-      else
-        if i == 0
-          pos = :first
-        elsif i < size - 1
-          pos = :middle
-        else
-          pos = :last
-        end
-      end
-      [e, pos]
-    end
-  end
-end
-
-[5, 6, 7].with_position  # =>
-[5].with_position        # =>
-EOT
-      :rust_example => <<~EOT,
-use itertools::Itertools;
-[5, 6, 7].iter().with_position().collect_vec() // =>
-[5].iter().with_position().collect_vec()       // =>
-EOT
-      :desc => "お気に入り",
-      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.with_position",
-      :build_by => :cargo,
-    },
-
-    {
-      :ruby_method => "tap { |e| e.each {} }",
-      :rust_method => "iter.inspect",
-      :ruby_example => %([5, 6, 7].tap { |e| p e }.entries # =>),
-      :rust_example => <<~EOT,
-      let mut v = Vec::new();
-      [5, 6, 7].iter().inspect(|&e| v.push(e)).collect::<Vec<_>>() // =>
-      v // =>
-EOT
-      :rust_feature => nil,
-      :desc => "1つずつ要素が来るので注意",
-      :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.inspect",
-    },
-
-    #     # array
-    #
-
-    {
-      :ruby_method => "each_slice(n).collect(&:first)",
-      :rust_method => "iter.step_by(n)",
-      :ruby_example => <<~EOT,
-      [5, 6, 7, 8].each_slice(2).collect(&:first) # =>
-
-      v = [5, 6, 7, 8]
-      v.values_at(*0.step(v.size - 1, by: 2)) # =>
-EOT
-      :rust_example => %([5, 6, 7, 8].iter().step_by(2).collect::<Vec<_>>() // =>),
-      :desc => nil,
-      :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.step_by",
-    },
-
-    {
-      :ruby_method => "zip 余り除去",
-      :rust_method => "iter.zip",
-      :ruby_example => <<~EOT,
-module Enumerable
-  def zip2(*args)
-    enums = [self, *args].collect(&:to_enum)
-    Enumerator.new do |y|
-      loop do
-        y << enums.collect(&:next)
-      end
-    end
-  end
-end
-
-[100, 200].zip2([5, 6, 7, 8]).to_a  # =>
-[5, 6, 7, 8].zip2([100, 200]).to_a  # =>
-EOT
-      :rust_example => <<~EOT,
-[100, 200].iter().zip([5, 6, 7, 8].iter()).collect::<Vec<_>>() // =>
-[5, 6, 7, 8].iter().zip([100, 200].iter()).collect::<Vec<_>>() // =>
-EOT
-      :desc => "ペアになれなかった要素は無視されるので注意しよう",
-      :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.zip",
-    },
-
-    {
-      :ruby_method => "zip 捨てない 詰める",
-      :rust_method => "iter.interleave",
-      :ruby_example => <<~EOT,
-module Enumerable
-  def interleave(*args)
-    enums = [self, *args].collect(&:to_enum)
-    Enumerator.new do |y|
-      loop do
-        exist = false
-        enums.each do |e|
-          begin
-            y << e.next
-            exist = true
-          rescue StopIteration
-          end
-        end
-        unless exist
-          break
-        end
-      end
-    end
-  end
-end
-
-[5, 6, 7, 8].interleave([100, 200]).to_a  # => [5, 100, 6, 200, 7, 8]
-[100, 200].interleave([5, 6, 7, 8]).to_a  # => [100, 5, 200, 6, 7, 8]
-EOT
-      :rust_example => <<~EOT,
-use itertools::Itertools;
-[5, 6, 7, 8].iter().interleave(&[100, 200]).collect::<Vec<_>>() // =>
-[100, 200].iter().interleave(&[5, 6, 7, 8]).collect::<Vec<_>>() // =>
-EOT
-      :desc => nil,
-      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.interleave",
-      :build_by => :cargo,
-    },
-
-    {
-      :ruby_method => "zip 捨てない 詰める 富豪的",
-      :rust_method => "iter.zip_longest",
-      :ruby_example => <<~EOT,
-module Enumerable
-  def zip_longest(other)
-    a = to_enum
-    b = other.to_enum
-    none = Object.new
-    Enumerator.new do |y|
-      loop do
-        l = a.next rescue none
-        r = b.next rescue none
-        case
-        when l != none && r != none
-          y << [:both, l, r]
-        when l != none
-          y << [:left, l]
-        when r != none
-          y << [:right, r]
-        else
-          break
-        end
-      end
-    end
-  end
-end
-
-[5, 6, 7, 8].zip_longest([100, 200]).to_a  # => [[:both, 5, 100], [:both, 6, 200], [:left, 7], [:left, 8]]
-[100, 200].zip_longest([5, 6, 7, 8]).to_a  # => [[:both, 100, 5], [:both, 200, 6], [:right, 7], [:right, 8]]
-EOT
-      :rust_example => <<~EOT,
-use itertools::Itertools;
-[5, 6, 7, 8].iter().zip_longest(&[100, 200]).collect::<Vec<_>>() // =>
-[100, 200].iter().zip_longest(&[5, 6, 7, 8]).collect::<Vec<_>>() // =>
-EOT
-      :desc => nil,
-      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.zip_longest",
-      :build_by => :cargo,
-    },
-
-    {
-      :ruby_method => "zip 次が無いと終わり",
-      :rust_method => "iter.interleave_shortest",
-      :ruby_example => <<~EOT,
-module Enumerable
-  def interleave_shortest(*others)
-    enums = [self, *others].collect(&:to_enum)
-    Enumerator.new do |y|
-      loop do
-        enums.each do |e|
-          y << e.next
-        end
-      end
-    end
-  end
-end
-
-[5, 6, 7, 8].interleave_shortest([100, 200]).to_a  # => [5, 100, 6, 200, 7]
-[100, 200].interleave_shortest([5, 6, 7, 8]).to_a  # => [100, 5, 200, 6]
-EOT
-      :rust_example => <<~EOT,
-use itertools::Itertools;
-[5, 6, 7, 8].iter().interleave_shortest(&[100, 200]).collect::<Vec<_>>() // =>
-[100, 200].iter().interleave_shortest(&[5, 6, 7, 8]).collect::<Vec<_>>() // =>
-EOT
-      :desc => nil,
-      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.interleave_shortest",
-      :build_by => :cargo,
-    },
 
     {
       :ruby_method => "sort.take(n)",
@@ -3066,6 +2984,45 @@ EOT
     },
     {
       :ruby_method => "?",
+      :rust_method => "is_sorted",
+      :ruby_example => <<~EOT,
+EOT
+      :rust_example => <<~EOT,
+      [5, 6, 7].is_sorted()  // =>
+  EOT
+      :rust_feature => "#![feature(is_sorted)]",
+      :mutable => false,
+      :desc => "ソートしてあるか調べるぐらいならソートすればよくね？ って思うけど、利用する側でソート済みならソートを省略するように書けばトータルで計算量を減らせたりする場合があってそれを考慮して用意されているメソッドだろうか。",
+      :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.is_sorted",
+    },
+    {
+      :ruby_method => "?",
+      :rust_method => "is_sorted_by",
+      :ruby_example => <<~EOT,
+  EOT
+      :rust_example => <<~EOT,
+      [5, 6, 7].is_sorted_by(|a, b| a.partial_cmp(b))  // =>
+  EOT
+      :rust_feature => "#![feature(is_sorted)]",
+      :mutable => false,
+      :desc => nil,
+      :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.is_sorted_by",
+    },
+    {
+      :ruby_method => "?",
+      :rust_method => "is_sorted_by_key",
+      :ruby_example => <<~EOT,
+  EOT
+      :rust_example => <<~EOT,
+      [5_isize, -6, 7].is_sorted_by_key(|e| e.abs())  // =>
+  EOT
+      :rust_feature => "#![feature(is_sorted)]",
+      :mutable => false,
+      :desc => nil,
+      :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.is_sorted_by_key",
+    },
+    {
+      :ruby_method => "?",
       :rust_method => "iter.is_sorted_by",
       :ruby_example => <<~EOT,
       v = [5, 6, 7]
@@ -3088,5 +3045,90 @@ EOT
       :desc => "",
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.is_sorted_by_key",
     },
+    {
+      :ruby_method => "?",
+      :rust_method => "select_nth_unstable",
+      :ruby_example => <<~EOT,
+  EOT
+      :rust_example => <<~EOT,
+      let mut v = vec![7, 6, 5];
+      v.select_nth_unstable(0); // [0] が 5 になることだけは保証する
+      v  // =>
+  EOT
+      :rust_feature => nil,
+      :mutable => true,
+      :desc => "指定の位置の値だけはソート後と同じにする。ソート処理の一部分だけを切り出したような機能。いざ必要になったときこのメソッドのことを忘れている自信はある。",
+      :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.select_nth_unstable",
+    },
+    {
+      :ruby_method => "?",
+      :rust_method => "select_nth_unstable_by",
+      :ruby_example => <<~EOT,
+  EOT
+      :rust_example => <<~EOT,
+      let mut v = vec![7, 6, 5];
+      v.select_nth_unstable_by(0, |a, b| a.cmp(b));
+      v  // =>
+  EOT
+      :rust_feature => nil,
+      :mutable => true,
+      :desc => nil,
+      :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.select_nth_unstable_by",
+    },
+    {
+      :ruby_method => "?",
+      :rust_method => "select_nth_unstable_by_key",
+      :ruby_example => <<~EOT,
+  EOT
+      :rust_example => <<~EOT,
+      let mut v = vec![7_isize, 6, 5];
+      v.select_nth_unstable_by_key(0, |e| e.abs());
+      v  // =>
+  EOT
+      :rust_feature => nil,
+      :mutable => true,
+      :desc => nil,
+      :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.select_nth_unstable_by_key",
+    },
+
+    {
+      :ruby_method => "to_enum を2つ",
+      :rust_method => "iter.tee",
+      :ruby_example => <<~EOT,
+module Enumerable
+  def tee
+    [to_enum, to_enum]
+  end
+end
+
+a, b = [5, 6, 7].tee
+a.entries  # =>
+b.entries  # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+let (a, b) = [5, 6, 7].iter().tee();
+a.collect::<Vec<_>>()  // =>
+b.collect::<Vec<_>>()  // =>
+EOT
+      :desc => "使いどころがわからないメソッド",
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.tee",
+      :build_by => :cargo,
+    },
+
+    {
+      :ruby_method => "?",
+      :rust_method => "iter.map_into",
+      :ruby_example => <<~EOT,
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5_i32, 6, 7].iter().map_into::<f64>().collect::<Vec<_>>() // =>
+EOT
+      :desc => nil,
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.map_into",
+      :build_by => :cargo,
+    },
+
   ],
 }

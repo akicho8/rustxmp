@@ -2,14 +2,12 @@
 # println!("{:?}", vec![Ok(5), Err(6), Ok(7)].into_iter().map_ok(|e| e * 2).collect::<Vec<_>>());
 
 class Result
-  attr_accessor :value
-
   def initialize(value)
     @value = value
   end
 
   def inspect
-    "#{self.class.name}(#{value})"
+    "#{self.class.name}(#{@value})"
   end
 
   def is_ok
