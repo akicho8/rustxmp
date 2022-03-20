@@ -54,7 +54,7 @@ class RubyToRustOne
         "Ruby" => e[:ruby_method],
         "Rust" => e[:rust_method],
         ""     => e.other_links,
-      }.transform_values { |e| e.gsub("|", "\\\\\\\\|") }
+      }.transform_values(&method(:escape_for_markdown))
     end
     @out << rows.to_t(markdown: true, truncate: false)
   end
@@ -70,6 +70,11 @@ class RubyToRustOne
       puts @out
       puts "-" * 80
     end
+  end
+
+  def escape_for_markdown(e)
+    e = e.gsub(/\|_\|/, '|\_|')
+    e = e.gsub(/([<>|])/, '\\\\\1')
   end
 
   class Element

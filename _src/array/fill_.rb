@@ -1,3 +1,7 @@
-v = [5, 6, 7]
-v.fill { 8 }
-v # => [8, 8, 8]
+module Enumerable
+  def pad_using(n, &block)
+    [*self, *(size...n).collect(&block)]
+  end
+end
+
+(100..102).pad_using(6) { |i| i * 2 } # =>

@@ -158,6 +158,52 @@ v[1]           # =>
       :desc => "何かやるとすぐ元を破壊しようとするメソッドが多いなかで get は安全かつ範囲も使えるので便利。ただしマイナスを指定しても末尾からとはならない。整数でアクセスするときだけ get(i) を [i] にすれば Option 型にならない。",
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.get",
     },
+
+    {
+      :ruby_method => "a, b = ary",
+      :rust_method => "next_tuple",
+      :ruby_example => <<~EOT,
+a, b = [5, 6, 7, 8]
+a  # => 5
+b  # => 6
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+if let Some((a, b)) = [5, 6, 7, 8].iter().next_tuple() {
+    a // =>
+    b // =>
+}
+
+[5, 6, 7, 8].get(..3)                         // =>
+[5, 6, 7, 8].iter().next_tuple::<(_, _, _)>() // =>
+EOT
+      :desc => "get(..n) に似ているが、取り出される数は受け側のタプルの要素数で決まる。繰り返さない。取り出しておわり。",
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.next_tuple",
+      :build_by => :cargo,
+    },
+
+    {
+      :ruby_method => "a, b = ary 厳しい版",
+      :rust_method => "collect_tuple",
+      :ruby_example => <<~EOT,
+v = [5, 6]
+if v.size == 2
+  a, b = v
+  a # =>
+  b # =>
+end
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+[5].iter().collect_tuple::<(_, _)>()       // =>
+[5, 6].iter().collect_tuple::<(_, _)>()    // =>
+[5, 6, 7].iter().collect_tuple::<(_, _)>() // =>
+EOT
+      :desc => "タプルの要素数と配列の要素数が同じときだけ取り出せる。メソッド名からこの挙動は想像つかなかった。",
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.collect_tuple",
+      :build_by => :cargo,
+    },
+
     {
       :ruby_method => "first",
       :rust_method => "first",
@@ -618,6 +664,28 @@ v # => [8, 8, 8]
       :desc => "引数の形式が厳密であるがゆえに少し違うだけで仕方なく別のメソッドを用意しているように感じる",
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.fill_with",
     },
+
+    {
+      :ruby_method => "fill にやや似",
+      :rust_method => "pad_using",
+      :ruby_example => <<~EOT,
+module Enumerable
+  def pad_using(n, &block)
+    [*self, *(size...n).collect(&block)]
+  end
+end
+
+(100..102).pad_using(6) { |i| i * 2 } # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+(100..=102).pad_using(6, |i| i * 2).collect::<Vec<_>>() // =>
+EOT
+      :desc => "配列に適用したかったが方法がわからなかった。Range的なのにしか適用できないのかもしれない。",
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.pad_using",
+      :build_by => :cargo,
+    },
+
     {
       :ruby_method => "v * n",
       :rust_method => "v.repeat(n)",
@@ -720,6 +788,40 @@ EOT
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.flat_map",
     },
     {
+      :ruby_method => "?",
+      :rust_method => "update",
+      :ruby_example => <<~EOT,
+["A", "B"].collect { |e| "\#{e}+" } # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+let v = vec![String::from("A"), String::from("B")];
+v.into_iter().update(|e| e.push_str("+")).collect::<Vec<_>>() // =>
+
+// これでよくない？
+["A", "B"].iter().map(|e| format!("{}+", e)).collect::<Vec<_>>() // =>
+EOT
+      :desc => "「各要素を生成する前に各要素にミューテーション関数を適用するイテレータアダプタを返す」らしいが意味はよくわかっていない",
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.update",
+      :build_by => :cargo,
+    },
+
+    {
+      :ruby_method => "map(&:to_f)",
+      :rust_method => "iter.map_into::<f64>()",
+      :ruby_example => <<~EOT,
+[5, 6, 7].map(&:to_f)  # =>
+EOT
+      :rust_example => <<~EOT,
+use itertools::Itertools;
+vec![5, 6, 7].into_iter().map_into::<f64>().collect::<Vec<_>>() // =>
+EOT
+      :desc => "逆に小数を整数にしようとしたらできなかった",
+      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.map_into",
+      :build_by => :cargo,
+    },
+
+    {
       :ruby_method => "map の何か渡せる版",
       :rust_method => "iter.scan",
       :ruby_example => <<~EOT,
@@ -734,6 +836,7 @@ EOT
       :desc => "書き方は inject に似ているけど map のように配列を返す。each_with_object の代用としても使えそう。",
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.scan",
     },
+
     {
       :ruby_method => "find_all",
       :rust_method => "iter.filter",
@@ -1203,7 +1306,7 @@ EOT
       :rust_method => "iter.max_by_key",
       :ruby_example => %([5, 6, -7].max_by(&:abs) # =>),
       :rust_example => %([5_isize, 6, -7].iter().max_by_key(|e| e.abs()) // =>),
-      :desc => "Rust は元の値を key と呼んでいる",
+      :desc => "Rust は元の値を key と呼んでいて混乱しそう",
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.max_by_key",
     },
     {
@@ -3113,21 +3216,6 @@ b.collect::<Vec<_>>()  // =>
 EOT
       :desc => "使いどころがわからないメソッド",
       :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.tee",
-      :build_by => :cargo,
-    },
-
-    {
-      :ruby_method => "map(&:to_f)",
-      :rust_method => "iter.map_into::<f64>()",
-      :ruby_example => <<~EOT,
-[5, 6, 7].map(&:to_f)  # =>
-EOT
-      :rust_example => <<~EOT,
-use itertools::Itertools;
-vec![5, 6, 7].into_iter().map_into::<f64>().collect::<Vec<_>>() // =>
-EOT
-      :desc => "逆に小数を整数にしようとしたらできなかった(悲)",
-      :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.map_into",
       :build_by => :cargo,
     },
 

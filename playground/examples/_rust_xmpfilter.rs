@@ -1,7 +1,8 @@
-#[allow(unused_variables)]
+use itertools::Itertools;
+
 fn main() {
-    let ok_value: Result<i32, &str> = Ok(5);
-    let ng_value: Result<i32, &str> = Err("失敗");
-    let ok2_value: Result<i32, &str> = Ok(20);
-    println!("{:?}", ng_value.ok());
+    let v = vec![String::from("A"), String::from("B")];
+    println!("{:?}", v.into_iter().update(|e| e.push_str("+")).collect::<Vec<_>>()); // >> ["A+", "B+"]
+
+    println!("{:?}", ["A", "B"].iter().map(|e| format!("{}+", e)).collect::<Vec<_>>()) // =>
 }
