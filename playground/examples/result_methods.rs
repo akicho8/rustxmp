@@ -1,5 +1,5 @@
 fn main() {
-    let ok_value: Result<isize, &str> = Ok(200);
+    let ok_value: Result<isize, &str> = Ok(5);
     let ng_value: Result<isize, &str> = Err("失敗");
     let ok2_value: Result<isize, &str> = Ok(20);
 
@@ -10,40 +10,40 @@ fn main() {
     println!("{:?}", ng_value.is_err()); // >> true
 
     // Result型 (Ok, Err) を Option型 (Some, None) に置き換える
-    println!("{:?}", ok_value.ok()); // >> Some(200)
+    println!("{:?}", ok_value.ok()); // >> Some(5)
     println!("{:?}", ng_value.ok()); // >> None
 
     println!("{:?}", ok_value.err()); // >> None
     println!("{:?}", ng_value.err()); // >> Some("失敗")
 
-    println!("{:?}", ok_value.map(|e| e + 1)); // >> Ok(400)
+    println!("{:?}", ok_value.map(|e| e + 1)); // >> Ok(6)
     println!("{:?}", ng_value.map(|e| e + 1)); // >> Err("失敗")
 
-    println!("{:?}", ok_value.and_then(|e| Ok(e + 1))); // >> Ok(400)
-    println!("{:?}", ng_value.and_then(|e| Ok(e + 1))); // >> Err("失敗")
+    println!("{:?}", ok_value.and_then(|e| Ok(e + 1))); // >> Ok(6)
+    println!("{:?}", ng_value.and_then::<isize, _>(|_| Err("x"))); // >> Err("失敗")
 
-    println!("{:?}", ok_value.map_or(500, |e| e + 1)); // >> 400
-    println!("{:?}", ng_value.map_or(500, |e| e + 1)); // >> 500
+    println!("{:?}", ok_value.map_or(999, |e| e + 1)); // >> 6
+    println!("{:?}", ng_value.map_or(999, |e| e + 1)); // >> 999
 
-    println!("{:?}", ok_value.map_or_else(|_| 500, |e|e + 1)); // >> 400
-    println!("{:?}", ng_value.map_or_else(|_| 500, |e|e + 1)); // >> 500
+    println!("{:?}", ok_value.map_or_else(|_| 999, |e|e + 1)); // >> 6
+    println!("{:?}", ng_value.map_or_else(|_| 999, |e|e + 1)); // >> 999
 
-    println!("{:?}", ok_value.map_err(|e| format!("大{}", e))); // >> Ok(200)
+    println!("{:?}", ok_value.map_err(|e| format!("大{}", e))); // >> Ok(5)
     println!("{:?}", ng_value.map_err(|e| format!("大{}", e))); // >> Err("大失敗")
 
-    println!("{:?}", ok_value.expect("xxx")); // >> 200
+    println!("{:?}", ok_value.expect("xxx")); // >> 5
     // println!("{:?}", ng_value.expect("xxx")); // ※実行できない
 
-    println!("{:?}", ok_value.unwrap()); // >> 200
+    println!("{:?}", ok_value.unwrap()); // >> 5
     // println!("{:?}", ng_value.unwrap()); // ※実行できない
 
-    println!("{:?}", ok_value.unwrap_or(500)); // >> 200
-    println!("{:?}", ng_value.unwrap_or(500)); // >> 500
+    println!("{:?}", ok_value.unwrap_or(999)); // >> 5
+    println!("{:?}", ng_value.unwrap_or(999)); // >> 999
 
-    println!("{:?}", ok_value.unwrap_or_else(|_| 500)); // >> 200
-    println!("{:?}", ng_value.unwrap_or_else(|_| 500)); // >> 500
+    println!("{:?}", ok_value.unwrap_or_else(|_| 999)); // >> 5
+    println!("{:?}", ng_value.unwrap_or_else(|_| 999)); // >> 999
 
-    println!("{:?}", ok_value.unwrap_or_default()); // >> 200
+    println!("{:?}", ok_value.unwrap_or_default()); // >> 5
     println!("{:?}", ng_value.unwrap_or_default()); // >> 0
 
     // println!("{:?}", ok_value.expect_err("xxx")); // ※実行できない
@@ -67,12 +67,12 @@ fn main() {
     println!("{:?}", ng_value.and(ok2_value)); // >> Err("失敗")
     println!("{:?}", ng_value.and(ng_value));  // >> Err("失敗")
 
-    println!("{:?}", ok_value.or(ok2_value)); // >> Ok(200)
-    println!("{:?}", ok_value.or(ng_value));  // >> Ok(200)
+    println!("{:?}", ok_value.or(ok2_value)); // >> Ok(5)
+    println!("{:?}", ok_value.or(ng_value));  // >> Ok(5)
     println!("{:?}", ng_value.or(ok2_value)); // >> Ok(20)
     println!("{:?}", ng_value.or(ng_value));  // >> Err("失敗")
 
-    println!("{:?}", unsafe { ok_value.unwrap_unchecked() });      // >> 200
+    println!("{:?}", unsafe { ok_value.unwrap_unchecked() });      // >> 5
     println!("{:?}", unsafe { ng_value.unwrap_err_unchecked() });  // >> "失敗"
     // println!("{:?}", unsafe { ng_value.unwrap_unchecked() });  // ※エラー
     // println!("{:?}", unsafe { ok_value.unwrap_err_unchecked() });  // ※エラー

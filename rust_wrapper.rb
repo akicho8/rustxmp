@@ -1,5 +1,6 @@
 require "pathname"
 require "fileutils"
+require "open3"
 
 class RustWrapper
   class RustRuntimeError < StandardError
@@ -20,18 +21,24 @@ class RustWrapper
     else
       command = "cd #{f.dirname} && rustc #{f.basename} && ./#{f.basename('.*')}"
     end
-    result = `#{command}`
-    unless $?.success?
-      puts "-" * 80
-      puts f
-      puts "-" * 80
-      puts source_code
-      puts "-" * 80
-      puts $?
-      puts "-" * 80
-      raise RustRuntimeError, f.to_s
+
+    stdout, stderr, status = Open3.capture3(command)
+    unless status.success?
+      puts "[file] #{f}"
+      puts status
+      if stderr
+        puts "-------------------------------------------------------------------------------- STDERR"
+        stderr = stderr.gsub(/.*RUST_BACKTRACE.*\R/, "")
+        puts stderr
+      end
+      unless stdout.empty?
+        puts "-------------------------------------------------------------------------------- STDOUT"
+        puts stdout
+      end
+      puts "--------------------------------------------------------------------------------"
+      raise RustRuntimeError, stderr.to_s
     end
-    result
+    stdout
   end
 
   def source_code
