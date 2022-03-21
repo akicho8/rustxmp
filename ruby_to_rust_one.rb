@@ -126,7 +126,7 @@ class RubyToRustOne
         file.write(s)
         command = "xmpfilter #{file}"
         result = `#{command}`.strip
-        if result.match?(/syntax error/)
+        if result.scrub.match?(/syntax error/)
           puts result
           abort
         end

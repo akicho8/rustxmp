@@ -1,7 +1,12 @@
-module Enumerable
-  def pad_using(max, &block)
-    [*self, *(size...max).collect(&block)]
-  end
-end
+# # v = s.bytes     # => [102, 111, 111, 129, 98, 97, 114]
+# # v.pack("C*").bytes         # => [102, 111, 111, 129, 98, 97, 114]
+# # v.pack("C*").bytes         # => [102, 111, 111, 129, 98, 97, 114]
+# puts s
+# # puts v.pack("C*")
+# puts "foo\x81bar"
 
-(100..102).pad_using(6) { |i| i * 2 }  # => [100, 101, 102, 6, 8, 10]
+# puts "foo\x81bar".scrub
+
+a = "a"
+a.concat("b")                   # => "ab"
+a                               # => "ab"

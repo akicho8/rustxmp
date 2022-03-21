@@ -1,8 +1,9 @@
-# https://doc.rust-lang.org/std/vec/struct.Vec.html
-# https://doc.rust-lang.org/std/iter/trait.Iterator.html
-
 ARRAY_LIST = {
   :name => "array",
+  :doc_urls => [
+    "https://doc.rust-lang.org/std/vec/struct.Vec.html",
+    "https://doc.rust-lang.org/std/iter/trait.Iterator.html",
+  ],
   :list => [
     #   {
     #     :ruby_method => "new",

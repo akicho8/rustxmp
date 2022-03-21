@@ -1,5 +1,3 @@
-// use itertools::Itertools;
-
 fn main() {
     let mut x = String::from("abc");
     let s = x.as_mut_str(); // let mut と書かなくていいのかな？
@@ -10,5 +8,4 @@ fn main() {
     let mut s = String::from("abc");
     s.make_ascii_uppercase();
     println!("{:?}", s);
-
 }
