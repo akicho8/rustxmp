@@ -1,0 +1,1 @@
+"Aあ🐲".codepoints  # =>

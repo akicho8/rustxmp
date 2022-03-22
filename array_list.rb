@@ -667,7 +667,7 @@ v # => [8, 8, 8]
     },
 
     {
-      :ruby_method => "fill にやや似",
+      :ruby_method => "fill に類似",
       :rust_method => "pad_using",
       :ruby_example => <<~EOT,
 module Enumerable
@@ -2229,45 +2229,74 @@ EOT
     },
 
     {
-      :ruby_method => "join(sep) ???",
+      :ruby_method => "join(sep)",
       :rust_method => "join",
       :ruby_example => <<~EOT,
 ["a", "b", "c"].join("-")                                 # =>
-[[4, 5], [6, 7], [8, 9]].zip([0].cycle).flatten(2)[..-2]  # =>
   EOT
       :rust_example => <<~EOT,
 ["a", "b", "c"].join("-")         // =>
-[[4, 5], [6, 7], [8, 9]].join(&0) // =>
   EOT
       :rust_feature => nil,
       :mutable => false,
-      :desc => "よくわからない挙動をする。元が文字列でないと文字列にならないようだ。また整数には絶対 `&` をつけないといけなくて文字列なら `&` をつけてもつけなくてもよい理由もわからない。",
+      :desc => nil,
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.join",
     },
+
     {
-      :ruby_method => "join or flatten(1) ???",
+      :ruby_method => "join",
       :rust_method => "concat",
       :ruby_example => <<~EOT,
-      ["a", "b"].join             # =>
-      [["a"], ["b"]].flatten(1)   # =>
-      [[5, 6], [7, 8]].flatten(1) # =>
+["a", "b"].join             # =>
   EOT
       :rust_example => <<~EOT,
-      ["a", "b"].concat()        // =>
-      [["a"], ["b"]].concat()    // =>
-      [[5, 6], [7, 8]].concat()  // =>
+["a", "b"].concat()        // =>
   EOT
       :rust_feature => nil,
       :mutable => false,
-      :desc => "どうなっているんだこれは。flatten(1) だけど文字列の配列なら join する(？)",
+      :desc => "文字列の配列だと join になる",
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.concat",
     },
 
     {
       :ruby_method => "flatten(1)",
+      :rust_method => "concat",
+      :ruby_example => <<~EOT,
+[[[5, 6]], [[7, 8]]].flatten(1) # =>
+  EOT
+      :rust_example => <<~EOT,
+[[[5, 6]], [[7, 8]]].concat() // =>
+  EOT
+      :rust_feature => nil,
+      :mutable => false,
+      :desc => "同じ concat でも配列の配列の場合は flatten(1) になる",
+      :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.concat",
+    },
+
+    {
+      :ruby_method => "flatten(1) 区切り値追加",
+      :rust_method => "join",
+      :ruby_example => <<~EOT,
+[[4, 5], [6, 7], [8, 9]].zip([0].cycle).flatten(2)[..-2]  # =>
+  EOT
+      :rust_example => <<~EOT,
+[[4, 5], [6, 7], [8, 9]].join(&0) // =>
+  EOT
+      :rust_feature => nil,
+      :mutable => false,
+      :desc => "Ruby の join は要素を文字列化するが Rust の方は配列を維持したままセパレータを入れる",
+      :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.join",
+    },
+
+    {
+      :ruby_method => "flatten(1)",
       :rust_method => "iter.flatten",
-      :ruby_example => %([[5, 6], [7, 8]].flatten(1) # =>),
-      :rust_example => %([[5, 6], [7, 8]].iter().flatten().collect::<Vec<_>>() // =>),
+      :ruby_example => <<~EOT,
+[[[5, 6]], [[7, 8]]].flatten(1) # =>
+EOT
+      :rust_example => <<~EOT,
+[[[5, 6]], [[7, 8]]].iter().flatten().collect::<Vec<_>>() // =>
+EOT
       :desc => nil,
       :doc_url => "https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.flatten",
     },
