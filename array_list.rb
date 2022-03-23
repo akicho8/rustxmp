@@ -65,11 +65,11 @@ EOT
       :ruby_method => "map.tally",
       :rust_method => "iter.counts_by",
       :ruby_example => <<~EOT,
-[5, 5, 6].map { |e| e }.tally  # =>
+[5, 5, 6].map { |e| e * 2 }.tally  # =>
 EOT
       :rust_example => <<~EOT,
 use itertools::Itertools;
-[5, 5, 6].iter().counts_by(|e| e)  // =>
+[5, 5, 6].iter().counts_by(|e| e * 2)  // =>
 EOT
       :desc => nil,
       :doc_url => "https://docs.rs/itertools/latest/itertools/trait.Itertools.html#method.counts_by",
@@ -1990,7 +1990,7 @@ v.split(0) # =>
   EOT
       :rust_feature => nil,
       :mutable => false,
-      :desc => "split の配列版風",
+      :desc => "split の類似",
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.split",
     },
     {
@@ -2025,7 +2025,7 @@ v.reverse.chunk { |e| e == 0 ? nil : true }.map { |e| e.last.reverse } # =>
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.rsplit",
     },
     {
-      :ruby_method => "split(?, n) の配列版風",
+      :ruby_method => "split(?, n) の類似",
       :rust_method => "splitn(n, ||)",
       :ruby_example => <<~EOT,
 "5607809".split("0", 2)  # =>
@@ -2064,7 +2064,7 @@ v # => [[5, 6], [7, 8, 0, 9]]
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.rsplitn",
     },
     {
-      :ruby_method => "start_with? の配列版",
+      :ruby_method => "start_with? の類似",
       :rust_method => "starts_with",
       :ruby_example => <<~EOT,
 [5, 6, 7].first([5, 6].length) == [5, 6]  # =>
@@ -2079,7 +2079,7 @@ v # => [[5, 6], [7, 8, 0, 9]]
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.starts_with",
     },
     {
-      :ruby_method => "end_with? の配列版",
+      :ruby_method => "end_with? の類似",
       :rust_method => "ends_with",
       :ruby_example => <<~EOT,
 [5, 6, 7].last([6, 7].length) == [6, 7]  # =>
@@ -2094,7 +2094,7 @@ v # => [[5, 6], [7, 8, 0, 9]]
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.ends_with",
     },
     {
-      :ruby_method => "delete_prefix の配列版",
+      :ruby_method => "delete_prefix の類似",
       :rust_method => "strip_prefix",
       :ruby_example => <<~EOT,
 a = [5, 6, 7, 8]
@@ -2114,7 +2114,7 @@ end
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.strip_prefix",
     },
     {
-      :ruby_method => "delete_suffix の配列版",
+      :ruby_method => "delete_suffix の類似",
       :rust_method => "strip_suffix",
       :ruby_example => <<~EOT,
 a = [5, 6, 7, 8]
@@ -2370,7 +2370,7 @@ v  # =>
     },
 
     {
-      :ruby_method => "sort_by ブロック呼びすぎ版",
+      :ruby_method => "sort_by ブロック呼びすぎ",
       :rust_method => "iter.sorted_by_key",
       :ruby_example => <<~EOT,
 [7, -6, 5].sort_by(&:abs)  # =>
@@ -2387,7 +2387,7 @@ EOT
     },
 
     {
-      :ruby_method => "sort_by! ブロック呼びすぎ版",
+      :ruby_method => "sort_by! ブロック呼びすぎ",
       :rust_method => "sort_by_key",
       :ruby_example => <<~EOT,
   EOT
@@ -2531,7 +2531,7 @@ EOT
     },
 
     {
-      :ruby_method => "squeeze! の配列版",
+      :ruby_method => "squeeze! の類似",
       :rust_method => "dedup",
       :ruby_example => <<~EOT,
 v = [5, 5, 6, 6, 5, 5, 5]
@@ -2553,7 +2553,7 @@ EOT
       :doc_url => "https://doc.rust-lang.org/std/vec/struct.Vec.html#method.dedup",
     },
     {
-      :ruby_method => "squeeze! の配列版風",
+      :ruby_method => "squeeze! の類似",
       :rust_method => "dedup_by_key(|e|)",
       :ruby_example => <<~EOT,
 v = [5, 5, 6, 6, 5, 5, 5]
@@ -2572,7 +2572,7 @@ EOT
     },
 
     {
-      :ruby_method => "squeeze! の配列版風",
+      :ruby_method => "squeeze! の類似",
       :rust_method => "dedup_by(|a, b|)",
       :ruby_example => <<~EOT,
 v = [5, 5, 6, 6, 5, 5, 5]
@@ -2613,7 +2613,7 @@ EOT
     },
 
     {
-      :ruby_method => "upcase! の配列版",
+      :ruby_method => "upcase! の類似",
       :rust_method => "make_ascii_uppercase",
       :ruby_example => <<~EOT,
 v = [97, 66, 99, 68]
@@ -2636,7 +2636,7 @@ EOT
     },
 
     {
-      :ruby_method => "downcase! の配列版",
+      :ruby_method => "downcase! の類似",
       :rust_method => "make_ascii_lowercase",
       :ruby_example => <<~EOT,
 v = [97, 66, 99, 68]
