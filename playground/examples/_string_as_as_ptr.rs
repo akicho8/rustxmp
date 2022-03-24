@@ -1,4 +1,4 @@
 fn main() {
-    let s = String::from("foo");
+    let s = "foo";
     println!("{:?}", s.as_ptr());
 }

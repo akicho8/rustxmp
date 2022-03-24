@@ -1,3 +1,3 @@
 fn main() {
-    println!("{:?}", String::from("Aあ🐲").chars());
+    println!("{:?}", "Aあ🥑".chars().collect::<Vec<_>>());
 }

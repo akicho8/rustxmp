@@ -1,6 +1,6 @@
 fn main() {
-    let mut s = String::new();
+    let mut s = String::from("foo");
     println!("{:?}", s.capacity());
-    s.reserve(257);
+    s.reserve(65535);
     println!("{:?}", s.capacity());
 }

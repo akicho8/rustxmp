@@ -1,1 +1,1 @@
-" foo\r\n bar　baz\n".gsub(/\p{Space}+/, " ").split # =>
+" a\r\n b　c\n".gsub(/[[:space:]]+/, " ").split # =>

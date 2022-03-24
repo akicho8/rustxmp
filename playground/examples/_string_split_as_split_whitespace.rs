@@ -1,4 +1,6 @@
 fn main() {
-    let s = String::from(" foo\r\n bar　baz\n");
-    println!("{:?}", s.split_whitespace().collect::<Vec<_>>());
+    println!(
+        "{:?}",
+        " a\r\n b　c\n".split_whitespace().collect::<Vec<_>>()
+    );
 }

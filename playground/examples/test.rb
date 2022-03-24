@@ -1,1 +1,3 @@
-"foo".chars.each.with_index.entries # => [["f", 0], ["o", 1], ["o", 2]]
+require "active_support/string"
+s = " foo\r\n bar　baz\n"
+s.squish # => "foo bar baz"

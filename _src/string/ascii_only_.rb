@@ -1,0 +1,1 @@
+"foo".ascii_only? # =>

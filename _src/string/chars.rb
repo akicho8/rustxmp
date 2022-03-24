@@ -1,2 +1,2 @@
-"Aあ🐲".chars       # =>
-"Aあ🐲".codepoints  # =>
+"Aあ🥑".chars       # =>
+"Aあ🥑".codepoints  # =>

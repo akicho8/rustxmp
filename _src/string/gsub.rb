@@ -1,0 +1,1 @@
+"abcabcabc".gsub("ab", "__") # =>

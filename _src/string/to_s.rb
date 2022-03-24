@@ -1,3 +1,1 @@
-s = "foo"
-s.concat("bar")
-s  # =>
+"abc".to_s # =>

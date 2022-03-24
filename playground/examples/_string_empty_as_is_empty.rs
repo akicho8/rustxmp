@@ -1,3 +1,3 @@
 fn main() {
-    println!("{:?}", String::from("").is_empty());
+    println!("{:?}", "".is_empty());
 }

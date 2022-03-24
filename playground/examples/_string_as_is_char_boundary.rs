@@ -1,5 +1,5 @@
 fn main() {
-    let s = String::from("A🧡B");
+    let s = "A🥑B";
     println!("{:?}", s.is_char_boundary(0));
     println!("{:?}", s.is_char_boundary(1));
     println!("{:?}", s.is_char_boundary(2));

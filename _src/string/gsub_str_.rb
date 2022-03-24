@@ -1,3 +1,3 @@
-s = "abcd abcd"
-s.gsub!("bc", "")
+s = "foo_bar"
+s.gsub!("bar", "")
 s # =>
