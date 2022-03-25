@@ -15,29 +15,28 @@ class RubyToRustOne
   end
 
   def run
-    output_md
+    tp @params[:name]
+    output_md_files
   end
 
-  def output_md
+  def output_md_files
     @out = []
-    tp @params[:name]
     zenn_header_build
+    render_records
+    file_write(Pathname("~/src/zenn-content/articles/#{@params[:slug]}.md"))
+
+    @out = []
     table_build
-    records.each { |e| render_all(e) }
+    render_records
+    file_write(Pathname("_md/#{@params[:name]}.md"))
     confirm
-    body = @out.join("\n") + "\n"
-    if @params[:zenn]
-      file = Pathname("~/src/zenn-content/articles/#{@params[:slug]}.md")
-    else
-      file = Pathname("_md/#{@params[:name]}.md")
-    end
-    file = file.expand_path
-    FileUtils.makedirs(file.dirname)
-    file.write(body)
-    puts file
   end
 
   private
+
+  def render_records
+    @out << records.collect(&:render_all).join("\n")
+  end
 
   def records
     @records ||= yield_self do
@@ -56,9 +55,7 @@ class RubyToRustOne
   end
 
   def zenn_header_build
-    if @params[:zenn]
-      @out << @params[:zenn_header_yaml]
-    end
+    @out << @params[:zenn_header_yaml]
   end
 
   def table_build
@@ -66,15 +63,11 @@ class RubyToRustOne
       {
         "Ruby" => e[:ruby_method],
         "Rust" => e[:rust_method],
-        ""     => e.other_links,
+        # ""     => e.other_links,
       }.transform_values(&method(:escape_for_markdown))
     end
     @out << rows.to_t(markdown: true, truncate: false)
-  end
-
-  def render_all(e)
     @out << ""
-    @out += e.render_all
   end
 
   def confirm
@@ -83,6 +76,14 @@ class RubyToRustOne
       puts @out
       puts "-" * 80
     end
+  end
+
+  def file_write(file)
+    body = @out.join("\n") + "\n"
+    file = file.expand_path
+    FileUtils.makedirs(file.dirname)
+    file.write(body)
+    puts "[write] #{file}"
   end
 
   def escape_for_markdown(e)
@@ -96,20 +97,22 @@ class RubyToRustOne
     def initialize(base, params)
       @base = base
       @params = params
-      @out = []
     end
 
     def render_all
-      validate!
-      title_process
-      ruby_process
-      rust_process
-      desc_process
-      ref_process
-      if s = other_links
-        @out << s
+      @render_all ||= yield_self do
+        @out = []
+        validate!
+        title_process
+        ruby_process
+        rust_process
+        desc_process
+        ref_process
+        if s = other_links
+          @out << s
+        end
+        @out.join("\n")
       end
-      @out
     end
 
     def other_links
@@ -187,8 +190,10 @@ class RubyToRustOne
         code << %(    #{rust_with_println.join.strip})
         code << %(})
         code = code.join("\n") + "\n"
-        code, *_ = Open3.capture2("rustfmt", stdin_data: code)
-        p "[rustfmt] #{title}"
+        if @params[:rust_fmt]
+          code, *_ = Open3.capture2("rustfmt", stdin_data: code)
+          p "[rustfmt] #{title}"
+        end
         code
       end
     end
@@ -206,16 +211,20 @@ class RubyToRustOne
     end
 
     def play_ground_process
-      unless @params[:rust_example].to_s.empty?
-        code = CGI.escape(main_rust_example)
-        url = "https://play.rust-lang.org/?code=#{code}&version=nightly&edition=2021"
-        %([実行](#{url}))
+      if @params[:playground_link]
+        unless @params[:rust_example].to_s.empty?
+          code = CGI.escape(main_rust_example)
+          url = "https://play.rust-lang.org/?code=#{code}&version=nightly&edition=2021"
+          %([実行](#{url}))
+        end
       end
     end
 
     def doc_source_processs
-      if url = @params[:doc_url]
-        %([DOC](#{url}))
+      if @params[:doc_link]
+        if url = @params[:doc_url]
+          %([DOC](#{url}))
+        end
       end
     end
 

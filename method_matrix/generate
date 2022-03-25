@@ -20,7 +20,7 @@ class Generate < Thor
       out << MethodMatrix.new(e.merge(new_options)).to_s
     end
     body = out.join("\n")
-
+    # file_write(Pathname("~/src/zenn-content/articles/#{@params[:slug]}.md"))
     file = Pathname("_output.md")
     file.write(body)
     puts file

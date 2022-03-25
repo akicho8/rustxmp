@@ -1,4 +1,4 @@
 fn main() {
     let v = vec![5, 6, 7, 8, 9];
-    println!("{:?}", v.rchunks(2).collect::<Vec<_>>());
+println!("{:?}", v.rchunks(2).collect::<Vec<_>>());
 }

@@ -1,4 +1,4 @@
 fn main() {
     let s = "foo";
-    println!("{:?}", s.as_ptr());
+println!("{:?}", s.as_ptr());
 }

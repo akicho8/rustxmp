@@ -5,11 +5,11 @@ STRING_LIST = {
   :slug => "895e0547645e03",
   :zenn_header_yaml => <<~EOT,
     ---
-    title: "Ruby脳向けRustのString系メソッド対応"
-    emoji: "🤖"
+    title: "【Ruby脳向け】RustのString系メソッド対応"
+    emoji: "🐶"
     type: "tech" # tech: 技術記事 / idea: アイデア
     topics: ["Rust", "Ruby", "String", "文字列"]
-    published: false
+    published: true
     ---
 EOT
   :doc_urls => [
@@ -435,9 +435,10 @@ String::from("abc").into_bytes() // =>
   EOT
       :rust_example => <<~EOT,
 "abc".as_bytes() // =>
+b"abc"           // =>
   EOT
       :rust_feature => nil,
-      :desc => "型変換？",
+      :desc => "型変換？ 表記がアレだけど `b` をつけても同じ結果になる。",
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.as_bytes",
     },
     {

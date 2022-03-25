@@ -1,6 +1,3 @@
 fn main() {
-    println!(
-        "{:?}",
-        " a\r\n b　c\n".split_whitespace().collect::<Vec<_>>()
-    );
+    println!("{:?}", " a\r\n b　c\n".split_whitespace().collect::<Vec<_>>());
 }

@@ -1,21 +1,33 @@
-with_position = -> v {
-  Enumerator.new do |y|
-    v.each_with_index do |e, i|
-      if v.size == 1
-        y << [e, :only]
-      else
-        if i == 0
-          pos = :first
-        elsif i < v.size - 1
-          pos = :middle
-        else
-          pos = :last
-        end
-        y << [e, pos]
-      end
-    end
-  end
-}
+play_per_day = 20 # 1日20回を
+days = 365 * 3    # 3年ぐらい遊んでいる
+win_rate = 0.5    # 勝率
 
-with_position.([5, 6, 7]).to_a  # => [[5, :first], [6, :middle], [7, :last]]
-with_position.([5]).to_a        # => [[5, :only]]
+n = play_per_day * days
+v = n.times.map { rand >= win_rate }
+v = v.chunk(&:itself).tally
+v = v.sort_by { |(_, a), _| -a.size }
+puts v.map { |(k, a), c| "%2d連%s %4d回" % [a.size, k ? "勝" : "敗", c] }
+# >> 12連勝    1回
+# >> 12連敗    4回
+# >> 11連敗    3回
+# >> 11連勝    3回
+# >> 10連敗   11回
+# >> 10連勝    4回
+# >>  9連勝    4回
+# >>  9連敗   12回
+# >>  8連敗   20回
+# >>  8連勝   20回
+# >>  7連勝   37回
+# >>  7連敗   38回
+# >>  6連勝   89回
+# >>  6連敗  102回
+# >>  5連敗  156回
+# >>  5連勝  155回
+# >>  4連勝  318回
+# >>  4連敗  348回
+# >>  3連勝  730回
+# >>  3連敗  690回
+# >>  2連勝 1389回
+# >>  2連敗 1369回
+# >>  1連勝 2748回
+# >>  1連敗 2746回

@@ -1,5 +1,5 @@
 fn main() {
     let mut s = String::from("foo");
-    s.clear();
-    println!("{:?}", s);
+s.clear();
+println!("{:?}", s);
 }

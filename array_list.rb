@@ -1,5 +1,17 @@
+# -*- coding: utf-8; compile-command: "./ruby_to_rust runner -c array -r -1" -*-
+
 ARRAY_LIST = {
   :name => "array",
+  :slug => "fb6266bcb6aa1b",
+  :zenn_header_yaml => <<~EOT,
+    ---
+    title: "【Ruby脳向け】Rustの配列系メソッド対応"
+    emoji: "🐱"
+    type: "tech" # tech: 技術記事 / idea: アイデア
+    topics: ["Rust", "Ruby", "Array", "Vec"]
+    published: true
+    ---
+EOT
   :doc_urls => [
     "https://doc.rust-lang.org/std/vec/struct.Vec.html",
     "https://doc.rust-lang.org/std/iter/trait.Iterator.html",

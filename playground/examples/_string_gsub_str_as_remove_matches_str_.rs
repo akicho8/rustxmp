@@ -2,6 +2,6 @@
 
 fn main() {
     let mut s = String::from("foo_bar");
-    s.remove_matches("bar");
-    println!("{:?}", s);
+s.remove_matches("bar");
+println!("{:?}", s);
 }

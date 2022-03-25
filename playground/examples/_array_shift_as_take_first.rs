@@ -2,6 +2,6 @@
 
 fn main() {
     let mut v: &[_] = &[5, 6, 7];
-    println!("{:?}", v.take_first());
-    println!("{:?}", v);
+println!("{:?}", v.take_first());
+println!("{:?}", v);
 }
