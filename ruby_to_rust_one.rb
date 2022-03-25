@@ -19,15 +19,22 @@ class RubyToRustOne
   end
 
   def output_md
-    tp @params[:name]
     @out = []
+    tp @params[:name]
+    zenn_header_build
     table_build
     records.each { |e| render_all(e) }
     confirm
     body = @out.join("\n") + "\n"
-    file = Pathname("_md/#{@params[:name]}.md")
+    if @params[:zenn]
+      file = Pathname("~/src/zenn-content/articles/#{@params[:slug]}.md")
+    else
+      file = Pathname("_md/#{@params[:name]}.md")
+    end
+    file = file.expand_path
     FileUtils.makedirs(file.dirname)
     file.write(body)
+    puts file
   end
 
   private
@@ -45,6 +52,12 @@ class RubyToRustOne
         av = av.find_all { |e| [e[:ruby_method], e[:rust_method]].join("/").include?(v) }
       end
       av.collect { |e| Element.new(self, e) }
+    end
+  end
+
+  def zenn_header_build
+    if @params[:zenn]
+      @out << @params[:zenn_header_yaml]
     end
   end
 

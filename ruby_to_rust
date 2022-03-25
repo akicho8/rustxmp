@@ -10,19 +10,20 @@ class RubyToRust < Thor
   default_command :runner
 
   desc "runner", "一括変換"
-  option :range,   type: :string, aliases: "-r", default: nil,       desc: "範囲"
-  option :target,  type: :string, aliases: "-t", default: "nightly", desc: "rustc の種類"
-  option :method,  type: :string, aliases: "-m", default: nil,       desc: "対象メソッド"
-  option :class,   type: :string, aliases: "-c", default: nil,       desc: "対象クラス"
+  option :range,   type: :string,  aliases: "-r", default: nil,       desc: "範囲"
+  option :target,  type: :string,  aliases: "-t", default: "nightly", desc: "rustc の種類"
+  option :method,  type: :string,  aliases: "-m", default: nil,       desc: "対象メソッド"
+  option :class,   type: :string,  aliases: "-c", default: nil,       desc: "対象クラス"
+  option :zenn,    type: :boolean, aliases: "-z", default: true,      desc: "Zenn用"
   def runner
+    new_options = options.transform_keys(&:to_sym)
     list = [
       ARRAY_LIST,
       STRING_LIST,
     ]
-    if v = options[:class]
+    if v = new_options[:class]
       list = list.find_all { |e| e[:name].match?(v) }
     end
-    new_options = options.transform_keys(&:to_sym)
     list.each do |e|
       RubyToRustOne.new(e.merge(new_options)).run
     end

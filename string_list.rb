@@ -2,6 +2,16 @@
 
 STRING_LIST = {
   :name => "string",
+  :slug => "895e0547645e03",
+  :zenn_header_yaml => <<~EOT,
+    ---
+    title: "Ruby脳向けRustのString系メソッド対応"
+    emoji: "🤖"
+    type: "tech" # tech: 技術記事 / idea: アイデア
+    topics: ["Rust", "Ruby", "String", "文字列"]
+    published: false
+    ---
+EOT
   :doc_urls => [
     "https://doc.rust-lang.org/std/string/struct.String.html",
   ],
