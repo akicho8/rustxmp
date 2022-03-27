@@ -1,0 +1,15 @@
+[package]
+name = "x"
+version = "0.1.0"
+# edition = "2018"
+edition = "2021"
+default-run = "x"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "x"
+path = "src/main.rs"
+
+[dependencies]
+nannou = "0.18.1"

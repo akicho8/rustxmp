@@ -50,7 +50,15 @@ class RustWrapper
   end
 
   def playground_root
-    Pathname("#{__dir__}/playground")
+    name = playground_name || "basic"
+    Pathname(__dir__).join("playground-#{name}")
+  end
+
+  def playground_name
+    # // rustxmp_playground: "nannou"
+    if md = source_code.match(%r{\b(?:rustxmp_playground):\s*"(?<rustxmp_playground>.+?)"})
+      md[:rustxmp_playground]
+    end
   end
 
   def basename
