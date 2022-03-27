@@ -11,4 +11,5 @@ name = "x"
 path = "src/main.rs"
 
 [dependencies]
+home-dir = "0.1.0"
 itertools = "0.10.3"
