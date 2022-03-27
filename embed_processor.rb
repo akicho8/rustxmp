@@ -11,7 +11,7 @@ class EmbedProcessor
     lines = RustWrapper.new(params).to_s.lines
     s = source.gsub(%r{^(?!\s*//)(?<code>.*)//\s*(=>|>>).*}) {
       if lines.empty?
-        s = "?"
+        s = params[:nothing] || "(出力なし)"
       else
         s = lines.shift.rstrip
       end
