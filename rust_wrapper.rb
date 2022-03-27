@@ -46,7 +46,7 @@ class RustWrapper
   end
 
   def build_by_cargo?
-    @params[:build_by] == :cargo || source_code.match?(/^\s*use itertools/)
+    @params[:build_by] == :cargo || source_code.match?(/^\s*use (#{other_crates.join("|")})/)
   end
 
   def playground_root
@@ -55,5 +55,12 @@ class RustWrapper
 
   def basename
     (@params[:basename] || "_rust_xmpfilter").to_s.gsub(/_+/, "_")
+  end
+
+  def other_crates
+    [
+      "itertools",
+      "dirs",
+    ]
   end
 end
