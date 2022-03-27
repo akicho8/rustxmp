@@ -27,6 +27,6 @@ class EmbedProcessor
   end
 
   def mark
-    params[:mark] || ">>"
+    params[:mark] || "=>"
   end
 end
