@@ -1,9 +1,11 @@
 (defun rustxmp ()
   "Replace buffer by rust-xmpfilter command"
   (interactive)
-  (let ((saved-current-line (count-lines (point-min) (point))))
+  (let ((saved-current-line (count-lines (point-min) (point)))
+        (saved-current-column (current-column)))
     (shell-command-on-region (point-min) (point-max) "rust-xmpfilter" (current-buffer) t)
     (goto-line saved-current-line)
+    (move-to-column saved-current-column)
     (recenter-top-bottom)))
 
 ;; rcodetools.el 参考
