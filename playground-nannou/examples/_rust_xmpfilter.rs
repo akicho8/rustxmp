@@ -240,25 +240,44 @@ fn main() {
         println!("{:?}", vec2(2.0, 0.0).rotate(PI * 0.5).round()); // => Vec2(-0.0, 2.0)
     }
 
-    // 法線(-y, x) 時計回りに90度回転
-    println!("{:?}", vec2(2.0, 3.0).perp());                                  // => Vec2(-3.0, 2.0)
+    // 法線
+    // 法線(-y, x) 90度回転したものと同じ。長さもそのまま。
+    {
+        println!("{:?}", vec2(2.0, 3.0).perp());                                  // => Vec2(-3.0, 2.0)
+
+        println!("{:?}", vec2(2.0, 3.0).rotate(2.0 * PI * 90.0 / 360.0)); // =>
+        
+        
+        
+    }
 
     // 内積・外積
     {
         // 内積
         // x1 * x2 + y1 * y2
-        println!("{:?}", vec2(2., 3.).dot(vec2(4., 5.))); // => 23
-        println!("{:?}", 2 * 4 + 3 * 5);                // => 23
+        println!("{:?}", vec2(2.0, 3.0).dot(vec2(4.0, 5.0))); // => 23.0
+        println!("{:?}", 2 * 4 + 3 * 5);                      // => 23
 
-        // ?
-        // selfとの垂直内積other。ウェッジ積、2Dクロス積、および行列式とも呼ばれます。
+        // 外積
         // x1 * y2 - x2 * y1
-        println!("{:?}", vec2(2., 3.).perp_dot(vec2(4., 5.))); // => -2
-        println!("{:?}", 2 * 5 - 4 * 3)                      // => -2
+        println!("{:?}", vec2(2.0, 3.0).perp_dot(vec2(4.0, 5.0))); // => -2.0
+        println!("{:?}", 2 * 5 - 4 * 3);                           // => -2
 
-        // println!("{:?}", vec2(2.0, 3.0).project_onto(vec2(2.0, 3.0)));            // => Vec2(2.0, 3.0)
-        // println!("{:?}", vec2(2.0, 3.0).reject_from(vec2(1.0, 1.0)));             // => Vec2(-0.5, 0.5)
-        // println!("{:?}", vec2(2.0, 3.0).project_onto_normalized(vec2(1.0, 1.0))); // => Vec2(5.0, 5.0)
-        // println!("{:?}", vec2(2.0, 3.0).reject_from_normalized(vec2(1.0, 1.0)));  // => Vec2(-3.0, -2.0)
+        let A = Vec2::new(3.0, 4.0);
+        let B = Vec2::new(6.0, 2.0);
+
+        // 投影
+        // AをBに投影する
+        // 言い替えるとAから垂直にBに線を降ろしたときの交点を返す
+        println!("{:?}", A.project_onto(B));                        // => Vec2(3.9, 1.3000001)
+        // 投影先が正規化されいるときに使えるメソッドで結果は同じ
+        println!("{:?}", A.project_onto_normalized(B.normalize())); // => Vec2(3.8999999, 1.3)
+
+        // 垂直方向への投影
+        // 投影した点からAへのまで
+        // (A - 投影)なので A - vec2(3.9, 1.3) となる
+        println!("{:?}", A.reject_from(B));                        // => Vec2(-0.9000001, 2.6999998)
+        println!("{:?}", A.reject_from_normalized(B.normalize())); // => Vec2(-0.89999986, 2.7)
+        println!("{:?}", A - A.project_onto(B));                   // => Vec2(-0.9000001, 2.6999998)
     }
 }
