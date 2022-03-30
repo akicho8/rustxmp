@@ -1,2 +1,0 @@
-"Aあ🥑".chars       # =>
-"Aあ🥑".codepoints  # =>

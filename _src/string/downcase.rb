@@ -1,1 +1,0 @@
-"aAöÖ❤".downcase # =>

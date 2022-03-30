@@ -1,2 +1,0 @@
-s = String.new
-s  # =>
