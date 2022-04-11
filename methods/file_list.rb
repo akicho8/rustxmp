@@ -24,11 +24,12 @@ EOT
       [5, 6].length  # =>
   EOT
       :rust_example => <<~EOT,
-use std::fs::File;
-let f = File::open("foo.txt")?;
+// use std::fs::File;
+// let f = File::open("foo.txt")?;
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+EOT
     },
   ],
 }

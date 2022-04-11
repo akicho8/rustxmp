@@ -51,7 +51,7 @@ class RustWrapper
 
   def playground_root
     name = playground_name || "basic"
-    Pathname(__dir__).join("playground-#{name}")
+    Pathname(__dir__).join("../playground-#{name}")
   end
 
   def playground_name

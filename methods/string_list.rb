@@ -26,7 +26,9 @@ EOT
 "🥑".len()  // =>
   EOT
       :rust_feature => nil,
-      :desc => "Ruby の配列は文字単位になっているのに対して Rust はバイト単位の配列になっている",
+      :desc => <<~EOT,
+Ruby の配列は文字単位になっているのに対して Rust はバイト単位の配列になっている
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.len",
     },
 
@@ -46,7 +48,10 @@ s.get(1..5) // =>
 s.get(5..6) // =>
   EOT
       :rust_feature => nil,
-      :desc => "範囲でしか指定できない。Rustではマルチバイト文字を含む文字列の操作が難しそうだ。",
+      :desc => <<~EOT,
+- 範囲でしか指定できない
+- Rustではマルチバイト文字を含む文字列の操作が難しそうだ
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.get",
     },
 
@@ -61,7 +66,9 @@ s.get(5..6) // =>
 "Aあ🥑".chars().collect::<Vec<_>>() // =>
   EOT
       :rust_feature => nil,
-      :desc => "文字単位で扱う場合はさっさとこれで配列化してから操作した方がよさそう",
+      :desc => <<~EOT,
+文字単位で扱う場合はさっさとこれで配列化してから操作した方がよさそう
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.chars",
     },
 
@@ -75,7 +82,9 @@ s.get(5..6) // =>
 "🥑".chars().count()  // =>
   EOT
       :rust_feature => nil,
-      :desc => "文字数",
+      :desc => <<~EOT,
+文字数
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.chars",
     },
 
@@ -92,7 +101,10 @@ let v: isize = "567".parse().unwrap();
 v // =>
   EOT
       :rust_feature => nil,
-      :desc => "`::<xxx>` の部分をターボフィッシュというらしい。戻値を受け取る変数に型指定があれば省略できるようだけど parse の方に指定した方がわかりやすい。",
+      :desc => <<~EOT,
+- `::<xxx>` の部分をターボフィッシュというらしい
+- 戻値を受け取る変数に型指定があれば省略できるようだけど parse の方に指定した方がわかりやすい
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.parse",
     },
 
@@ -106,7 +118,9 @@ v // =>
 "foo\nbar\nbaz\n".lines().collect::<Vec<_>>() // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.lines",
     },
 
@@ -120,7 +134,9 @@ v // =>
 " foo ".trim() // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.trim",
     },
 
@@ -134,7 +150,9 @@ v // =>
 " foo ".trim_start() // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.trim_start",
     },
     {
@@ -147,7 +165,9 @@ v // =>
 " foo ".trim_end() // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.trim_end",
     },
 
@@ -161,7 +181,10 @@ v // =>
 " a\r\n b　c\n".split_whitespace().collect::<Vec<_>>() // =>
   EOT
       :rust_feature => nil,
-      :desc => "全角スペースに対応している。使いやすそう。",
+      :desc => <<~EOT,
+- 全角スペースに対応している
+- 使いやすそう
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.split_whitespace",
     },
 
@@ -178,7 +201,9 @@ v // =>
 "a-b_c".split(['-', '_']).collect::<Vec<_>>()   // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.split",
     },
 
@@ -196,7 +221,9 @@ s.remove_matches("bar");
 s // =>
   EOT
       :rust_feature => "#![feature(string_remove_matches)]",
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.remove_matches",
     },
 
@@ -214,7 +241,9 @@ s.push_str("bar");
 s  // =>
   EOT
       :rust_feature => nil,
-      :desc => "メソッド名がイケてない",
+      :desc => <<~EOT,
+メソッド名がイケてない
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.push_str",
     },
 
@@ -236,7 +265,9 @@ s.push('r');
 s  // =>
   EOT
       :rust_feature => nil,
-      :desc => "こんな滅多に使わなそうなのは push_char にして push_str を push にしてほしかった",
+      :desc => <<~EOT,
+こんな滅多に使わなそうなのは push_char にして push_str を push にしてほしかった
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.push",
     },
 
@@ -250,7 +281,9 @@ s  // =>
 "foo".repeat(2) // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.repeat",
     },
 
@@ -268,7 +301,9 @@ s.clear();
 s  // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.clear",
     },
     {
@@ -281,7 +316,9 @@ s  // =>
 "".is_empty()  // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.is_empty",
     },
 
@@ -295,7 +332,9 @@ s  // =>
 "abcd".contains("bc") // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.contains",
     },
     {
@@ -308,7 +347,10 @@ s  // =>
 "Aあ🥑".char_indices().collect::<Vec<_>>() // =>
   EOT
       :rust_feature => nil,
-      :desc => "Rust のほうの位置は連番ではない。バイト配列での位置になっている。",
+      :desc => <<~EOT,
+- Rust のほうの位置は連番ではない
+- バイト配列での位置になっている
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.char_indices",
     },
 
@@ -322,7 +364,9 @@ s  // =>
 "A🥑\n".escape_debug().to_string()    // =>
   EOT
       :rust_feature => nil,
-      :desc => "改行がエスケープされ `\\n` 表記になる",
+      :desc => <<~EOT,
+改行がエスケープされ `\\n` 表記になる
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.escape_debug",
     },
 
@@ -336,7 +380,9 @@ s  // =>
 "abcabcabc".replace("ab", "__") // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.replace",
     },
     {
@@ -360,7 +406,9 @@ s # => "__c__cabc"
 "abcabcabc".replacen("ab", "__", 2) // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.replacen",
     },
 
@@ -378,7 +426,9 @@ s.insert_str(1, "__"); // 文字列
 s // =>
   EOT
       :rust_feature => nil,
-      :desc => "メソッド名がイケてない",
+      :desc => <<~EOT,
+メソッド名がイケてない
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.insert_str",
     },
     {
@@ -395,7 +445,9 @@ s.insert(1, '_'); // 文字
 s // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.insert",
     },
 
@@ -411,7 +463,9 @@ let s = String::new();
 s  // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.new",
     },
     {
@@ -424,7 +478,9 @@ s  // =>
 String::from("abc").into_bytes() // =>
   EOT
       :rust_feature => nil,
-      :desc => "所有権が移動するやつ？",
+      :desc => <<~EOT,
+所有権が移動するやつ？
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.into_bytes",
     },
     {
@@ -438,7 +494,9 @@ String::from("abc").into_bytes() // =>
 b"abc"           // =>
   EOT
       :rust_feature => nil,
-      :desc => "型変換？ 表記がアレだけど `b` をつけても同じ結果になる。",
+      :desc => <<~EOT,
+型変換？ 表記がアレだけど `b` をつけても同じ結果になる
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.as_bytes",
     },
     {
@@ -453,7 +511,9 @@ let v = unsafe { s.as_mut_vec() };
 v // =>
   EOT
       :rust_feature => nil,
-      :desc => "同じようなのがいくつもあるな",
+      :desc => <<~EOT,
+同じようなのがいくつもあるな
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.as_mut_vec",
     },
 
@@ -480,7 +540,9 @@ s             // =>
 // s.truncate(2)
   EOT
       :rust_feature => nil,
-      :desc => "マルチバイト文字が含まれていたら文字の境界線を慎重に指定しないとパニックになる",
+      :desc => <<~EOT,
+マルチバイト文字が含まれていたら文字の境界線を慎重に指定しないとパニックになる
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.truncate",
     },
     {
@@ -497,7 +559,9 @@ s.pop() // =>
 s       // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.pop",
     },
     {
@@ -514,7 +578,9 @@ s.remove(3) // =>
 s           // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.remove",
     },
 
@@ -542,7 +608,9 @@ s.retain(|e| e != '_'); // "_" では文字列を表すのでコンパイルエ�
 s // =>
   EOT
       :rust_feature => nil,
-      :desc => "この例では `remove_matches(\"_\")` のほうが良い",
+      :desc => <<~EOT,
+この例では `remove_matches("_")` のほうが良い
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.retain",
     },
 
@@ -565,7 +633,9 @@ s.split_off(1) // =>
 s              // =>
   EOT
       :rust_feature => nil,
-      :desc => "正確には byteslice の破壊版に近い",
+      :desc => <<~EOT,
+正確には byteslice の破壊版に近い
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.split_off",
     },
 
@@ -583,7 +653,9 @@ s.replace_range(..2, "__");
 s  // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.replace_range",
     },
 
@@ -603,7 +675,9 @@ let s = s.map(|e| {         // e は "fo"
 s // =>
   EOT
       :rust_feature => nil,
-      :desc => "なんだこれ",
+      :desc => <<~EOT,
+なんだこれ
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.get_mut",
     },
 
@@ -617,7 +691,9 @@ s // =>
 "a-b-c".rsplit('-').collect::<Vec<_>>()  // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.rsplit",
     },
 
@@ -631,7 +707,9 @@ s // =>
 "a-b-c".split_inclusive('-').collect::<Vec<_>>() // =>
   EOT
       :rust_feature => nil,
-      :desc => "セパレータで分けて前の要素に残す",
+      :desc => <<~EOT,
+セパレータで分けて前の要素に残す
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.split_inclusive",
     },
 
@@ -645,7 +723,9 @@ s // =>
 "a-b-c-".split_terminator("-").collect::<Vec<_>>() // =>
   EOT
       :rust_feature => nil,
-      :desc => "セパレータではなく句点のように終端に特定の文字がある構造を分ける",
+      :desc => <<~EOT,
+セパレータではなく句点のように終端に特定の文字がある構造を分ける
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.split_terminator",
     },
     {
@@ -658,7 +738,9 @@ s // =>
 "a-b-c-".rsplit_terminator("-").collect::<Vec<_>>() // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.rsplit_terminator",
     },
 
@@ -672,7 +754,9 @@ s // =>
 "foo-bar-baz".splitn(2, "-").collect::<Vec<_>>() // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.splitn",
     },
     {
@@ -685,7 +769,9 @@ s // =>
 "foo-bar-baz".rsplitn(2, "-").collect::<Vec<_>>() // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.rsplitn",
     },
     {
@@ -698,7 +784,9 @@ s // =>
 "foo-bar-baz".split_once("-") // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.split_once",
     },
 
@@ -713,7 +801,9 @@ s.collect(&:reverse).reverse # =>
 "foo-bar-baz".rsplit_once("-") // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.rsplit_once",
     },
 
@@ -727,7 +817,9 @@ s.collect(&:reverse).reverse # =>
 "_56_".matches(char::is_numeric).collect::<Vec<_>>() // =>
   EOT
       :rust_feature => nil,
-      :desc => "予想に反して1文字づつ返ってくる",
+      :desc => <<~EOT,
+予想に反して1文字づつ返ってくる
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.matches",
     },
 
@@ -741,7 +833,9 @@ s.collect(&:reverse).reverse # =>
 "_56_".rmatches(char::is_numeric).collect::<Vec<_>>() // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.rmatches",
     },
 
@@ -755,7 +849,9 @@ s.collect(&:reverse).reverse # =>
 "abcd".starts_with("ab") // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.starts_with",
     },
     {
@@ -768,7 +864,9 @@ s.collect(&:reverse).reverse # =>
 "abcd".ends_with("cd") // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.ends_with",
     },
 
@@ -782,7 +880,9 @@ s.collect(&:reverse).reverse # =>
 "foo".is_ascii() // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.is_ascii",
     },
 
@@ -802,7 +902,9 @@ s.find("cd")          // =>
 s.find(|e| e == 'c')  // =>
   EOT
       :rust_feature => nil,
-      :desc => "xxx, xxx_by, xxx_by_key シリーズのように引数の型が変わるたびに異なるメソッドになるのが Rust のスタイルかと思いきや、このメソッドはいろんな引数に対応していてありがたい",
+      :desc => <<~EOT,
+xxx, xxx_by, xxx_by_key シリーズのように引数の型が変わるたびに異なるメソッドになるのが Rust 流かと思いきや、このメソッドはいろんな引数に対応していてありがたい
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.find",
     },
 
@@ -822,7 +924,9 @@ s.rfind("cd")          // =>
 s.rfind(|e| e == 'c')  // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.rfind",
     },
 
@@ -836,7 +940,9 @@ s.rfind(|e| e == 'c')  // =>
 "56foo78".trim_matches(char::is_numeric) // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.trim_matches",
     },
     {
@@ -849,7 +955,9 @@ s.rfind(|e| e == 'c')  // =>
 "56foo78".trim_start_matches(char::is_numeric) // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.trim_start_matches",
     },
     {
@@ -862,7 +970,9 @@ s.rfind(|e| e == 'c')  // =>
 "56foo78".trim_end_matches(char::is_numeric) // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.trim_end_matches",
     },
     {
@@ -875,7 +985,9 @@ s.rfind(|e| e == 'c')  // =>
 "56foo56".strip_prefix("56") // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.strip_prefix",
     },
     {
@@ -888,7 +1000,9 @@ s.rfind(|e| e == 'c')  // =>
 "56foo56".strip_suffix("56") // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.strip_suffix",
     },
 
@@ -902,7 +1016,9 @@ s.rfind(|e| e == 'c')  // =>
 "Föö".eq_ignore_ascii_case("föö") // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.eq_ignore_ascii_case",
     },
 
@@ -916,7 +1032,9 @@ s.rfind(|e| e == 'c')  // =>
 "aAöÖ❤".to_uppercase() // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.to_uppercase",
     },
     {
@@ -929,7 +1047,9 @@ s.rfind(|e| e == 'c')  // =>
 "aAöÖ❤".to_lowercase() // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.to_lowercase",
     },
 
@@ -943,7 +1063,9 @@ s.rfind(|e| e == 'c')  // =>
 "aAöÖ❤".to_ascii_uppercase() // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.to_ascii_uppercase",
     },
     {
@@ -956,7 +1078,9 @@ s.rfind(|e| e == 'c')  // =>
 "aAöÖ❤".to_ascii_lowercase() // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.to_ascii_lowercase",
     },
 
@@ -974,7 +1098,9 @@ s.make_ascii_uppercase();
 s // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.make_ascii_uppercase",
     },
     {
@@ -991,7 +1117,9 @@ s.make_ascii_lowercase();
 s // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.make_ascii_lowercase",
     },
 
@@ -1005,7 +1133,9 @@ s // =>
 "_56_".match_indices(char::is_numeric).collect::<Vec<_>>() // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.match_indices",
     },
     {
@@ -1018,7 +1148,9 @@ s // =>
 "_56_".rmatch_indices(char::is_numeric).collect::<Vec<_>>() // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.rmatch_indices",
     },
 
@@ -1032,7 +1164,10 @@ s // =>
 "A🥑\n".escape_default().to_string()    // =>
   EOT
       :rust_feature => nil,
-      :desc => "絵文字はユニコードの数字表記になる。ちょうど良い。",
+      :desc => <<~EOT,
+- 絵文字はユニコードの数字表記になる
+- ちょうど良い
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.escape_default",
     },
     {
@@ -1045,7 +1180,10 @@ s // =>
 "A🥑\n".escape_unicode().to_string()    // =>
   EOT
       :rust_feature => nil,
-      :desc => "全部ユニコードの数字表記で、改行も a になって余計わからん",
+      :desc => <<~EOT,
+- 全部ユニコードの数字表記になる
+- 改行も a になって余計わからん
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.escape_unicode",
     },
 
@@ -1058,7 +1196,9 @@ s // =>
 "foo".to_string() // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.to_string",
     },
 
@@ -1074,7 +1214,10 @@ s // =>
 String::from("abc").as_str() // =>
   EOT
       :rust_feature => nil,
-      :desc => "String型にしか生えてない。to_string と何が違う？",
+      :desc => <<~EOT,
+- String型にしか生えてない
+- to_string と何が違う？
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.as_str",
     },
     {
@@ -1095,7 +1238,9 @@ s.make_ascii_uppercase();
 s // =>
   EOT
       :rust_feature => nil,
-      :desc => "なんかよくわからないけどそのうちわかるだろう",
+      :desc => <<~EOT,
+なんかよくわからないけどそのうちわかるだろう
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.as_mut_str",
     },
 
@@ -1109,7 +1254,9 @@ puts [240, 159, 144, 178].pack("C*")
 String::from_utf8(vec![240, 159, 144, 178]) // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.from_utf8",
     },
     {
@@ -1122,7 +1269,9 @@ let v = vec![102, 111, 111, 129, 98, 97, 114];
 String::from_utf8_lossy(&v) // =>
   EOT
       :rust_feature => nil,
-      :desc => "129 は無効な文字なので � になる",
+      :desc => <<~EOT,
+129 は無効な文字なので � になる
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.from_utf8_lossy",
     },
 
@@ -1140,7 +1289,9 @@ s            // =>
 s.capacity() // =>
   EOT
       :rust_feature => nil,
-      :desc => nil,
+      :desc => <<~EOT,
+
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.with_capacity",
     },
     {
@@ -1155,7 +1306,10 @@ s.reserve(65535);
 s.capacity() // =>
   EOT
       :rust_feature => nil,
-      :desc => "あとから容量を確保する。キリの良い単位で確保するので指定よりも多く確保することもある。",
+      :desc => <<~EOT,
+- あとから容量を確保する
+- キリの良い単位で確保するので指定よりも多く確保することもある
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.reserve",
     },
     {
@@ -1172,7 +1326,9 @@ s.shrink_to_fit();
 s.capacity() // =>
   EOT
       :rust_feature => nil,
-      :desc => "reserve の逆でメモリを切り詰める",
+      :desc => <<~EOT,
+reserve の逆でメモリを切り詰める
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.shrink_to_fit",
     },
 
@@ -1189,7 +1345,9 @@ len // =>
 cap // =>
   EOT
       :rust_feature => "#![feature(vec_into_raw_parts)]",
-      :desc => "文字列をさらにラップしているらしい",
+      :desc => <<~EOT,
+文字列をさらにラップしているらしい
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.into_raw_parts",
     },
 
@@ -1215,7 +1373,9 @@ unsafe {
 }
   EOT
       :rust_feature => nil,
-      :desc => "自力で文字列作成用？",
+      :desc => <<~EOT,
+自力で文字列作成用？
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.from_raw_parts",
     },
 
@@ -1230,7 +1390,9 @@ let x = s.into_boxed_str(); // s から x に所有権移動しちゃってる
 x // =>
   EOT
       :rust_feature => nil,
-      :desc => "どゆこと？",
+      :desc => <<~EOT,
+どゆこと？
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.into_boxed_str",
     },
 
@@ -1250,7 +1412,9 @@ s.is_char_boundary(5)  // =>
 s.is_char_boundary(6)  // =>
   EOT
       :rust_feature => nil,
-      :desc => "指定位置のバイトがUTF-8コードポイントシーケンスの最初のバイトまたは文字列の終わりなら true らしいがピンとこない",
+      :desc => <<~EOT,
+指定位置のバイトがUTF-8コードポイントシーケンスの最初のバイトまたは文字列の終わりなら true らしいがピンとこない
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.is_char_boundary",
     },
 
@@ -1264,7 +1428,9 @@ let s = "foo";
 s.as_ptr() // =>
   EOT
       :rust_feature => nil,
-      :desc => "ptr はC言語で言うところポインタなのかな",
+      :desc => <<~EOT,
+ptr はC言語で言うところポインタなのかな
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.as_ptr",
     },
     {
@@ -1277,9 +1443,10 @@ let mut s = String::from("foo");
 s.as_mut_ptr() // =>
   EOT
       :rust_feature => nil,
-      :desc => "文字を更新するとき用",
+      :desc => <<~EOT,
+文字を更新するとき用
+EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.as_mut_ptr",
     },
-
   ],
 }

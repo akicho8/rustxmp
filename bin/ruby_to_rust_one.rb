@@ -22,13 +22,14 @@ class RubyToRustOne
   def output_md_files
     @out = []
     zenn_header_build
+    table_build
     render_records
     file_write(Pathname("~/src/zenn-content/articles/#{@params[:slug]}.md"))
 
     @out = []
     table_build
     render_records
-    file_write(Pathname("_md/#{@params[:name]}.md"))
+    file_write(Pathname("#{__dir__}/../_md/#{@params[:name]}.md"))
     confirm
   end
 
@@ -199,8 +200,9 @@ class RubyToRustOne
     end
 
     def desc_process
-      if @params[:desc]
-        @out << @params[:desc]
+      s = @params[:desc].to_s.strip
+      unless s.empty?
+        @out << s
       end
     end
 
