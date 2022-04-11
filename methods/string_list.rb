@@ -893,10 +893,10 @@ s.rfind(|e| e == 'c')  // =>
     },
 
     {
-      :ruby_method => "casecmp(other) == 0",
+      :ruby_method => "casecmp?(other)",
       :rust_method => "eq_ignore_ascii_case",
       :ruby_example => <<~'EOT',
-"Föö".casecmp("föö") == 0 # =>
+"Föö".casecmp?("föö") # =>
   EOT
       :rust_example => <<~'EOT',
 "Föö".eq_ignore_ascii_case("föö") // =>

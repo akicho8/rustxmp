@@ -13,3 +13,4 @@ path = "src/main.rs"
 
 [dependencies]
 nannou = "0.18.1"
+tinylog = "3.0.0"

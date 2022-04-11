@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
 
 require "thor"
-require "./ruby_to_rust_one"
+require "#{__dir__}/ruby_to_rust_one"
 
-require "./array_list"
-require "./string_list"
-require "./file_list"
+require "#{__dir__}/../methods/array_list"
+require "#{__dir__}/../methods/string_list"
+require "#{__dir__}/../methods/file_list"
 
 ALL_CONTENTS = [
   ARRAY_LIST,

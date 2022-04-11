@@ -5,7 +5,7 @@ require "cgi"
 require "open3"
 require "active_support/isolated_execution_state"
 require "table_format"
-require "./embed_processor"
+require "#{__dir__}/embed_processor"
 
 class RubyToRustOne
   attr_accessor :params
