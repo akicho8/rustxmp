@@ -1,23 +1,19 @@
 require "matrix"
-Vector[2, 3] + 1            rescue $! # => #<TypeError: 1 can't be coerced into Vector>
-Vector[2, 3] * Vector[4, 5] rescue $! # => #<ExceptionForMatrix::ErrOperationNotDefined: Operation(*) can't be defined: Vector op Vector>
 
-require "matrix"
-Vector[2, 3] + Vector[1, 1]                     # => Vector[3, 4]
-Vector[2, 3].map2(Vector[4, 5]) {|a, b| a * b } # => Vector[8, 15]
+a = Vector[2, 5]
+b = Vector[6, 3]
 
-Vector[2, 3].r                  # => 3.605551275463989
-Vector[2, 3].norm                  # => 3.605551275463989
-Vector[2, 3].magnitude                  # => 3.605551275463989
+# a から b に投射したときの原点から接点までの長さは？
+# お互いの成分同士を掛け算して足ばよいのだけど、先に相手つまり b を正規化しておく
+b = b.normalize                     # => Vector[0.8944271909999159, 0.4472135954999579]
+len = a.map2(b) {|a, b| a * b }.sum # => 4.024922359499621
 
-v = Vector[2.0, 3.0]
-r = v.magnitude  # => 3.605551275463989
-d = (3.7 - r)
-d                               # => 0.09444872453601105
+# a から b に投射したときの接点sは？
+# 上で求めた長さは b の線の上にあるので (正規化したb) * 長さ で設定が求まる
+s = b * len                         # => Vector[3.5999999999999996, 1.7999999999999998]
 
-Vector[2.0523908, 3.078586].r   # => 3.6999999669352213
+# 接点sからaへのベクトルは？
+a - s                          # => Vector[-1.5999999999999996, 3.2]
 
-Vector[2, 3].r           # => 3.605551275463989
-Vector[2, 3].normalize   # => Vector[0.5547001962252291, 0.8320502943378437]
-
-Vector[2, 3].normalize.r          # => 1.0
+# その長さは？
+(a - s).r                      # => 3.5777087639996634
