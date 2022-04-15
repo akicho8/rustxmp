@@ -91,19 +91,25 @@ EOT
     {
       :ruby_method => "to_i",
       :rust_method => "parse::<isize>()",
-      :ruby_example => <<~EOT,
+      :ruby_example => <<~'EOT',
 "567".to_i # =>
   EOT
       :rust_example => <<~EOT,
-"567".parse::<isize>() // =>
+"567".parse::<isize>()          // =>
 
 let v: isize = "567".parse().unwrap();
 v // =>
+
+" 567 ".parse::<isize>()        // =>
+" 567 ".trim().parse::<isize>() // =>
   EOT
       :rust_feature => nil,
       :desc => <<~EOT,
 - `::<xxx>` の部分をターボフィッシュというらしい
-- 戻値を受け取る変数に型指定があれば省略できるようだけど parse の方に指定した方がわかりやすい
+  - 戻値を受け取る変数に型指定があれば省略できる
+  - parse の方に指定した方がわかりやすい
+- 空白や改行が含まれているだけで `InvalidDigit` と言われる
+  - `trim()` とペアで使おう
 EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.parse",
     },
@@ -182,8 +188,7 @@ EOT
   EOT
       :rust_feature => nil,
       :desc => <<~EOT,
-- 全角スペースに対応している
-- 使いやすそう
+- 全角スペースもスペースとして扱う
 EOT
       :doc_url => "https://doc.rust-lang.org/std/string/struct.String.html#method.split_whitespace",
     },
