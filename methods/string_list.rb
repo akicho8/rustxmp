@@ -5,7 +5,7 @@ STRING_LIST = {
   :slug => "895e0547645e03",
   :zenn_header_yaml => <<~EOT,
     ---
-    title: "【Ruby脳向け】RustのString系メソッド対応"
+    title: "Ruby脳のためのRust文字列系メソッドまとめ"
     emoji: "🐶"
     type: "tech" # tech: 技術記事 / idea: アイデア
     topics: ["Rust", "Ruby", "String", "文字列"]

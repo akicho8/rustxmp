@@ -12,5 +12,6 @@ name = "x"
 path = "src/main.rs"
 
 [dependencies]
+itertools = "0.10.3"
 nannou = "0.18.1"
 tinylog = "3.0.0"

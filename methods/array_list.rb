@@ -5,7 +5,7 @@ ARRAY_LIST = {
   :slug => "fb6266bcb6aa1b",
   :zenn_header_yaml => <<~EOT,
     ---
-    title: "【Ruby脳向け】Rustの配列系メソッド対応"
+    title: "Ruby脳のためのRust配列系メソッドまとめ"
     emoji: "🐱"
     type: "tech" # tech: 技術記事 / idea: アイデア
     topics: ["Rust", "Ruby", "Array", "Vec", "Itertools"]
