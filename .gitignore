@@ -1,1 +1,7 @@
+/Gemfile.lock
+/*.gem
+/pkg
+/spec/.all_test_result.txt
 _*
+# /playground/*/examples/trash
+

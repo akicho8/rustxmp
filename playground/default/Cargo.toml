@@ -1,0 +1,19 @@
+[package]
+name = "playground-default"
+version = "0.1.0"
+edition = "2018"
+default-run = "playground-default"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "playground-default"
+path = "src/main.rs"
+
+[dependencies]
+dirs = "4.0.0"
+glob = "0.3.0"
+globmatch = "0.1.1"
+home-dir = "0.1.0"
+itertools = "0.10.3"
+nix = "0.23.1"

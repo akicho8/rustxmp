@@ -1,0 +1,17 @@
+[package]
+name = "playground-nannou"
+version = "0.1.0"
+# edition = "2018"
+edition = "2021"
+default-run = "playground-nannou"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "playground-nannou"
+path = "src/main.rs"
+
+[dependencies]
+itertools = "0.10.3"
+nannou = "0.18.1"
+tinylog = "3.0.0"

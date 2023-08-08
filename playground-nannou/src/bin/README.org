@@ -1,9 +1,0 @@
-ここに
-
-    foo.rs
-
-があれば
-
-    cargo run --bin foo
-
-で実行できる
