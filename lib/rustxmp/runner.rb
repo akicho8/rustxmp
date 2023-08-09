@@ -8,14 +8,14 @@ module Rustxmp
 
     def call
       if pipe?
-        puts EmbedProcessor.new(@options.merge(source_code: STDIN.read)).to_s
+        puts EmbedProcessor.new(@options.merge(source: STDIN.read)).to_s
         return
       end
 
       @files.each do |e|
         e = Pathname(e)
-        # str = CodeRun.new(@options.merge(source_code: e.read)).to_s
-        str = EmbedProcessor.new(@options.merge(source_code: e.read)).to_s
+        # str = CodeRun.new(@options.merge(source: e.read)).to_s
+        str = EmbedProcessor.new(@options.merge(source: e.read)).to_s
         if @options[:overwrite]
           e.write(str)
           next

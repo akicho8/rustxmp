@@ -1,24 +1,15 @@
 module Rustxmp
   class EmbedProcessor
-    attr_accessor :params
+    attr_accessor :options
 
-    def initialize(params)
-      @params = params
+    def initialize(source, options = {})
+      @source = source
+      @options = options
     end
 
     def call
-      lines = CodeRun.new(@params).to_s.lines
-      s = source.gsub(%r{^(?!\s*//)(?<code>.*)//\s*(=>|>>).*}) {
-        md = Regexp.last_match
-        if lines.empty?
-          s = @params[:nothing] || "(出力なし)"
-        else
-          s = lines.shift.rstrip
-        end
-        "#{md[:code]}// #{mark} #{s}"
-      }
-      # 残りの標準出力
-      s + lines.collect { |e| "// >> #{e.rstrip}\n" }.join
+      @output = CodeRun.new(@source, @options).to_s
+      MergeProcessor.new(@output, merge_target, @options).to_s
     end
 
     def to_s
@@ -27,12 +18,8 @@ module Rustxmp
 
     private
 
-    def source
-      @params[:replace_code] || @params[:source_code]
-    end
-
-    def mark
-      @params[:mark] || "=>"
+    def merge_target
+      @options[:merge_target] || @source
     end
   end
 end

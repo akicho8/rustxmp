@@ -1,12 +1,13 @@
 module Rustxmp
-  # CodeRun.new(source_code: "...").call
+  # CodeRun.new("...").call
   class CodeRun
     class RustRuntimeError < StandardError; end
 
     attr_accessor :params
 
-    def initialize(params)
-      @params = params
+    def initialize(source, options = {})
+      @source = source
+      @options = options
     end
 
     def call
@@ -24,7 +25,7 @@ module Rustxmp
     private
 
     def replaced_code
-      raw_code.lines.collect { |e|
+      @source.lines.collect { |e|
         case
         when e.match?(/println/)
           e
@@ -37,11 +38,10 @@ module Rustxmp
       }.join
     end
 
-    def raw_code
-      @params[:source_code]
-    end
-
     def playground_dir
+      if v = ENV["PLAYGROUND_DIR"]
+        return Pathname(v).expand_path
+      end
       playground_root.join(playground_name || playground_default)
     end
 
@@ -55,13 +55,13 @@ module Rustxmp
 
     # // rustxmp_playground: "nannou"
     def playground_name
-      if md = raw_code.match(%r{\b(?:rustxmp_playground):\s*"(?<value>.+?)"})
+      if md = @source.match(%r{\b(?:rustxmp_playground):\s*"(?<value>.+?)"})
         md[:value]
       end
     end
 
     def basename
-      (@params[:basename] || "_rustxmp").to_s.gsub(/_+/, "_")
+      (@options[:basename] || "_rustxmp").to_s.gsub(/_+/, "_")
     end
 
     def current_file
@@ -77,7 +77,7 @@ module Rustxmp
     end
 
     def build_by_cargo?
-      @params[:build_by] == :cargo || raw_code.match?(/^\s*use (?!std)\w+/)
+      @options[:build_by] == :cargo || @source.match?(/^\s*use (?!std)\w+/)
     end
 
     def error_report

@@ -3,7 +3,7 @@
 ## Example ##
 
 ```ruby
-puts Rustxmp::EmbedProcessor.new(source_code: <<~EOS)
+puts Rustxmp::EmbedProcessor.new(<<~EOS)
 fn main() {
     1 + 2;  // =>
 }
@@ -17,7 +17,7 @@ EOS
 > ```
 
 ```ruby
-puts Rustxmp::EmbedProcessor.new(source_code: <<~EOS)
+puts Rustxmp::EmbedProcessor.new(<<~EOS)
 fn main() {
     println!("{:?}", 1 + 2);  // =>
 }
@@ -31,7 +31,7 @@ EOS
 > ```
 
 ```ruby
-puts Rustxmp::EmbedProcessor.new(source_code: <<~EOS)
+puts Rustxmp::EmbedProcessor.new(<<~EOS)
 // rustxmp_playground: "nannou"
 
 use nannou::prelude::*;
